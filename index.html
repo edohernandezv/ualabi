@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UALABI — Diseño e innovación para entidades</title>
+<meta name="description" content="Consultora de diseño e innovación. Acompañamos a entidades en el desarrollo de productos e iniciativas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2EFE9;
+  --ink:#232226;
+  --turq:#3FAEC6;
+  --purp:#83389B;
+  --rule:#232226;
+  --gutter:clamp(16px,4vw,48px);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:16px;line-height:1.4;overflow-x:hidden;
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;
+  opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em}
+.meta{font-size:.6875rem;font-weight:500;line-height:1.3}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+:focus-visible{outline:3px solid var(--purp);outline-offset:2px}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:0;top:0;z-index:10000;background:var(--ink);color:var(--paper);padding:12px 20px}
+
+.frame{border-left:2px solid var(--rule);border-right:2px solid var(--rule);max-width:1600px;margin:0 auto}
+.pad{padding:var(--gutter)}
+
+/* ---------- TOPBAR / NAV ---------- */
+.topbar{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;padding:10px var(--gutter);border-bottom:2px solid var(--rule)}
+.topbar .c{text-align:center}.topbar .r{text-align:right}
+@media(max-width:720px){.topbar{grid-template-columns:1fr auto}.topbar .c{display:none}}
+
+.nav{display:flex;flex-wrap:wrap;border-bottom:2px solid var(--rule);position:sticky;top:0;background:var(--paper);z-index:100}
+.nav a{padding:14px var(--gutter);border-right:2px solid var(--rule);font-size:.6875rem;transition:background .12s linear,color .12s linear}
+.nav a:hover{background:var(--ink);color:var(--paper)}
+.nav .spacer{flex:1}
+.nav .cta{border-right:none;border-left:2px solid var(--rule);background:var(--turq);font-weight:700}
+.nav .cta:hover{background:var(--purp);color:var(--paper)}
+@media(max-width:820px){.nav{overflow-x:auto;flex-wrap:nowrap}.nav a{white-space:nowrap;padding:12px 16px}.nav .spacer{display:none}}
+
+/* ---------- HERO ---------- */
+.hero{padding:clamp(28px,6vw,72px) var(--gutter) clamp(20px,4vw,48px)}
+.kicker{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:clamp(24px,5vw,56px)}
+h1{font-weight:900;text-transform:uppercase;font-size:clamp(3.6rem,17vw,15rem);line-height:.82;letter-spacing:-.05em}
+h1 .out{color:transparent;-webkit-text-stroke:2px var(--ink)}
+h1 .tq{color:var(--turq);-webkit-text-stroke:2px var(--ink)}
+
+/* titular con palabra rotativa — patrón IDEO */
+.rot-line{margin-top:clamp(20px,4vw,44px);font-size:clamp(1.5rem,4.6vw,3.4rem);font-weight:800;letter-spacing:-.035em;line-height:1;display:flex;flex-wrap:wrap;align-items:baseline;gap:.3em}
+.rot{display:inline-grid;background:var(--purp);color:var(--paper);padding:0 .14em}
+.rot span{grid-area:1/1;opacity:0;animation:cycle 12s infinite}
+.rot span:nth-child(2){animation-delay:3s}
+.rot span:nth-child(3){animation-delay:6s}
+.rot span:nth-child(4){animation-delay:9s}
+@keyframes cycle{0%,25%{opacity:1}30%,100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.rot span{animation:none;opacity:0}.rot span:first-child{opacity:1}}
+
+.hero-foot{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--gutter);margin-top:clamp(24px,5vw,56px);align-items:end}
+.lede{font-size:clamp(1.05rem,2.2vw,1.5rem);font-weight:600;line-height:1.22;letter-spacing:-.02em;max-width:36ch}
+.hero-meta{display:grid;gap:6px;text-align:right}
+@media(max-width:860px){.hero-foot{grid-template-columns:1fr}.hero-meta{text-align:left}}
+
+/* enlaces de servicio bajo el hero — patrón IDEO */
+.qlinks{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
+.qlinks a{background:var(--paper);padding:20px var(--gutter);display:flex;justify-content:space-between;align-items:center;gap:1rem;font-weight:800;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(.95rem,1.6vw,1.2rem);transition:background .12s,color .12s}
+.qlinks a:hover{background:var(--turq)}
+.qlinks .arw{font-family:'JetBrains Mono',monospace;font-weight:700}
+@media(max-width:820px){.qlinks{grid-template-columns:1fr}}
+
+/* ---------- MARQUEE ---------- */
+.strip{background:var(--ink);color:var(--paper);overflow:hidden;border-top:2px solid var(--rule);border-bottom:2px solid var(--rule)}
+.strip-track{display:flex;gap:2.5rem;padding:11px 0;white-space:nowrap;animation:slide 34s linear infinite;width:max-content}
+.strip-track span{font-size:.6875rem}
+.strip-track .dot{color:var(--turq)}
+@keyframes slide{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
+
+/* ---------- CABECERA DE SECCIÓN ---------- */
+.sec-head{display:grid;grid-template-columns:auto 1fr auto;gap:1rem;align-items:baseline;padding:12px var(--gutter);border-bottom:2px solid var(--rule);border-top:2px solid var(--rule);background:var(--ink);color:var(--paper)}
+.sec-head .n{color:var(--turq);font-weight:700}
+@media(max-width:620px){.sec-head{grid-template-columns:auto 1fr}.sec-head>div:last-child{display:none}}
+
+/* ---------- MOSAICO IRREGULAR — patrón IDEO "Latest" ---------- */
+.mosaic{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--rule)}
+.mosaic>article{background:var(--paper);padding:var(--gutter);display:flex;flex-direction:column;min-height:clamp(240px,26vw,320px);transition:background .15s,color .15s}
+.mosaic>article:hover{background:var(--ink);color:var(--paper)}
+.mosaic>article:hover .tag{border-color:var(--turq);color:var(--turq)}
+.mosaic .wide{grid-column:span 2;background:var(--turq);min-height:clamp(300px,34vw,440px)}
+.mosaic .wide:hover{background:var(--ink);color:var(--paper)}
+.m-top{display:flex;justify-content:space-between;gap:1rem;margin-bottom:auto}
+.tag{border:1px solid currentColor;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:.625rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.mosaic h3{font-size:clamp(1.4rem,3.2vw,2.6rem);font-weight:800;text-transform:uppercase;letter-spacing:-.035em;line-height:.94;margin:clamp(20px,4vw,40px) 0 12px;max-width:22ch}
+.mosaic p{font-size:.875rem;line-height:1.45;max-width:46ch}
+.m-foot{margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:1rem;border-top:1px solid currentColor;padding-top:10px}
+@media(max-width:820px){.mosaic{grid-template-columns:1fr}.mosaic .wide{grid-column:span 1}}
+
+/* ---------- MISIONES / TRES BLOQUES — patrón Nesta ---------- */
+.miss{background:var(--ink);color:var(--paper);padding:clamp(28px,5vw,64px) var(--gutter)}
+.miss h2{font-size:clamp(1.6rem,4vw,2.8rem);font-weight:800;letter-spacing:-.035em;line-height:1;max-width:24ch;margin-bottom:clamp(20px,4vw,40px)}
+.miss-row{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.miss-row>div{padding:18px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;color:var(--ink);min-height:110px;flex-direction:column}
+.miss-row>div:nth-child(1){background:var(--turq)}
+.miss-row>div:nth-child(2){background:var(--purp);color:var(--paper)}
+.miss-row>div:nth-child(3){background:var(--paper)}
+.miss-row strong{font-size:clamp(1.05rem,2vw,1.45rem);font-weight:800;text-transform:uppercase;letter-spacing:-.025em;line-height:1}
+.miss-row .plus{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;align-self:flex-end;margin-top:auto}
+@media(max-width:820px){.miss-row{grid-template-columns:1fr}}
+
+/* ---------- SERVICIOS ---------- */
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--rule)}
+.svc>article{background:var(--paper);padding:var(--gutter);min-height:clamp(280px,32vw,380px);display:flex;flex-direction:column;justify-content:space-between;transition:background .15s,color .15s}
+.svc>article:hover{background:var(--ink);color:var(--paper)}
+.svc>article:hover .idx{color:var(--turq)}
+.idx{font-size:clamp(2.6rem,6vw,4.5rem);font-weight:900;line-height:.8;letter-spacing:-.05em;color:var(--turq);-webkit-text-stroke:1.5px currentColor}
+.svc h3{font-size:clamp(1.35rem,2.6vw,2rem);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.95;margin:auto 0 12px}
+.svc p{font-size:.875rem;line-height:1.45;max-width:38ch}
+.svc .tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+@media(max-width:980px){.svc{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.svc{grid-template-columns:1fr}}
+
+/* ---------- MÉTODO ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:.8125rem}
+.tbl th,.tbl td{border-bottom:1px solid var(--rule);padding:16px var(--gutter);text-align:left;vertical-align:top}
+.tbl th{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.625rem;font-weight:500;border-bottom:2px solid var(--rule)}
+.tbl tr:hover td{background:var(--turq)}
+.tbl td:first-child{font-family:'JetBrains Mono',monospace;font-size:.6875rem;letter-spacing:.08em;white-space:nowrap;width:1%}
+.tbl .fase{font-weight:800;text-transform:uppercase;letter-spacing:-.02em;font-size:1.0625rem}
+.tbl td:last-child{max-width:52ch}
+@media(max-width:720px){.tbl,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}.tbl thead{display:none}.tbl tr{border-bottom:2px solid var(--rule)}.tbl td{border-bottom:none;padding:6px var(--gutter)}.tbl tr td:first-child{padding-top:16px}.tbl tr td:last-child{padding-bottom:16px}}
+
+/* ---------- CIFRAS ---------- */
+.figs{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
+.figs>div{background:var(--paper);padding:var(--gutter)}
+.figs>div:nth-child(2){background:var(--turq)}
+.figs>div:nth-child(3){background:var(--purp);color:var(--paper)}
+.fig-n{font-size:clamp(2.6rem,7vw,5rem);font-weight:900;line-height:.82;letter-spacing:-.05em}
+.figs .meta{margin-top:10px}
+@media(max-width:860px){.figs{grid-template-columns:repeat(2,1fr)}}
+
+/* ---------- PRINCIPIOS ---------- */
+.prin{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--rule)}
+.prin>div{background:var(--paper);padding:var(--gutter)}
+.prin h4{font-size:clamp(1.1rem,2vw,1.5rem);font-weight:800;text-transform:uppercase;letter-spacing:-.02em;margin:10px 0 8px}
+.prin p{font-size:.875rem;line-height:1.45;max-width:44ch}
+.bar{height:10px;background:var(--ink)}
+.prin>div:nth-child(2) .bar{background:var(--turq)}
+.prin>div:nth-child(3) .bar{background:var(--purp)}
+@media(max-width:720px){.prin{grid-template-columns:1fr}}
+
+/* ---------- EQUIPO / QUOTES — patrón IDEO ---------- */
+.people{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--rule)}
+.people>figure{background:var(--paper);padding:var(--gutter);display:flex;flex-direction:column}
+.people>figure:nth-child(2){background:var(--purp);color:var(--paper)}
+.people blockquote{font-size:clamp(1.05rem,2.1vw,1.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.18;max-width:32ch;margin-bottom:auto}
+.people figcaption{margin-top:clamp(24px,4vw,44px);border-top:1px solid currentColor;padding-top:12px;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.people .who{font-weight:800;text-transform:uppercase;letter-spacing:-.02em;font-size:1rem}
+@media(max-width:820px){.people{grid-template-columns:1fr}}
+
+/* ---------- FAQ — patrón IDEO ---------- */
+.faq{border-top:2px solid var(--rule)}
+.faq details{border-bottom:1px solid var(--rule)}
+.faq summary{padding:18px var(--gutter);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-weight:600;font-size:clamp(.95rem,1.6vw,1.1rem);letter-spacing:-.015em;transition:background .12s}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{background:var(--turq)}
+.faq summary::after{content:"+";font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.25rem;flex-shrink:0}
+.faq details[open] summary{background:var(--ink);color:var(--paper)}
+.faq details[open] summary::after{content:"−";color:var(--turq)}
+.faq .ans{padding:0 var(--gutter) 20px;font-size:.9375rem;line-height:1.5;max-width:66ch}
+.faq details[open] .ans{padding-top:16px}
+
+/* ---------- CTA ---------- */
+.cta-block{background:var(--ink);color:var(--paper);padding:clamp(36px,7vw,96px) var(--gutter);border-top:2px solid var(--rule)}
+.cta-block h2{font-size:clamp(2.4rem,9vw,7.5rem);font-weight:900;text-transform:uppercase;line-height:.85;letter-spacing:-.05em}
+.cta-block h2 .p{color:var(--purp)}
+.cta-row{display:grid;grid-template-columns:1fr auto;gap:var(--gutter);align-items:end;margin-top:clamp(24px,5vw,56px)}
+.btn{display:inline-block;background:var(--turq);color:var(--ink);padding:18px 32px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.8125rem;font-weight:700;border:2px solid var(--turq);transition:background .12s,color .12s}
+.btn:hover{background:transparent;color:var(--turq)}
+.cta-list{display:grid;gap:4px}
+@media(max-width:720px){.cta-row{grid-template-columns:1fr}}
+
+/* ---------- NEWSLETTER — patrón Nesta/IDEO ---------- */
+.news{display:grid;grid-template-columns:1fr 1.2fr;gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
+.news>div{background:var(--paper);padding:var(--gutter)}
+.news h2{font-size:clamp(1.5rem,3.4vw,2.4rem);font-weight:800;text-transform:uppercase;letter-spacing:-.035em;line-height:.95;margin-bottom:12px}
+.news p{font-size:.875rem;line-height:1.45;max-width:40ch}
+.news form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.news label{display:block;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.625rem;font-weight:500;margin-bottom:5px}
+.news input{width:100%;background:transparent;border:2px solid var(--rule);padding:12px;font-family:'JetBrains Mono',monospace;font-size:.8125rem;color:var(--ink)}
+.news input:focus{outline:none;border-color:var(--purp);background:#fff}
+.news .full{grid-column:span 2}
+.news button{grid-column:span 2;background:var(--ink);color:var(--paper);border:2px solid var(--ink);padding:15px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:700;cursor:pointer;transition:background .12s,color .12s}
+.news button:hover{background:var(--turq);color:var(--ink)}
+.news .consent{grid-column:span 2;display:flex;gap:10px;align-items:flex-start;font-size:.6875rem;line-height:1.4}
+.news .consent input{width:auto;flex-shrink:0;margin-top:2px;accent-color:var(--purp)}
+@media(max-width:820px){.news{grid-template-columns:1fr}.news form{grid-template-columns:1fr}.news .full,.news button,.news .consent{grid-column:span 1}}
+
+/* ---------- FOOTER DENSO — patrón Nesta/IDEO ---------- */
+.foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
+.foot-grid>div{background:var(--paper);padding:var(--gutter)}
+.foot-grid h5{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.625rem;font-weight:700;margin-bottom:12px;color:var(--purp)}
+.foot-grid ul{list-style:none;display:grid;gap:7px}
+.foot-grid li a{font-size:.8125rem;font-weight:500;border-bottom:1px solid transparent}
+.foot-grid li a:hover{border-bottom-color:var(--ink)}
+@media(max-width:860px){.foot-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
+
+.legal{padding:20px var(--gutter);display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;border-top:2px solid var(--rule)}
+.legal .c{text-align:center}.legal .r{text-align:right}
+@media(max-width:720px){.legal{grid-template-columns:1fr;gap:6px}.legal .c,.legal .r{text-align:left}}
+</style>
+</head>
+<body>
+<a class="skip mono meta" href="#main">Saltar al contenido</a>
+<div class="frame">
+
+  <div class="topbar mono meta">
+    <div>UALABI® / CONSULTORA DE DISEÑO E INNOVACIÓN</div>
+    <div class="c">EST. 2024 — SANTIAGO, CL</div>
+    <div class="r">REV 1.0 / UNIT-001</div>
+  </div>
+
+  <nav class="nav mono">
+    <a href="#trabajo">[ 01 ] TRABAJO</a>
+    <a href="#servicios">[ 02 ] SERVICIOS</a>
+    <a href="#metodo">[ 03 ] MÉTODO</a>
+    <a href="#equipo">[ 04 ] EQUIPO</a>
+    <a href="#faq">[ 05 ] FAQ</a>
+    <span class="spacer"></span>
+    <a href="#contacto" class="cta">&gt;&gt; INICIAR PROYECTO</a>
+  </nav>
+
+  <main id="main">
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <div class="kicker mono meta">
+      <div>/// ACOMPAÑAMIENTO A ENTIDADES PÚBLICAS Y PRIVADAS</div>
+      <div>DISEÑO + INNOVACIÓN + PRODUCTO</div>
+    </div>
+
+    <h1>UA<span class="tq">LA</span><span class="out">BI</span></h1>
+
+    <p class="rot-line">Diseño e innovación con
+      <span class="rot"><span>propósito</span><span>evidencia</span><span>método</span><span>impacto</span></span>
+    </p>
+
+    <div class="hero-foot">
+      <p class="lede">Acompañamos a entidades en el desarrollo de productos e iniciativas basados en los principios de diseño e innovación.</p>
+      <div class="hero-meta mono meta">
+        <div>+ DIAGNÓSTICO / PROTOTIPO / ESCALA</div>
+        <div>+ EQUIPOS EMBEBIDOS, NO PRESENTACIONES</div>
+        <div>+ DISPONIBILIDAD Q4 — CUPOS LIMITADOS</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="qlinks">
+    <a href="#servicios">Diseñar el producto <span class="arw">→</span></a>
+    <a href="#metodo">Instalar el método <span class="arw">→</span></a>
+    <a href="#contacto">Escalar la iniciativa <span class="arw">→</span></a>
+  </div>
+
+  <div class="strip">
+    <div class="strip-track mono">
+      <span>INVESTIGACIÓN APLICADA</span><span class="dot">◆</span>
+      <span>DISEÑO DE SERVICIOS</span><span class="dot">◆</span>
+      <span>PROTOTIPADO RÁPIDO</span><span class="dot">◆</span>
+      <span>INNOVACIÓN PÚBLICA</span><span class="dot">◆</span>
+      <span>PRODUCTO DIGITAL</span><span class="dot">◆</span>
+      <span>FACILITACIÓN</span><span class="dot">◆</span>
+      <span>INVESTIGACIÓN APLICADA</span><span class="dot">◆</span>
+      <span>DISEÑO DE SERVICIOS</span><span class="dot">◆</span>
+      <span>PROTOTIPADO RÁPIDO</span><span class="dot">◆</span>
+      <span>INNOVACIÓN PÚBLICA</span><span class="dot">◆</span>
+      <span>PRODUCTO DIGITAL</span><span class="dot">◆</span>
+      <span>FACILITACIÓN</span><span class="dot">◆</span>
+    </div>
+  </div>
+
+  <!-- ===== MISIONES (Nesta) ===== -->
+  <section class="miss">
+    <h2>Trabajamos sobre tres frentes donde el diseño mueve la aguja</h2>
+    <div class="miss-row">
+      <div><strong>Servicios<br>públicos</strong><span class="plus mono">+</span></div>
+      <div><strong>Producto<br>digital</strong><span class="plus mono">+</span></div>
+      <div><strong>Capacidad<br>interna</strong><span class="plus mono">+</span></div>
+    </div>
+  </section>
+
+  <!-- ===== TRABAJO / MOSAICO (IDEO) ===== -->
+  <section id="trabajo">
+    <div class="sec-head mono meta">
+      <div class="n">[ 01 ]</div>
+      <div>TRABAJO / CASOS Y PUBLICACIONES</div>
+      <div>03 REGISTROS</div>
+    </div>
+    <div class="mosaic">
+      <article class="wide">
+        <div class="m-top">
+          <span class="tag">Caso destacado</span>
+          <span class="mono meta">2026</span>
+        </div>
+        <h3>¿Cómo rediseñar un trámite que tarda 40 días?</h3>
+        <p>Mapeamos el recorrido completo del usuario en un servicio municipal, identificamos siete puntos de fricción evitables y prototipamos una versión que redujo el ciclo a menos de una semana.</p>
+        <div class="m-foot mono meta"><span>Sector público / Servicio</span><span>Leer caso →</span></div>
+      </article>
+      <article>
+        <div class="m-top">
+          <span class="tag">Artículo</span>
+          <span class="mono meta">2026</span>
+        </div>
+        <h3>La innovación no es una jornada de post-its</h3>
+        <p>Por qué los talleres de creatividad rara vez sobreviven al lunes siguiente, y qué estructura hace falta para que una idea llegue a producción.</p>
+        <div class="m-foot mono meta"><span>Método</span><span>Leer →</span></div>
+      </article>
+      <article>
+        <div class="m-top">
+          <span class="tag">Caso</span>
+          <span class="mono meta">2025</span>
+        </div>
+        <h3>Un piloto que sobrevivió al cambio de administración</h3>
+        <p>Transferencia metodológica a un equipo interno de 12 personas. La iniciativa siguió operando dieciocho meses después de terminado nuestro contrato.</p>
+        <div class="m-foot mono meta"><span>Capacidad instalada</span><span>Leer caso →</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== SERVICIOS ===== -->
+  <section id="servicios">
+    <div class="sec-head mono meta">
+      <div class="n">[ 02 ]</div>
+      <div>SERVICIOS / LÍNEAS DE TRABAJO</div>
+      <div>03 UNIDADES</div>
+    </div>
+    <div class="svc">
+      <article>
+        <div class="idx">01</div>
+        <h3>Diagnóstico<br>e investigación</h3>
+        <p>Entendemos el problema antes de diseñar la solución. Levantamiento con usuarios, mapeo de actores y análisis del contexto institucional.</p>
+        <div class="tags"><span class="tag">Research</span><span class="tag">Blueprint</span><span class="tag">Journey</span></div>
+      </article>
+      <article>
+        <div class="idx">02</div>
+        <h3>Diseño de<br>productos</h3>
+        <p>Del concepto al prototipo funcional. Definición de propuesta de valor, arquitectura de la experiencia y validación con usuarios reales.</p>
+        <div class="tags"><span class="tag">Prototipo</span><span class="tag">UX/UI</span><span class="tag">Testing</span></div>
+      </article>
+      <article>
+        <div class="idx">03</div>
+        <h3>Innovación<br>e implementación</h3>
+        <p>Instalamos capacidad en el equipo interno. Facilitación, pilotos acotados y transferencia metodológica para sostener la iniciativa.</p>
+        <div class="tags"><span class="tag">Piloto</span><span class="tag">Formación</span><span class="tag">Escala</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== MÉTODO ===== -->
+  <section id="metodo">
+    <div class="sec-head mono meta">
+      <div class="n">[ 03 ]</div>
+      <div>MÉTODO / SECUENCIA OPERATIVA</div>
+      <div>04 FASES</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Fase</th><th>Etapa</th><th>Qué ocurre</th></tr></thead>
+      <tbody>
+        <tr><td>F—01</td><td class="fase">Comprender</td><td>Inmersión en el contexto de la entidad. Entrevistas, revisión de antecedentes y definición conjunta del desafío a resolver.</td></tr>
+        <tr><td>F—02</td><td class="fase">Explorar</td><td>Generación divergente de alternativas. Referentes, sesiones de co-creación y selección de conceptos con criterios explícitos.</td></tr>
+        <tr><td>F—03</td><td class="fase">Prototipar</td><td>Construcción de versiones tangibles y baratas. Se prueban con usuarios antes de comprometer presupuesto de implementación.</td></tr>
+        <tr><td>F—04</td><td class="fase">Implementar</td><td>Piloto acotado, medición de resultados y transferencia al equipo interno para que la iniciativa siga viva sin nosotros.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="figs">
+    <div><div class="fig-n">04</div><div class="mono meta">FASES DEL MÉTODO</div></div>
+    <div><div class="fig-n">6—12</div><div class="mono meta">SEMANAS POR CICLO</div></div>
+    <div><div class="fig-n">100%</div><div class="mono meta">CON EQUIPO INTERNO</div></div>
+    <div><div class="fig-n">00</div><div class="mono meta">INFORMES QUE NADIE LEE</div></div>
+  </div>
+
+  <!-- ===== PRINCIPIOS ===== -->
+  <section id="principios">
+    <div class="sec-head mono meta">
+      <div class="n">[ 04 ]</div>
+      <div>PRINCIPIOS / CÓMO TRABAJAMOS</div>
+      <div>04 REGLAS</div>
+    </div>
+    <div class="prin">
+      <div><div class="bar"></div><h4>Evidencia antes que opinión</h4><p>Ninguna decisión de diseño se sostiene sola. Si no hay dato o usuario que lo respalde, es una hipótesis y se trata como tal.</p></div>
+      <div><div class="bar"></div><h4>Lo tangible gana</h4><p>Un prototipo mediocre enseña más que una presentación perfecta. Preferimos mostrar antes que describir.</p></div>
+      <div><div class="bar"></div><h4>Capacidad instalada</h4><p>El objetivo no es que nos necesiten. Es que el equipo interno pueda repetir el proceso cuando nos vayamos.</p></div>
+      <div><div class="bar"></div><h4>Restricción como material</h4><p>Presupuesto, normativa y tiempos no son obstáculos: son los bordes que definen la forma de la solución.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== EQUIPO / QUOTES (IDEO) ===== -->
+  <section id="equipo">
+    <div class="sec-head mono meta">
+      <div class="n">[ 05 ]</div>
+      <div>EQUIPO / QUIÉNES ESTÁN DETRÁS</div>
+      <div>02 VOCES</div>
+    </div>
+    <div class="people">
+      <figure>
+        <blockquote>“La mayoría de las entidades no tiene un problema de ideas. Tiene un problema de método para llevarlas a algo real.”</blockquote>
+        <figcaption><span class="who">Nombre Apellido</span><span class="mono meta">Socio fundador</span></figcaption>
+      </figure>
+      <figure>
+        <blockquote>“Nuestro mejor resultado es que el equipo interno no vuelva a llamarnos porque ya aprendió a hacerlo.”</blockquote>
+        <figcaption><span class="who">Nombre Apellido</span><span class="mono meta">Dirección de diseño</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== FAQ (IDEO) ===== -->
+  <section id="faq">
+    <div class="sec-head mono meta">
+      <div class="n">[ 06 ]</div>
+      <div>PREGUNTAS FRECUENTES</div>
+      <div>04 ENTRADAS</div>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>¿Qué es el diseño centrado en las personas y cómo lo aplican?</summary>
+        <div class="ans">Es partir del problema real de quien usa el servicio, no del organigrama de quien lo entrega. En la práctica significa que la primera semana la pasamos con usuarios y funcionarios, no en una sala de reuniones definiendo alcance.</div>
+      </details>
+      <details>
+        <summary>¿Trabajan con entidades públicas y privadas por igual?</summary>
+        <div class="ans">Sí. El método es el mismo; cambian las restricciones. En el sector público el borde suele ser normativo y de plazos; en el privado, de presupuesto y time-to-market. Ambos son material de diseño.</div>
+      </details>
+      <details>
+        <summary>¿Cuánto dura un proyecto típico?</summary>
+        <div class="ans">Entre 6 y 12 semanas por ciclo. Preferimos ciclos cortos con entregables tangibles antes que contratos largos sin puntos de control. Si el desafío es mayor, se divide en ciclos encadenados.</div>
+      </details>
+      <details>
+        <summary>¿Qué recibimos al terminar?</summary>
+        <div class="ans">Un prototipo validado, la evidencia que lo respalda y la documentación del método para que el equipo interno pueda repetirlo. No entregamos informes de 200 páginas.</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section id="contacto" class="cta-block">
+    <div class="mono meta" style="margin-bottom:clamp(20px,4vw,44px)">/// [ 07 ] INICIAR CONVERSACIÓN</div>
+    <h2>Cuéntanos<br>el <span class="p">desafío</span></h2>
+    <div class="cta-row">
+      <div class="cta-list mono meta">
+        <div>+ RESPONDEMOS EN 48 HORAS HÁBILES</div>
+        <div>+ PRIMERA SESIÓN DE DIAGNÓSTICO SIN COSTO</div>
+        <div>+ HOLA@UALABI.CL</div>
+      </div>
+      <div><a class="btn" href="mailto:hola@ualabi.cl?subject=Proyecto%20con%20ualabi">ESCRIBIR &gt;&gt;</a></div>
+    </div>
+  </section>
+
+  <!-- ===== NEWSLETTER ===== -->
+  <section class="news">
+    <div>
+      <h2>Suscríbete</h2>
+      <p>Notas sobre diseño, innovación pública y lo que aprendemos en cada proyecto. Sin frecuencia fija: escribimos cuando hay algo que decir.</p>
+    </div>
+    <div>
+      <form action="#" method="post">
+        <div><label for="nom">Nombre</label><input id="nom" name="nombre" type="text" autocomplete="given-name" required></div>
+        <div><label for="org">Organización</label><input id="org" name="organizacion" type="text" autocomplete="organization"></div>
+        <div class="full"><label for="mail">Email *</label><input id="mail" name="email" type="email" autocomplete="email" required></div>
+        <label class="consent"><input type="checkbox" name="consent" required> Acepto recibir comunicaciones de ualabi y el tratamiento de mis datos según la política de privacidad.</label>
+        <button type="submit">Suscribirme &gt;&gt;</button>
+      </form>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="foot-grid">
+      <div>
+        <h5>Servicios</h5>
+        <ul>
+          <li><a href="#servicios">Diagnóstico e investigación</a></li>
+          <li><a href="#servicios">Diseño de productos</a></li>
+          <li><a href="#servicios">Innovación e implementación</a></li>
+          <li><a href="#metodo">Facilitación</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>ualabi</h5>
+        <ul>
+          <li><a href="#equipo">Equipo</a></li>
+          <li><a href="#trabajo">Trabajo</a></li>
+          <li><a href="#principios">Principios</a></li>
+          <li><a href="#faq">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contacto</h5>
+        <ul>
+          <li><a href="mailto:hola@ualabi.cl">hola@ualabi.cl</a></li>
+          <li><a href="#contacto">Iniciar proyecto</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Uso de cookies</a></li>
+          <li><a href="#">Accesibilidad</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal mono meta">
+      <div>© 2026 UALABI SpA</div>
+      <div class="c">DISEÑO E INNOVACIÓN</div>
+      <div class="r">SANTIAGO / CHILE</div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
