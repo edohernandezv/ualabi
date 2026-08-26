@@ -18,7 +18,6 @@
    Un solo tema por modo. Radio 0 en todo. Acento único turquesa.
    ============================================================ */
 :root{
-  --paper:#F2EFE9;
   --ink:#232226;
   --turq:#3FAEC6;          /* marca: fondos y sobre tinta */
   --turq-text:#287586;     /* mismo matiz 190.7deg, legible como texto sobre crema: 4.60:1 */
@@ -29,24 +28,37 @@
   --rule:#232226;
   --shade:#E7E2D9;
   --gutter:clamp(16px,4vw,48px);
+  /* escala tipografica: ratio 1.25, fluida de 360px a 1600px */
+  --s-fluid:clamp(0rem,(100vw - 22.5rem)/56,1rem);
+  --t-s:calc(1.15rem + var(--s-fluid)*.35);
+  --t-m:calc(1.4rem  + var(--s-fluid)*.7);
+  --t-l:calc(1.75rem + var(--s-fluid)*1.65);
+  --t-xl:calc(2.6rem + var(--s-fluid)*3.4);
+  /* ritmo vertical entre secciones */
+  --v:clamp(28px,5vw,72px);
+  --nav-h:4rem;
+  --on-turq:#232226;   /* --turq es superficie clara en ambos modos */
 }
 @media(prefers-color-scheme:dark){
   :root{
-    --paper:#232226;
     --ink:#F2EFE9;
     --surface:#232226;
     --on-surface:#F2EFE9;
     --rule:#F2EFE9;
-    --shade:#2E2C32;
+    --shade:#33313A;
     --turq-text:#3FAEC6;   /* sobre tinta da 6.08:1 */
+    --on-turq:#232226;     /* no cambia: --turq sigue siendo superficie clara */
     --purp-focus:#C77FDC;  /* #83389B sobre tinta da 2.26:1 */
   }
 }
-*{margin:0;padding:0;box-sizing:border-box;border-radius:0}
+*{margin:0;padding:0;box-sizing:border-box}
+input,button,textarea,select{border-radius:0;-webkit-appearance:none;appearance:none}
+input[type=checkbox]{-webkit-appearance:auto;appearance:auto}
 html{color-scheme:light dark}
 a,button,summary,input,label{touch-action:manipulation}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:76px}
-section[id],header[id],main[id]{scroll-margin-top:76px}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 12px)}
+section[id],header[id],main[id]{scroll-margin-top:calc(var(--nav-h) + 12px)}
+@media(max-height:420px){.nav{position:static}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{
   background:var(--surface);color:var(--on-surface);
@@ -70,13 +82,13 @@ img{display:block;max-width:100%;height:auto}
 .frame{border-left:2px solid var(--rule);border-right:2px solid var(--rule);max-width:1600px;margin:0 auto}
 
 /* ---------- NAV: una línea, altura ≤80px ---------- */
-.nav{display:flex;align-items:stretch;border-bottom:2px solid var(--rule);position:sticky;top:0;background:var(--surface);z-index:100;height:64px}
+.nav{display:flex;align-items:stretch;border-bottom:2px solid var(--rule);position:sticky;top:0;background:var(--surface);z-index:100;min-height:var(--nav-h)}
 .brand{display:flex;align-items:center;padding:0 var(--gutter);border-right:2px solid var(--rule);font-weight:900;text-transform:uppercase;letter-spacing:-.04em;font-size:1.25rem}
 .brand b{color:var(--turq);-webkit-text-stroke:1px var(--ink)}
 .nav-links{display:flex;align-items:stretch;flex:1}
 .nav-links a{display:flex;align-items:center;padding:0 24px;border-right:1px solid var(--rule);font-size:.75rem;transition:background .12s linear,color .12s linear}
 .nav-links a:hover{background:var(--ink);color:var(--surface)}
-.nav .cta{display:flex;align-items:center;padding:0 var(--gutter);border-left:2px solid var(--rule);background:var(--turq);color:#232226;font-weight:700;font-size:.75rem;white-space:nowrap;transition:background .12s}
+.nav .cta{display:flex;align-items:center;padding:0 var(--gutter);border-left:2px solid var(--rule);background:var(--turq);color:var(--on-turq);font-weight:700;font-size:.75rem;white-space:nowrap;transition:background .12s}
 .nav .cta:hover{background:var(--purp);color:#F2EFE9}
 @media(max-width:900px){
   .nav-links{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
@@ -87,11 +99,11 @@ img{display:block;max-width:100%;height:auto}
 /* ---------- HERO: split asimétrico, cabe en viewport ---------- */
 .hero{display:grid;grid-template-columns:1.15fr .85fr;border-bottom:2px solid var(--rule);min-height:min(72vh,620px)}
 .hero-copy{padding:clamp(28px,5vw,64px) var(--gutter);display:flex;flex-direction:column;justify-content:center;border-right:2px solid var(--rule)}
-h1{text-wrap:balance;font-weight:900;text-transform:uppercase;font-size:clamp(2.6rem,7.2vw,6rem);line-height:.92;letter-spacing:-.05em;max-width:14ch}
+h1{text-wrap:balance;font-weight:900;text-transform:uppercase;font-size:var(--t-xl);line-height:.92;letter-spacing:-.05em;max-width:14ch}
 h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
 .lede{text-wrap:pretty;font-size:clamp(1rem,1.7vw,1.3rem);font-weight:500;line-height:1.35;max-width:44ch;margin-top:clamp(18px,2.6vw,28px)}
 .hero-cta{margin-top:clamp(22px,3.4vw,36px);display:flex;flex-wrap:wrap;gap:12px}
-.btn{display:inline-block;background:var(--turq);color:#232226;padding:16px 30px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.8125rem;font-weight:700;border:2px solid var(--turq);white-space:nowrap;transition:background .12s,color .12s,transform .08s}
+.btn{display:inline-block;background:var(--turq);color:var(--on-turq);padding:16px 30px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.8125rem;font-weight:700;border:2px solid var(--turq);white-space:nowrap;transition:background .12s,color .12s,transform .08s}
 .btn:hover{background:transparent;color:var(--on-surface);border-color:var(--rule)}
 .btn:active{transform:translateY(1px)}
 .btn-ghost{background:transparent;color:var(--on-surface);border-color:var(--rule)}
@@ -102,16 +114,17 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
 
 /* ---------- MARQUEE (único de la página) ---------- */
 .strip{background:#232226;background:var(--ink);color:#F2EFE9;color:var(--surface);overflow:hidden;border-bottom:2px solid var(--rule)}
-.strip-track{display:flex;gap:2.5rem;padding:11px 0;white-space:nowrap;animation:slide 38s linear infinite;width:max-content}
-.strip-track span{font-size:.6875rem}
+.strip-track{display:flex;gap:2.5rem;padding:12px 0;white-space:nowrap;animation:slide 38s linear infinite;width:max-content}
+.strip-track span{font-size:.75rem}
 @keyframes slide{to{transform:translateX(-50%)}}
 .strip:hover .strip-track,.strip:focus-within .strip-track{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
 
 /* ---------- CABECERA DE SECCIÓN (sin numeración) ---------- */
-.sh{padding:clamp(28px,4.4vw,56px) var(--gutter) clamp(18px,2.4vw,28px)}
-.sh h2{text-wrap:balance;font-size:clamp(1.8rem,4.4vw,3.4rem);font-weight:900;text-transform:uppercase;letter-spacing:-.045em;line-height:.92;max-width:20ch}
-.sh p{margin-top:14px;font-size:.9375rem;line-height:1.5;max-width:62ch}
+.sh{padding:var(--v) var(--gutter) calc(var(--v)*.45)}
+.sh-open{padding-top:calc(var(--v)*1.6)}
+.sh h2{text-wrap:balance;font-size:var(--t-l);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.92;max-width:20ch}
+.sh p{margin-top:16px;font-size:.9375rem;line-height:1.5;max-width:62ch}
 
 /* ---------- TRABAJO: bento 3 celdas, 3 items ---------- */
 .bento{display:grid;grid-template-columns:1.4fr 1fr;grid-auto-rows:minmax(0,auto);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
@@ -120,11 +133,12 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
 .bento .lead{grid-row:span 2}
 .bento .shot{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--shade);filter:grayscale(1) contrast(1.1);border-bottom:2px solid var(--rule)}
 .bento .lead .shot{aspect-ratio:16/11}
+.bento .lead h3{font-size:var(--t-m)}
 .bento .body{padding:var(--gutter);display:flex;flex-direction:column;flex:1}
-.bento h3{text-wrap:balance;font-size:clamp(1.25rem,2.5vw,2.1rem);font-weight:800;text-transform:uppercase;letter-spacing:-.035em;line-height:.96;max-width:20ch}
+.bento h3{text-wrap:balance;font-size:var(--t-s);font-weight:800;text-transform:uppercase;letter-spacing:-.035em;line-height:.96;max-width:20ch}
 .bento p{margin-top:12px;font-size:.875rem;line-height:1.5;max-width:46ch}
 .bento .kind{margin-top:auto;padding-top:16px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:500}
-.bento .tint{background:var(--turq);color:#232226}
+.bento .tint{background:var(--turq);color:var(--on-turq)}
 .bento .tint:hover{background:var(--ink);color:var(--surface)}
 @media(max-width:900px){.bento{grid-template-columns:1fr}.bento .lead{grid-row:auto}}
 
@@ -134,21 +148,26 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
 .zig>div:last-child{border-bottom:none}
 .zig .num{padding:var(--gutter);font-family:'JetBrains Mono',monospace;font-size:.8125rem;font-weight:700;letter-spacing:.08em;color:var(--turq-text);border-right:1px solid var(--rule);display:flex;align-items:flex-start;min-width:78px}
 .zig .name{padding:var(--gutter);border-right:1px solid var(--rule);display:flex;align-items:center}
-.zig h3{font-size:clamp(1.2rem,2.4vw,1.9rem);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.98}
+.zig h3{font-size:var(--t-s);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.98}
 .zig .desc{padding:var(--gutter);display:flex;flex-direction:column;justify-content:center}
 .zig .desc p{font-size:.9375rem;line-height:1.5;max-width:52ch}
 .zig .what{margin-top:12px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.07em;font-size:.75rem;line-height:1.7}
 .zig>div:hover{background:var(--shade)}
-@media(max-width:900px){.zig>div{grid-template-columns:auto 1fr}.zig .name{border-right:none}.zig .desc{grid-column:1/-1;border-top:1px solid var(--rule);padding-top:20px}}
+@media(max-width:900px){
+  .zig>div{grid-template-columns:1fr}
+  .zig .num{min-width:0;padding:var(--gutter) var(--gutter) 0;border-right:none}
+  .zig .name{border-right:none;padding-top:8px}
+  .zig .desc{border-top:1px solid var(--rule);padding-top:20px}
+}
 
 /* ---------- MÉTODO: 4 tarjetas, sin tabla de hairlines ---------- */
 .method{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
 .method>div{background:var(--surface);padding:var(--gutter);display:flex;flex-direction:column;min-height:clamp(220px,24vw,290px)}
 .method .step{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.1em;font-weight:700;color:var(--turq-text);margin-bottom:auto}
-.method h3{font-size:clamp(1.15rem,2.1vw,1.7rem);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.98;margin-bottom:10px}
+.method h3{font-size:var(--t-s);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.98;margin-bottom:12px}
 .method p{font-size:.875rem;line-height:1.55}
-.method>div:nth-child(2){background:var(--turq);color:#232226}
-.method>div:nth-child(2) .step{color:#232226;opacity:.65}
+.method>div:nth-child(4){background:var(--turq);color:var(--on-turq)}
+.method>div:nth-child(4) .step{color:var(--on-turq);opacity:.65}
 @media(max-width:980px){.method{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.method{grid-template-columns:1fr}}
 
@@ -156,9 +175,9 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
 .prin{border-top:2px solid var(--rule)}
 .prin>div{padding:clamp(22px,3vw,34px) var(--gutter);border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr 1.3fr;gap:var(--gutter);align-items:baseline}
 .prin>div:last-child{border-bottom:none}
-.prin h3{font-size:clamp(1.3rem,3vw,2.4rem);font-weight:900;text-transform:uppercase;letter-spacing:-.045em;line-height:.94}
+.prin h3{font-size:var(--t-m);font-weight:900;text-transform:uppercase;letter-spacing:-.045em;line-height:.94}
 .prin p{font-size:.9375rem;line-height:1.5;max-width:54ch}
-@media(max-width:820px){.prin>div{grid-template-columns:1fr;gap:10px}}
+@media(max-width:820px){.prin>div{grid-template-columns:1fr;gap:12px}}
 
 /* ---------- EQUIPO ---------- */
 .people{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
@@ -166,24 +185,28 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
 .people img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--shade);filter:grayscale(1) contrast(1.1);border-bottom:2px solid var(--rule)}
 .people .q{padding:var(--gutter);display:flex;flex-direction:column;flex:1}
 .people blockquote{font-size:clamp(1rem,1.9vw,1.35rem);font-weight:600;letter-spacing:-.02em;line-height:1.24;max-width:34ch}
-.people figcaption{margin-top:auto;padding-top:20px;display:flex;flex-direction:column;gap:3px}
+.people figcaption{margin-top:auto;padding-top:20px;display:flex;flex-direction:column;gap:4px}
 .people .who{font-weight:800;text-transform:uppercase;letter-spacing:-.02em;font-size:.9375rem}
 @media(max-width:820px){.people{grid-template-columns:1fr}}
 
 /* ---------- FAQ ---------- */
 .faq{border-top:2px solid var(--rule)}
 .faq details{border-bottom:1px solid var(--rule)}
-.faq summary{padding:18px var(--gutter);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-weight:600;font-size:clamp(.95rem,1.6vw,1.1rem);letter-spacing:-.015em;transition:background .12s}
+.faq summary{padding:20px var(--gutter);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-weight:600;font-size:clamp(.95rem,1.6vw,1.1rem);letter-spacing:-.015em;transition:background .12s}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary:hover{background:var(--shade)}
 .faq summary::after{content:"+" / "";font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.25rem;flex-shrink:0}
 .faq details[open] summary{background:var(--ink);color:var(--surface)}
 .faq details[open] summary::after{content:"\2212" / "";color:var(--turq)}  /* sobre tinta: 6.08:1 */
-.faq .ans{padding:16px var(--gutter) 22px;font-size:.9375rem;line-height:1.55;max-width:66ch}
+.faq .ans-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s cubic-bezier(.22,1,.36,1)}
+.faq details[open] .ans-wrap{grid-template-rows:1fr}
+.faq .ans{overflow:hidden;min-height:0;font-size:.9375rem;line-height:1.55;max-width:66ch}
+.faq .ans>p{padding:16px var(--gutter) 22px}
+@media(prefers-reduced-motion:reduce){.faq .ans-wrap{transition:none}}
 
 /* ---------- CTA ---------- */
 .cta-block{background:#232226;background:var(--ink);color:#F2EFE9;color:var(--surface);padding:clamp(40px,7vw,96px) var(--gutter);border-top:2px solid var(--rule)}
-.cta-block h2{text-wrap:balance;font-size:clamp(2.2rem,7.4vw,6rem);font-weight:900;text-transform:uppercase;line-height:.86;letter-spacing:-.05em;max-width:16ch}
+.cta-block h2{text-wrap:balance;font-size:var(--t-xl);font-weight:900;text-transform:uppercase;line-height:.86;letter-spacing:-.05em;max-width:16ch}
 .cta-block h2 mark{background:none;color:var(--turq)}
 .cta-row{display:flex;flex-wrap:wrap;gap:var(--gutter);align-items:center;margin-top:clamp(26px,4vw,48px)}
 .cta-row .btn{border-color:var(--turq)}
@@ -193,27 +216,30 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
 /* ---------- NEWSLETTER ---------- */
 .news{display:grid;grid-template-columns:1fr 1.2fr;gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
 .news>div{background:var(--surface);padding:var(--gutter)}
-.news h2{font-size:clamp(1.4rem,3vw,2.2rem);font-weight:900;text-transform:uppercase;letter-spacing:-.04em;line-height:.95;margin-bottom:12px}
+.news h2{font-size:var(--t-s);font-weight:900;text-transform:uppercase;letter-spacing:-.04em;line-height:.95;margin-bottom:12px}
 .news p{font-size:.875rem;line-height:1.5;max-width:40ch}
-.news form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.news label{display:block;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.8125rem;font-weight:600;margin-bottom:7px}
+.news form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.news label{display:block;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.8125rem;font-weight:600;margin-bottom:8px}
 .news input[type=text],.news input[type=email]{width:100%;background:var(--surface);border:2px solid var(--rule);padding:13px;font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--on-surface)}
 .news input::placeholder{color:var(--on-surface);opacity:.55}
 .news input:focus-visible{outline:3px solid var(--purp-focus);outline-offset:0;border-color:var(--purp-focus)}
 .news .full{grid-column:span 2}
-.news button{grid-column:span 2;background:var(--ink);color:var(--surface);border:2px solid var(--ink);padding:15px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:700;cursor:pointer;transition:background .12s,color .12s,transform .08s}
-.news button:hover{background:var(--turq);color:#232226;border-color:var(--turq)}
+.news button{grid-column:span 2;background:var(--ink);color:var(--surface);border:2px solid var(--ink);padding:16px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:700;cursor:pointer;transition:background .12s,color .12s,transform .08s}
+.news button:hover{background:var(--turq);color:var(--on-turq);border-color:var(--turq)}
 .news button:active{transform:translateY(1px)}
-.news .consent{grid-column:span 2;display:flex;gap:10px;align-items:flex-start;font-size:.75rem;line-height:1.45}
+.news .consent{grid-column:span 2;display:flex;gap:12px;align-items:flex-start;font-size:.75rem;line-height:1.45}
 .news .consent input{width:auto;flex-shrink:0;margin-top:2px;accent-color:var(--purp)}
-.news .hint{grid-column:span 2;font-size:.75rem;line-height:1.5}
+.news-lead{font-size:.9375rem;line-height:1.5;max-width:44ch;margin-bottom:20px}
+.news-lead a{border-bottom:2px solid var(--turq)}
+.news .btn{margin-bottom:16px}
+.news .hint{font-size:.75rem;line-height:1.5;max-width:44ch}
 .news .hint a{border-bottom:1px solid currentColor}
 @media(max-width:820px){.news{grid-template-columns:1fr}.news form{grid-template-columns:1fr}.news .full,.news button,.news .consent,.news .hint{grid-column:span 1}}
 
 /* ---------- FOOTER ---------- */
 .foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
 .foot-grid>div{background:var(--surface);padding:var(--gutter)}
-.foot-grid h4{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:700;margin-bottom:14px}
+.foot-grid h4{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:700;margin-bottom:16px}
 .foot-grid ul{list-style:none;display:grid;gap:8px}
 .foot-grid li a{display:flex;align-items:center;min-height:44px;font-size:.875rem;font-weight:500;border-bottom:1px solid transparent;transition:border-color .12s}
 .foot-grid li .pending{display:flex;align-items:center;min-height:44px;font-size:.875rem;font-weight:500;opacity:.6}
@@ -233,7 +259,7 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
   .frame{border:none;max-width:none}
   .cta-block{background:#fff;color:#000;border:2px solid #000}
   .cta-block h2 mark,h1 mark,.brand b{color:#000;-webkit-text-stroke:0}
-  .method>div:nth-child(2),.bento .tint{background:#fff;color:#000;border:2px solid #000}
+  .method>div:nth-child(4),.bento .tint{background:#fff;color:#000;border:2px solid #000}
   .faq details{display:block}
   .faq .ans{display:block}
   .faq details summary::after{content:""}
@@ -258,7 +284,7 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
       <a href="#equipo">Equipo</a>
       <a href="#faq">Preguntas</a>
     </div>
-    <a href="#contacto" class="cta mono">Agendar conversación</a>
+    <a href="#contacto" class="cta mono">Escríbenos</a>
   </nav>
 
   <main id="main">
@@ -269,7 +295,7 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
       <h1>Diseño que <mark>llega</mark> a producción</h1>
       <p class="lede">Consultora chilena de diseño. Trabajamos con municipios, servicios públicos y empresas para convertir un problema difuso en un servicio que funciona y que su equipo puede sostener.</p>
       <div class="hero-cta">
-        <a class="btn" href="#contacto">Agendar una conversación</a>
+        <a class="btn" href="#contacto">Escríbenos</a>
         <a class="btn btn-ghost" href="#metodo">Ver el método</a>
       </div>
     </div>
@@ -309,14 +335,14 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
           <div class="kind">Sector público, diseño de servicios</div>
         </div>
       </article>
-      <article class="tint">
+      <article>
         <div class="body">
           <h3>La innovación no es una jornada de post-its</h3>
           <p>Por qué los talleres de creatividad rara vez sobreviven al lunes siguiente, y qué estructura hace falta para que una idea llegue a producción.</p>
           <div class="kind">Artículo</div>
         </div>
       </article>
-      <article>
+      <article class="tint">
         <img class="shot" src="https://picsum.photos/seed/ualabi-equipo-interno/900/560" alt="Equipo interno trabajando frente a una pizarra" width="900" height="560" loading="lazy">
         <div class="body">
           <h3>Un piloto que sobrevivió al cambio de administración</h3>
@@ -331,10 +357,11 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
   <section id="servicios">
     <div class="sh">
       <h2>Tres formas de trabajar juntos</h2>
+      <p>La mayoría de los proyectos parte en la primera y avanza. También se pueden contratar por separado.</p>
     </div>
     <div class="zig">
       <div>
-        <div class="num">01</div>
+        <div class="num" aria-hidden="true">01</div>
         <div class="name"><h3>Diagnóstico e investigación</h3></div>
         <div class="desc">
           <p>Entendemos el problema antes de diseñar la solución. Levantamiento con usuarios, mapeo de actores y análisis del contexto institucional.</p>
@@ -342,7 +369,7 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
         </div>
       </div>
       <div>
-        <div class="num">02</div>
+        <div class="num" aria-hidden="true">02</div>
         <div class="name"><h3>Diseño de productos</h3></div>
         <div class="desc">
           <p>Del concepto al prototipo funcional. Definición de propuesta de valor, arquitectura de la experiencia y validación con usuarios reales.</p>
@@ -350,7 +377,7 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
         </div>
       </div>
       <div>
-        <div class="num">03</div>
+        <div class="num" aria-hidden="true">03</div>
         <div class="name"><h3>Innovación e implementación</h3></div>
         <div class="desc">
           <p>Instalamos capacidad en el equipo interno. Facilitación, pilotos acotados y transferencia metodológica para sostener la iniciativa.</p>
@@ -405,7 +432,7 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
 
   <!-- EQUIPO -->
   <section id="equipo">
-    <div class="sh">
+    <div class="sh sh-open">
       <h2>Quiénes trabajan contigo</h2>
     </div>
     <div class="people">
@@ -441,19 +468,19 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
     <div class="faq">
       <details>
         <summary>¿Qué es el diseño centrado en las personas y cómo lo aplican?</summary>
-        <div class="ans">Es partir del problema real de quien usa el servicio, no del organigrama de quien lo entrega. En la práctica significa que la primera semana la pasamos con usuarios y funcionarios, no en una sala definiendo alcance.</div>
+        <div class="ans-wrap"><div class="ans"><p>Es partir del problema real de quien usa el servicio, no del organigrama de quien lo entrega. En la práctica significa que la primera semana la pasamos con usuarios y funcionarios, no en una sala definiendo alcance.</p></div></div>
       </details>
       <details>
         <summary>¿Trabajan con entidades públicas y privadas por igual?</summary>
-        <div class="ans">Sí. El método es el mismo y cambian las restricciones. En el sector público el borde suele ser normativo y de plazos. En el privado, de presupuesto y tiempo de salida al mercado. Ambos son material de diseño.</div>
+        <div class="ans-wrap"><div class="ans"><p>Sí. El método es el mismo y cambian las restricciones. En el sector público el borde suele ser normativo y de plazos. En el privado, de presupuesto y tiempo de salida al mercado. Ambos son material de diseño.</p></div></div>
       </details>
       <details>
         <summary>¿Cuánto dura un proyecto típico?</summary>
-        <div class="ans">Trabajamos en ciclos cortos con puntos de control claros. Preferimos eso antes que contratos largos sin entregables intermedios. Si el desafío es mayor, se divide en ciclos encadenados.</div>
+        <div class="ans-wrap"><div class="ans"><p>Trabajamos en ciclos cortos con puntos de control claros. Preferimos eso antes que contratos largos sin entregables intermedios. Si el desafío es mayor, se divide en ciclos encadenados.</p></div></div>
       </details>
       <details>
         <summary>¿Qué recibimos al terminar?</summary>
-        <div class="ans">Un prototipo validado, la evidencia que lo respalda y la documentación del método para que el equipo interno pueda repetirlo. No entregamos informes de doscientas páginas.</div>
+        <div class="ans-wrap"><div class="ans"><p>Un prototipo validado, la evidencia que lo respalda y la documentación del método para que el equipo interno pueda repetirlo. No entregamos informes de doscientas páginas.</p></div></div>
       </details>
     </div>
   </section>
@@ -462,7 +489,7 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
   <section id="contacto" class="cta-block">
     <h2>¿Tienen un <mark>problema</mark> sin resolver?</h2>
     <div class="cta-row">
-      <a class="btn" href="mailto:hola@ualabi.cl?subject=Conversación%20inicial%20con%20ualabi">Agendar una conversación</a>
+      <a class="btn" href="mailto:hola@ualabi.cl?subject=Conversaci%C3%B3n%20inicial%20con%20ualabi&amp;body=Cu%C3%A9ntenos%20brevemente%3A%0A%0AInstituci%C3%B3n%3A%0AProblema%20a%20resolver%3A%0APlazo%20estimado%3A%0A">Escribir a hola@ualabi.cl</a>
       <p class="cta-note">Respondemos en 48 horas hábiles. La primera sesión de diagnóstico no tiene costo y no compromete contratación.</p>
     </div>
   </section>
@@ -474,21 +501,13 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
       <p>Notas sobre diseño, innovación pública y lo que aprendemos en cada proyecto. Escribimos cuando hay algo que decir.</p>
     </div>
     <div>
-      <!-- Sin backend todavia: el envio abre el cliente de correo.
-           Al conectar un endpoint, restituir el formulario completo
-           con sus estados de exito y de error. -->
-      <form action="mailto:hola@ualabi.cl" method="post" enctype="text/plain" aria-labelledby="news-title">
-        <div class="full">
-          <label for="mail">Correo electrónico</label>
-          <input id="mail" name="email" type="email" autocomplete="email" spellcheck="false" placeholder="nombre@institucion.cl" required>
-        </div>
-        <label class="consent">
-          <input type="checkbox" name="consent" required>
-          <span>Acepto recibir las notas de ualabi por correo. Sus datos no se comparten con terceros y puede pedir su eliminación escribiendo a hola@ualabi.cl.</span>
-        </label>
-        <button type="submit">Recibir las notas</button>
-        <p class="hint">Se abrirá su cliente de correo para enviar la solicitud. También puede escribir directamente a <a href="mailto:hola@ualabi.cl">hola@ualabi.cl</a>. Puede darse de baja cuando quiera.</p>
-      </form>
+      <!-- Sin backend todavia. mailto con POST falla en Safari, asi que
+           va un enlace directo con asunto y cuerpo precargados.
+           Al conectar un endpoint (Formspree, Worker), restituir el
+           formulario con sus estados de exito y de error. -->
+      <p class="news-lead">Escriba a <a href="mailto:hola@ualabi.cl?subject=Suscripci%C3%B3n%20a%20las%20notas">hola@ualabi.cl</a> con el asunto <em>Suscripción</em> y lo agregamos.</p>
+      <a class="btn" href="mailto:hola@ualabi.cl?subject=Suscripci%C3%B3n%20a%20las%20notas&amp;body=Quiero%20recibir%20las%20notas%20de%20ualabi.%0A%0ANombre%3A%0AInstituci%C3%B3n%3A%0A">Suscribirme por correo</a>
+      <p class="hint">Sus datos no se comparten con terceros y puede pedir la baja cuando quiera.</p>
     </div>
   </section>
 
@@ -518,7 +537,7 @@ h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
         <h4>Contacto</h4>
         <ul>
           <li><a href="mailto:hola@ualabi.cl">hola@ualabi.cl</a></li>
-          <li><a href="#contacto">Agendar una conversación</a></li>
+          <li><a href="#contacto">Escríbenos</a></li>
           <li><span class="pending">LinkedIn</span></li>
           <li><span class="pending">Instagram</span></li>
         </ul>
