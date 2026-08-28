@@ -228,7 +228,8 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .bento h3{font-size:var(--t-s);max-width:22ch}
 .bento .lead h3{font-size:var(--t-m)}
 .bento p{margin-top:12px;font-size:.9375rem;line-height:1.55;max-width:48ch;opacity:.88}
-.bento .kind{margin-top:auto;padding-top:20px;display:inline-flex;align-self:flex-start}
+.bento .kind{margin-top:clamp(20px,2.4vw,28px);display:inline-flex;align-self:flex-start}
+.bento .lead .kind{margin-top:auto;padding-top:24px}
 .bento .kind span{background:var(--ink);color:var(--cream);border-radius:var(--r-pill);
   padding:7px 15px;font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
   text-transform:uppercase;letter-spacing:.07em;font-size:.6875rem;font-weight:700}
@@ -447,7 +448,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
     <div class="pad">
       <p class="kicker rise">Consultoría de diseño e innovación corporativa</p>
       <h1 class="rise">Diseño, innovación e <span class="hl">inteligencia artificial</span> para empresas</h1>
-      <p class="lede rise">Acompañamos a empresas en el diseño de productos digitales, la transformación de procesos con IA y el desarrollo de capacidades organizacionales.</p>
+      <p class="lede rise">Diseñamos productos digitales, rediseñamos procesos con IA y dejamos al equipo interno capaz de sostenerlos.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">Conversemos</a>
         <a class="btn" href="#servicios">Ver servicios</a>
@@ -470,15 +471,17 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   <section id="trabajo">
     <div class="sh">
       <h2>Trabajo reciente</h2>
-      <p>Proyectos con entidades públicas y privadas. Cada uno terminó con algo funcionando, no con un informe.</p>
+      <p>Cada proyecto terminó con algo operando, no con un informe.</p>
     </div>
+    <!-- TODO: los tres casos son placeholder. Reemplazar por proyectos reales
+         con empresas privadas antes de publicar. -->
     <div class="bento">
       <article class="lead">
         <img class="shot" src="work-lead.jpg" alt="Módulos de autoatención instalados en una oficina de atención de público" width="1248" height="832" loading="lazy">
         <div class="body">
           <p class="tag">Producto digital, UX/UI</p>
-          <h3>Plataforma digital para gestión de clientes corporativos</h3>
-          <p>Rediseñamos la experiencia de atención del Departamento de Patentes. Implementamos un piloto de autoatención física que redujo el tiempo de espera promedio de 42 a 12 minutos.</p>
+          <h3>Plataforma de gestión para clientes corporativos</h3>
+          <p>Rediseñamos el flujo de atención de una operación B2B. El piloto de autoatención bajó el tiempo de espera promedio de 42 a 12 minutos.</p>
           <div class="kind"><a class="btn btn-sm" href="#contacto">Ver caso de estudio</a></div>
         </div>
       </article>
@@ -486,7 +489,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
         <div class="body">
           <p class="tag">Artículo, metodología</p>
           <h3>IA aplicada: cuando automatizar no es la respuesta obvia</h3>
-          <p>Nuestra postura crítica sobre los talleres creativos sin impacto real. Abordamos cómo estructurar dinámicas que se conviertan en código y normativa.</p>
+          <p>Automatizar un proceso que nadie entiende multiplica el problema. Cuándo conviene rediseñar primero y automatizar después.</p>
           <div class="kind"><a class="btn btn-sm" href="#contacto">Leer artículo</a></div>
         </div>
       </article>
@@ -494,7 +497,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
         <div class="body">
           <p class="tag">Procesos con IA, transformación</p>
           <h3>Transformación de procesos internos con IA generativa</h3>
-          <p>Cómo entrenamos a funcionarios de carrera para sostener la plataforma de distribución de subsidios sociales, blindando la operación ante contingencias políticas.</p>
+          <p>Formamos al equipo interno para operar y evolucionar la plataforma sin depender de nosotros. Sigue en producción dos años después.</p>
           <div class="kind"><a class="btn btn-sm" href="#contacto">Ver transferencia</a></div>
         </div>
       </article>
@@ -506,14 +509,14 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
     <div class="pad svc">
       <div class="svc-intro">
         <h2>Qué hacemos</h2>
-        <p>Cuatro líneas de servicio pensadas para acompañar a empresas en diseño, transformación y capacidad.</p>
+        <p>Cuatro líneas de trabajo. Se contratan juntas o por separado.</p>
       </div>
       <div class="svc-list">
         <div class="card svc-item">
           <div class="svc-num" aria-hidden="true">01</div>
           <div>
             <h3>Productos digitales</h3>
-            <p>Diseño y desarrollo de productos que responden a necesidades reales. Estrategia, experiencia de usuario, puesta en marcha y escalamiento responsable, financiero y técnico.</p>
+            <p>Del concepto al producto en operación: estrategia, experiencia de usuario, puesta en marcha y crecimiento que el negocio pueda pagar y el equipo mantener.</p>
             <div class="tags"><span>Estrategia</span><span>UX/UI</span><span>Prototipado</span><span>Escalamiento</span></div>
           </div>
         </div>
@@ -521,7 +524,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
           <div class="svc-num" aria-hidden="true">02</div>
           <div>
             <h3>Procesos con IA</h3>
-            <p>Repensar los procesos organizacionales en el contexto de la inteligencia artificial. Identificar oportunidades y articular soluciones para sacar el máximo potencial.</p>
+            <p>Dónde la IA rinde y dónde no. Identificamos qué procesos conviene rediseñar, cuáles automatizar y cuáles dejar como están.</p>
             <div class="tags"><span>Análisis de oportunidad</span><span>Arquitectura de proceso</span><span>Validación operativa</span><span>Gobernanza</span></div>
           </div>
         </div>
@@ -529,7 +532,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
           <div class="svc-num" aria-hidden="true">03</div>
           <div>
             <h3>Innovación</h3>
-            <p>Metodologías para involucrar actores clave en el desarrollo. Identificar procesos críticos y co-crear soluciones con las personas que las van a operar.</p>
+            <p>Diseñamos con las personas que van a operar el proceso, no solo con quienes lo aprueban.</p>
             <div class="tags"><span>Talleres estratégicos</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
           </div>
         </div>
@@ -537,7 +540,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
           <div class="svc-num" aria-hidden="true">04</div>
           <div>
             <h3>Capacidades organizacionales</h3>
-            <p>Desarrollo de capacidades a nivel organizacional en inteligencia artificial. Formación, habilitación y acompañamiento de equipos internos.</p>
+            <p>Formación y acompañamiento para que el equipo interno use IA con criterio propio.</p>
             <div class="tags"><span>Formación</span><span>Habilitación</span><span>Acompañamiento</span><span>Gobernanza</span></div>
           </div>
         </div>
@@ -549,18 +552,18 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   <section id="metodo">
     <div class="sh">
       <h2>Cómo trabajamos</h2>
-      <p>Un método estructurado para reducir el riesgo técnico y político antes de la escala.</p>
+      <p>Reducir el riesgo antes de comprometer presupuesto.</p>
     </div>
     <div class="method">
       <div>
         <span class="step">01</span>
         <h3>Entendemos antes de proponer</h3>
-        <p>Nos sumergimos en el contexto del negocio y sus usuarios antes de diseñar cualquier solución.</p>
+        <p>Primero entendemos el negocio y a quienes lo usan. Después diseñamos.</p>
       </div>
       <div>
         <span class="step">02</span>
         <h3>Construimos para validar</h3>
-        <p>Prototipos funcionales que se prueban con usuarios reales antes de comprometer inversión.</p>
+        <p>Prototipos que se prueban con usuarios reales antes de comprometer inversión.</p>
       </div>
       <div>
         <span class="step">03</span>
@@ -573,11 +576,11 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   <!-- CTA -->
   <section id="contacto" class="block block-ink cta-block on-dark">
     <div class="pad">
-      <p class="kicker">Hablemos de su próximo paso de innovación</p>
+      <p class="kicker">Hablemos de su próximo paso</p>
       <h2>¿Tienen un <span class="hl">desafío</span> de producto, procesos o IA?</h2>
       <div class="cta-row">
         <a class="btn btn-light" href="mailto:hola@ualabi.cl?subject=Conversaci%C3%B3n%20inicial%20con%20ualabi&amp;body=Cu%C3%A9ntenos%20brevemente%3A%0A%0AEmpresa%3A%0ADesaf%C3%ADo%3A%0APlazo%20estimado%3A%0A">Escribir a hola@ualabi.cl</a>
-        <p class="cta-note">Primera conversación sin costo ni compromiso.</p>
+        <p class="cta-note">La primera conversación no tiene costo.</p>
       </div>
     </div>
   </section>
@@ -589,7 +592,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
       <div class="foot-grid">
         <div class="foot-brand">
           <p class="foot-mark">ualabi</p>
-          <p>Consultoría chilena de diseño de servicios y productos digitales.</p>
+          <p>Consultoría chilena de diseño, innovación y tecnología.</p>
         </div>
         <div>
           <h4>Servicios</h4>
