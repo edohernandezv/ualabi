@@ -379,6 +379,17 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 /* hero: el h1 ya no es el primer elemento */
 .hero h1{margin-bottom:0}
 
+/* ---------- BLOB DE PLASTILINA ---------- */
+.blob{position:absolute;right:-4%;top:6%;width:42%;height:94%;
+  pointer-events:none;opacity:0;transition:opacity .8s var(--ease)}
+.blob.ready{opacity:1;pointer-events:auto}
+.blob canvas{display:block;width:100%;height:100%;cursor:grab}
+.blob canvas:active{cursor:grabbing}
+.hero{position:relative;overflow:hidden}
+.hero .pad{position:relative;z-index:2}
+@media(max-width:1100px){.blob{display:none}}
+@media(prefers-reduced-motion:reduce){.blob{display:none}}
+
 /* ---------- ENTRADA ---------- */
 /* El contenido es visible por defecto. La animacion solo desplaza:
    si no corre (impresion, PDF, captura headless), el texto sigue ahi.
@@ -458,6 +469,9 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
         <a class="btn" href="#servicios">Ver servicios</a>
       </div>
     </div>
+    <!-- Blob de plastilina. Decorativo: si WebGL no carga, el hero
+         funciona igual. Solo se monta en pantallas anchas. -->
+    <div class="blob" id="blob" aria-hidden="true"></div>
   </header>
 
   <div class="strip">
@@ -623,5 +637,290 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   </footer>
 
 </div>
+<script>
+/* Blob de plastilina, WebGL.
+   Deformacion por vertice en el vertex shader: ruido lento de base
+   (la masa "respira"), abolladura suave donde esta el puntero y
+   hendidura persistente donde se hizo click, que se relaja sola.
+   Decorativo: si algo falla, el hero queda intacto. */
+(function () {
+  var host = document.getElementById('blob');
+  if (!host) return;
+  if (window.matchMedia('(max-width:1100px)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+  // WebGL disponible?
+  try {
+    var probe = document.createElement('canvas');
+    if (!(probe.getContext('webgl') || probe.getContext('experimental-webgl'))) return;
+  } catch (e) { return; }
+
+  var load = function (src) {
+    return new Promise(function (res, rej) {
+      var t = document.createElement('script');
+      t.src = src; t.onload = res; t.onerror = rej;
+      document.head.appendChild(t);
+    });
+  };
+
+  var start = function () {
+    var W = host.clientWidth, H = host.clientHeight;
+    if (!W || !H) return;
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+    camera.position.z = 6.2;
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(W, H);
+    host.appendChild(renderer.domElement);
+
+    // hasta 4 hendiduras vivas a la vez
+    var MAX = 4;
+    var dents = [];
+    for (var i = 0; i < MAX; i++) dents.push({ p: new THREE.Vector3(), s: 0 });
+
+    var uniforms = {
+      uTime:     { value: 0 },
+      uPointer:  { value: new THREE.Vector3(999, 999, 999) },
+      uPress:    { value: 0 },
+      uDentPos:  { value: dents.map(function (d) { return d.p; }) },
+      uDentStr:  { value: dents.map(function () { return 0; }) },
+      uTeal:     { value: new THREE.Color('#3FAEC6') },
+      uPurple:   { value: new THREE.Color('#83389B') },
+      uInk:      { value: new THREE.Color('#232226') }
+    };
+
+    var vert = [
+      'uniform float uTime;',
+      'uniform vec3 uPointer;',
+      'uniform float uPress;',
+      'uniform vec3 uDentPos[' + MAX + '];',
+      'uniform float uDentStr[' + MAX + '];',
+      'varying vec3 vNormal;',
+      'varying vec3 vPos;',
+      'varying float vDent;',
+      'varying vec3 vWorld;',
+      // ruido simplex 3D, Ashima
+      'vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}',
+      'vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}',
+      'vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}',
+      'vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}',
+      'float snoise(vec3 v){',
+      '  const vec2 C=vec2(1.0/6.0,1.0/3.0); const vec4 D=vec4(0.0,0.5,1.0,2.0);',
+      '  vec3 i=floor(v+dot(v,C.yyy)); vec3 x0=v-i+dot(i,C.xxx);',
+      '  vec3 g=step(x0.yzx,x0.xyz); vec3 l=1.0-g;',
+      '  vec3 i1=min(g.xyz,l.zxy); vec3 i2=max(g.xyz,l.zxy);',
+      '  vec3 x1=x0-i1+C.xxx; vec3 x2=x0-i2+C.yyy; vec3 x3=x0-D.yyy;',
+      '  i=mod289(i);',
+      '  vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));',
+      '  float n_=0.142857142857; vec3 ns=n_*D.wyz-D.xzx;',
+      '  vec4 j=p-49.0*floor(p*ns.z*ns.z);',
+      '  vec4 x_=floor(j*ns.z); vec4 y_=floor(j-7.0*x_);',
+      '  vec4 x=x_*ns.x+ns.yyyy; vec4 y=y_*ns.x+ns.yyyy; vec4 h=1.0-abs(x)-abs(y);',
+      '  vec4 b0=vec4(x.xy,y.xy); vec4 b1=vec4(x.zw,y.zw);',
+      '  vec4 s0=floor(b0)*2.0+1.0; vec4 s1=floor(b1)*2.0+1.0; vec4 sh=-step(h,vec4(0.0));',
+      '  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy; vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;',
+      '  vec3 p0=vec3(a0.xy,h.x); vec3 p1=vec3(a0.zw,h.y); vec3 p2=vec3(a1.xy,h.z); vec3 p3=vec3(a1.zw,h.w);',
+      '  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));',
+      '  p0*=norm.x; p1*=norm.y; p2*=norm.z; p3*=norm.w;',
+      '  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0); m=m*m;',
+      '  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));',
+      '}',
+      'void main(){',
+      '  vNormal = normal; vPos = position;',
+      // masa que respira, lento
+      '  float breathe = snoise(position*0.55 + uTime*0.16) * 0.30;',
+      '  breathe += snoise(position*1.5 + uTime*0.1) * 0.09;',
+      // abolladura blanda bajo el puntero
+      '  float d = distance(position, uPointer);',
+      '  float press = smoothstep(2.1, 0.0, d) * uPress * 0.62;',
+      // hendiduras persistentes del click
+      '  float dent = 0.0;',
+      '  for (int i = 0; i < ' + MAX + '; i++) {',
+      '    float dd = distance(position, uDentPos[i]);',
+      '    dent += smoothstep(1.45, 0.0, dd) * uDentStr[i];',
+      '  }',
+      '  vDent = dent;',
+      '  float disp = breathe - press - dent * 0.72;',
+      '  vec3 pos = position + normal * disp;',
+      '  vec4 wp = modelMatrix * vec4(pos,1.0);',
+      '  vWorld = wp.xyz;',
+      '  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos,1.0);',
+      '}'
+    ].join('\n');
+
+    var frag = [
+      'uniform vec3 uTeal; uniform vec3 uPurple; uniform vec3 uInk;',
+      'uniform float uTime;',
+      'varying vec3 vNormal; varying vec3 vPos; varying float vDent;',
+      'varying vec3 vWorld;',
+      // ruido de valor, barato, para grano y huellas
+      'float hash(vec3 p){ p=fract(p*0.3183099+vec3(0.71,0.113,0.419)); p*=17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }',
+      'float vnoise(vec3 x){',
+      '  vec3 p=floor(x); vec3 f=fract(x); f=f*f*(3.0-2.0*f);',
+      '  return mix(mix(mix(hash(p+vec3(0,0,0)),hash(p+vec3(1,0,0)),f.x),',
+      '                 mix(hash(p+vec3(0,1,0)),hash(p+vec3(1,1,0)),f.x),f.y),',
+      '             mix(mix(hash(p+vec3(0,0,1)),hash(p+vec3(1,0,1)),f.x),',
+      '                 mix(hash(p+vec3(0,1,1)),hash(p+vec3(1,1,1)),f.x),f.y),f.z);',
+      '}',
+      'float fbm(vec3 p){',
+      '  float v=0.0, a=0.5;',
+      '  for(int i=0;i<5;i++){ v+=a*vnoise(p); p*=2.03; a*=0.5; }',
+      '  return v;',
+      '}',
+      'void main(){',
+      '  vec3 n = normalize(vNormal);',
+      // --- relieve: grano fino + huellas de dedo, perturban la normal ---
+      '  float grain = fbm(vPos*9.0);',
+      '  float prints = fbm(vPos*3.2 + 11.3);',
+      '  float bumps = grain*0.35 + prints*0.65;',
+      // gradiente del ruido para inclinar la normal, da relieve real
+      '  float e = 0.09;',
+      '  float bx = fbm(vec3(vPos.x+e,vPos.y,vPos.z)*9.0) - fbm(vec3(vPos.x-e,vPos.y,vPos.z)*9.0);',
+      '  float by = fbm(vec3(vPos.x,vPos.y+e,vPos.z)*9.0) - fbm(vec3(vPos.x,vPos.y-e,vPos.z)*9.0);',
+      '  float bz = fbm(vec3(vPos.x,vPos.y,vPos.z+e)*9.0) - fbm(vec3(vPos.x,vPos.y,vPos.z-e)*9.0);',
+      '  n = normalize(n + vec3(bx,by,bz)*0.40);',
+      // --- color: plastilina amasada, las vetas no se mezclan del todo ---
+      '  vec3 sp = vec3(vPos.x*0.55, vPos.y*2.4, vPos.z*0.55);',
+      '  float knead = fbm(sp*0.85 + vec3(0.0, uTime*0.025, 0.0));',
+      '  float swirl = fbm(sp*1.5 + knead*3.1);',
+      '  float band = smoothstep(0.40, 0.62, swirl);',
+      '  vec3 base = mix(uTeal, uPurple, band);',
+      // grumos mas claros, masa sin amasar del todo
+      '  base = mix(base, base*1.07, smoothstep(0.5,0.9,prints));',
+      // --- luz: mate, difusa, casi sin especular ---
+      '  vec3 L1 = normalize(vec3(-0.45, 0.9, 0.55));',
+      '  vec3 L2 = normalize(vec3(0.7, -0.3, 0.4));',
+      '  float d1 = max(dot(n,L1),0.0);',
+      '  float d2 = max(dot(n,L2),0.0)*0.30;',
+      // wrap lighting: la luz envuelve, tipico de material subsuperficial
+      '  float wrap = (d1*0.5+0.5)*0.82 + d2;',
+      '  vec3 col = base * wrap;',
+      // oclusion en los valles del grano, lo que da aspecto de masa
+      '  col *= 0.93 + 0.07*smoothstep(0.2,0.8,bumps);',
+      // --- hendidura: mas oscura y comprimida ---
+      '  float dentMask = clamp(vDent,0.0,1.0);',
+      '  col = mix(col, col*0.42, dentMask*0.85);',
+      '  col = mix(col, uInk, dentMask*0.20);',
+      // --- especular ancho y debil: plastilina brilla poco y disperso ---
+      '  vec3 V = normalize(cameraPosition - vWorld);',
+      '  vec3 H = normalize(L1 + V);',
+      '  float spec = pow(max(dot(n,H),0.0), 8.0) * 0.20;',
+      '  spec += pow(max(dot(n,H),0.0), 40.0) * 0.10;',
+      '  spec *= (1.0 - dentMask*0.75);',
+      '  col += spec;',
+      // borde apenas iluminado
+      '  float rim = pow(1.0 - max(dot(n,V),0.0), 3.2);',
+      '  col += rim * 0.09;',
+      '  gl_FragColor = vec4(col, 1.0);',
+      '}'
+    ].join('\n');
+
+    var geo = new THREE.IcosahedronGeometry(2.05, 64);
+    var mat = new THREE.ShaderMaterial({
+      uniforms: uniforms, vertexShader: vert, fragmentShader: frag
+    });
+    var mesh = new THREE.Mesh(geo, mat);
+    scene.add(mesh);
+
+    // --- puntero ---
+    var ray = new THREE.Raycaster();
+    var ndc = new THREE.Vector2();
+    var pressTarget = 0, pressNow = 0;
+    var cv = renderer.domElement;
+
+    function hit(ev) {
+      var r = cv.getBoundingClientRect();
+      ndc.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
+      ndc.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+      ray.setFromCamera(ndc, camera);
+      var h = ray.intersectObject(mesh);
+      return h.length ? h[0].point.clone().normalize().multiplyScalar(2.05) : null;
+    }
+
+    cv.addEventListener('pointermove', function (ev) {
+      var p = hit(ev);
+      if (p) { uniforms.uPointer.value.copy(p); pressTarget = 1; }
+      else pressTarget = 0;
+    });
+    cv.addEventListener('pointerleave', function () { pressTarget = 0; });
+
+    // click: hendidura que queda y se relaja sola
+    var slot = 0;
+    cv.addEventListener('pointerdown', function (ev) {
+      var p = hit(ev);
+      if (!p) return;
+      var d = dents[slot % MAX];
+      d.p.copy(p); d.s = 1.0;
+      slot++;
+      if (window.gsap) {
+        gsap.fromTo(mesh.scale, { x: 0.955, y: 0.955, z: 0.955 },
+          { x: 1, y: 1, z: 1, duration: 1.15, ease: 'elastic.out(1,0.42)' });
+      }
+    });
+
+    // --- loop ---
+    var clock = new THREE.Clock();
+    var raf;
+    function tick() {
+      raf = requestAnimationFrame(tick);
+      var t = clock.getElapsedTime();
+      uniforms.uTime.value = t;
+
+      pressNow += (pressTarget - pressNow) * 0.11;
+      uniforms.uPress.value = pressNow;
+
+      // la plastilina recupera forma despacio
+      for (var i = 0; i < MAX; i++) {
+        if (dents[i].s > 0.001) dents[i].s *= 0.992;
+        uniforms.uDentStr.value[i] = dents[i].s;
+      }
+
+      mesh.rotation.y = t * 0.13;
+      mesh.rotation.x = Math.sin(t * 0.19) * 0.14;
+      renderer.render(scene, camera);
+    }
+    tick();
+    host.classList.add('ready');
+
+    // pausar fuera de pantalla, no quemar bateria
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting) { if (!raf) tick(); }
+          else { cancelAnimationFrame(raf); raf = null; }
+        });
+      }).observe(host);
+    }
+
+    var rt;
+    window.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () {
+        var w = host.clientWidth, h = host.clientHeight;
+        if (!w || !h) return;
+        camera.aspect = w / h; camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      }, 160);
+    });
+  };
+
+  var boot = function () {
+    load('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js')
+      .then(function () {
+        return load('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js')
+          .catch(function () {}); // gsap es opcional
+      })
+      .then(start)
+      .catch(function () { /* sin blob, el hero funciona igual */ });
+  };
+
+  if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 2600 });
+  else setTimeout(boot, 1200);
+})();
+</script>
 </body>
+
 </html>
