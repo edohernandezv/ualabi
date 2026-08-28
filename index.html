@@ -380,12 +380,16 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .hero h1{margin-bottom:0}
 
 /* ---------- ENTRADA ---------- */
+/* El contenido es visible por defecto. La animacion solo desplaza:
+   si no corre (impresion, PDF, captura headless), el texto sigue ahi.
+   Animar desde opacity:0 dejaba el hero en blanco al imprimir. */
 @media(prefers-reduced-motion:no-preference){
-  .rise{opacity:0;transform:translateY(16px);animation:rise .6s var(--ease) forwards}
+  .rise{animation:rise .6s var(--ease) backwards}
   .rise:nth-child(2){animation-delay:.06s}
   .rise:nth-child(3){animation-delay:.12s}
-  @keyframes rise{to{opacity:1;transform:none}}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}}
 }
+@media print{.rise{animation:none}}
 
 /* ---------- IMPRESION ---------- */
 @media print{
@@ -448,7 +452,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
     <div class="pad">
       <p class="kicker rise">Consultoría de diseño e innovación corporativa</p>
       <h1 class="rise">Diseño, innovación e <span class="hl">inteligencia artificial</span> para empresas</h1>
-      <p class="lede rise">Diseñamos productos digitales, rediseñamos procesos con IA y dejamos al equipo interno capaz de sostenerlos.</p>
+      <p class="lede rise">Diseñamos productos digitales y rediseñamos procesos con IA. El equipo interno queda capaz de sostenerlos.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">Conversemos</a>
         <a class="btn" href="#servicios">Ver servicios</a>
@@ -471,7 +475,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   <section id="trabajo">
     <div class="sh">
       <h2>Trabajo reciente</h2>
-      <p>Cada proyecto terminó con algo operando, no con un informe.</p>
+      <p>Cada proyecto terminó con algo operando.</p>
     </div>
     <!-- TODO: los tres casos son placeholder. Reemplazar por proyectos reales
          con empresas privadas antes de publicar. -->
@@ -516,7 +520,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
           <div class="svc-num" aria-hidden="true">01</div>
           <div>
             <h3>Productos digitales</h3>
-            <p>Del concepto al producto en operación: estrategia, experiencia de usuario, puesta en marcha y crecimiento que el negocio pueda pagar y el equipo mantener.</p>
+            <p>Del concepto al producto en operación. Crecimiento que el negocio pueda pagar y el equipo mantener.</p>
             <div class="tags"><span>Estrategia</span><span>UX/UI</span><span>Prototipado</span><span>Escalamiento</span></div>
           </div>
         </div>
@@ -524,7 +528,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
           <div class="svc-num" aria-hidden="true">02</div>
           <div>
             <h3>Procesos con IA</h3>
-            <p>Dónde la IA rinde y dónde no. Identificamos qué procesos conviene rediseñar, cuáles automatizar y cuáles dejar como están.</p>
+            <p>Identificamos en qué procesos la IA rinde. Algunos conviene rediseñarlos antes, otros conviene dejarlos como están.</p>
             <div class="tags"><span>Análisis de oportunidad</span><span>Arquitectura de proceso</span><span>Validación operativa</span><span>Gobernanza</span></div>
           </div>
         </div>
@@ -532,7 +536,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
           <div class="svc-num" aria-hidden="true">03</div>
           <div>
             <h3>Innovación</h3>
-            <p>Diseñamos con las personas que van a operar el proceso, no solo con quienes lo aprueban.</p>
+            <p>Diseñamos con las personas que van a operar el proceso, además de quienes lo aprueban.</p>
             <div class="tags"><span>Talleres estratégicos</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
           </div>
         </div>
@@ -540,7 +544,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
           <div class="svc-num" aria-hidden="true">04</div>
           <div>
             <h3>Capacidades organizacionales</h3>
-            <p>Formación y acompañamiento para que el equipo interno use IA con criterio propio.</p>
+            <p>Formamos al equipo interno para que decida por su cuenta dónde usar IA.</p>
             <div class="tags"><span>Formación</span><span>Habilitación</span><span>Acompañamiento</span><span>Gobernanza</span></div>
           </div>
         </div>
@@ -558,17 +562,17 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
       <div>
         <span class="step">01</span>
         <h3>Entendemos antes de proponer</h3>
-        <p>Primero entendemos el negocio y a quienes lo usan. Después diseñamos.</p>
+        <p>Entendemos el negocio y a quienes lo usan antes de diseñar.</p>
       </div>
       <div>
         <span class="step">02</span>
         <h3>Construimos para validar</h3>
-        <p>Prototipos que se prueban con usuarios reales antes de comprometer inversión.</p>
+        <p>Probamos los prototipos con usuarios reales antes de comprometer inversión.</p>
       </div>
       <div>
         <span class="step">03</span>
         <h3>Transferimos capacidad</h3>
-        <p>El objetivo es que el equipo interno pueda sostener y evolucionar lo que construimos juntos.</p>
+        <p>El equipo interno queda capaz de sostener y hacer crecer lo que construimos juntos.</p>
       </div>
     </div>
   </section>
