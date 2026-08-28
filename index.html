@@ -3,558 +3,615 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ualabi, diseño e innovación para entidades</title>
-<meta name="description" content="Consultora de diseño e innovación. Acompañamos a entidades en el desarrollo de productos e iniciativas.">
-<meta name="theme-color" content="#F2EFE9" media="(prefers-color-scheme: light)">
+<title>ualabi, procesos complejos, productos simples</title>
+<meta name="description" content="Consultora de innovación, diseño y tecnología. Convertimos procesos complejos en productos simples que su equipo puede usar y sostener.">
+<meta name="theme-color" content="#F6F0EA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#232226" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://picsum.photos">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Public+Sans:wght@400;500;600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   ualabi, brutalismo Swiss Industrial
-   Un solo tema por modo. Radio 0 en todo. Acento único turquesa.
+   ualabi — maximalismo estructural
+   Bloques de color plenos, bordes gruesos, radio generoso.
+   Paleta de marca: tinta 232226, morado 83389B, turquesa 3FAEC6,
+   arena E4DBD2, crema F6F0EA.
+   Cada seccion toma un color y lo lleva entero. La rotacion
+   cromatica es la estructura, no la decoracion.
    ============================================================ */
 :root{
-  --ink:#232226;
-  --turq:#3FAEC6;          /* marca: fondos y sobre tinta */
-  --turq-text:#287586;     /* mismo matiz 190.7deg, legible como texto sobre crema: 4.60:1 */
-  --purp:#83389B;
-  --purp-focus:#83389B;
-  --surface:#F2EFE9;
-  --on-surface:#232226;
-  --rule:#232226;
-  --shade:#E7E2D9;
-  --gutter:clamp(16px,4vw,48px);
-  /* escala tipografica: ratio 1.25, fluida de 360px a 1600px */
+  /* marca, en OKLCH: chroma controlada, mismo matiz que el hex */
+  --ink:oklch(20.5% .012 305);          /* #232226 */
+  --purple:oklch(43.5% .175 313);       /* #83389B */
+  --purple-lift:oklch(56% .175 313);    /* morado que respira sobre tinta */
+  --teal:oklch(72% .098 218);           /* #3FAEC6 */
+  --teal-deep:oklch(52% .085 218);      /* turquesa legible como texto sobre crema */
+  --sand:oklch(88.5% .019 76);          /* #E4DBD2 */
+  --cream:oklch(95.8% .012 85);         /* #F6F0EA */
+
+  --surface:var(--cream);
+  --on-surface:var(--ink);
+  --paper:oklch(99% .006 85);           /* tarjeta sobre bloque de color */
+
+  /* texto sobre cada bloque */
+  --on-purple:var(--cream);
+  --on-teal:var(--ink);
+  --on-ink:var(--cream);
+  --on-sand:var(--ink);
+
+  --line:var(--ink);
+  --bw:3px;                              /* borde estructural */
+  --bw-lg:4px;
+
+  --r:28px;                              /* radio grande, sticker */
+  --r-sm:16px;
+  --r-pill:999px;
+
+  --gutter:clamp(18px,4vw,56px);
+  /* escala 1.28, fluida 360 -> 1600 */
   --s-fluid:clamp(0rem,(100vw - 22.5rem)/56,1rem);
-  --t-s:calc(1.15rem + var(--s-fluid)*.35);
-  --t-m:calc(1.4rem  + var(--s-fluid)*.7);
-  --t-l:calc(1.75rem + var(--s-fluid)*1.65);
-  --t-xl:calc(2.6rem + var(--s-fluid)*3.4);
-  /* ritmo vertical entre secciones */
-  --v:clamp(28px,5vw,72px);
-  --nav-h:4rem;
-  --on-turq:#232226;   /* --turq es superficie clara en ambos modos */
+  --t-s:calc(1.1rem  + var(--s-fluid)*.42);
+  --t-m:calc(1.45rem + var(--s-fluid)*.95);
+  --t-l:calc(2rem    + var(--s-fluid)*2.1);
+  --t-xl:calc(2.9rem + var(--s-fluid)*4.3);
+  --v:clamp(40px,7vw,104px);
+  --nav-h:4.5rem;
+  --ease:cubic-bezier(.22,1,.36,1);
 }
 @media(prefers-color-scheme:dark){
   :root{
-    --ink:#F2EFE9;
-    --surface:#232226;
-    --on-surface:#F2EFE9;
-    --rule:#F2EFE9;
-    --shade:#33313A;
-    --turq-text:#3FAEC6;   /* sobre tinta da 6.08:1 */
-    --on-turq:#232226;     /* no cambia: --turq sigue siendo superficie clara */
-    --purp-focus:#C77FDC;  /* #83389B sobre tinta da 2.26:1 */
+    --surface:oklch(17.5% .012 305);
+    --on-surface:var(--cream);
+    --paper:oklch(24% .014 305);
+    --sand:oklch(30% .018 76);
+    --line:oklch(99% .006 85);
+    --ink:oklch(13% .01 305);
+    --on-sand:var(--cream);
+    --teal-deep:var(--teal);
+    --purple-lift:oklch(68% .15 313);
   }
 }
+
 *{margin:0;padding:0;box-sizing:border-box}
-input,button,textarea,select{border-radius:0;-webkit-appearance:none;appearance:none}
-input[type=checkbox]{-webkit-appearance:auto;appearance:auto}
-html{color-scheme:light dark}
-a,button,summary,input,label{touch-action:manipulation}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 12px)}
-section[id],header[id],main[id]{scroll-margin-top:calc(var(--nav-h) + 12px)}
-@media(max-height:420px){.nav{position:static}}
+html{color-scheme:light dark;-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 16px)}
+section[id],header[id],main[id]{scroll-margin-top:calc(var(--nav-h) + 16px)}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+a,button,summary,input,label{touch-action:manipulation}
+html,body{overflow-x:clip}
 body{
   background:var(--surface);color:var(--on-surface);
-  font-family:'Archivo','Arial Narrow',system-ui,sans-serif;
-  font-size:16px;line-height:1.4;overflow-x:hidden;
+  font-family:'Public Sans',system-ui,sans-serif;
+  font-size:clamp(1rem,.97rem + .16vw,1.0625rem);line-height:1.55;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
 }
-body::after{
-  content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;
-  opacity:.05;mix-blend-mode:multiply;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-@media(prefers-color-scheme:dark){body::after{mix-blend-mode:screen;opacity:.04}}
-.mono{font-family:'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em}
-.meta{font-size:.75rem;font-weight:500;line-height:1.4}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%;height:auto}
-:focus-visible{outline:3px solid #83389B;outline:3px solid var(--purp-focus);outline-offset:2px;box-shadow:0 0 0 5px var(--surface)}
+:focus-visible{outline:3px solid var(--purple-lift);outline-offset:3px}
 .skip{position:absolute;left:-9999px}
-.skip:focus{left:0;top:0;z-index:10000;background:var(--ink);color:var(--surface);padding:12px 20px}
+.skip:focus{left:12px;top:12px;z-index:10000;background:var(--ink);color:var(--cream);padding:14px 22px;border-radius:var(--r-pill)}
 
-.frame{border-left:2px solid var(--rule);border-right:2px solid var(--rule);max-width:1600px;margin:0 auto}
-
-/* ---------- NAV: una línea, altura ≤80px ---------- */
-.nav{display:flex;align-items:stretch;border-bottom:2px solid var(--rule);position:sticky;top:0;background:var(--surface);z-index:100;min-height:var(--nav-h)}
-.brand{display:flex;align-items:center;padding:0 var(--gutter);border-right:2px solid var(--rule);font-weight:900;text-transform:uppercase;letter-spacing:-.04em;font-size:1.25rem}
-.brand b{color:var(--turq);-webkit-text-stroke:1px var(--ink)}
-.nav-links{display:flex;align-items:stretch;flex:1}
-.nav-links a{display:flex;align-items:center;padding:0 24px;border-right:1px solid var(--rule);font-size:.75rem;transition:background .12s linear,color .12s linear}
-.nav-links a:hover{background:var(--ink);color:var(--surface)}
-.nav .cta{display:flex;align-items:center;padding:0 var(--gutter);border-left:2px solid var(--rule);background:var(--turq);color:var(--on-turq);font-weight:700;font-size:.75rem;white-space:nowrap;transition:background .12s}
-.nav .cta:hover{background:var(--purp);color:#F2EFE9}
-@media(max-width:900px){
-  .nav-links{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
-  .nav-links::-webkit-scrollbar{display:none}
-  .nav-links a{padding:0 16px;white-space:nowrap}
+/* display: Archivo condensado por eje de ancho */
+h1,h2,h3,.display{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-variation-settings:'wdth' 78;
+  font-weight:800;letter-spacing:-.025em;line-height:.94;text-wrap:balance;
+}
+.label{
+  font-family:'Archivo',system-ui,sans-serif;font-variation-settings:'wdth' 100;
+  text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;font-weight:700;
 }
 
-/* ---------- HERO: split asimétrico, cabe en viewport ---------- */
-.hero{display:grid;grid-template-columns:1.15fr .85fr;border-bottom:2px solid var(--rule);min-height:min(72vh,620px)}
-.hero-copy{padding:clamp(28px,5vw,64px) var(--gutter);display:flex;flex-direction:column;justify-content:center;border-right:2px solid var(--rule)}
-h1{text-wrap:balance;font-weight:900;text-transform:uppercase;font-size:var(--t-xl);line-height:.92;letter-spacing:-.05em;max-width:14ch}
-h1 mark{background:none;color:var(--turq);-webkit-text-stroke:2px var(--ink)}
-.lede{text-wrap:pretty;font-size:clamp(1rem,1.7vw,1.3rem);font-weight:500;line-height:1.35;max-width:44ch;margin-top:clamp(18px,2.6vw,28px)}
-.hero-cta{margin-top:clamp(22px,3.4vw,36px);display:flex;flex-wrap:wrap;gap:12px}
-.btn{display:inline-block;background:var(--turq);color:var(--on-turq);padding:16px 30px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.8125rem;font-weight:700;border:2px solid var(--turq);white-space:nowrap;transition:background .12s,color .12s,transform .08s}
-.btn:hover{background:transparent;color:var(--on-surface);border-color:var(--rule)}
-.btn:active{transform:translateY(1px)}
-.btn-ghost{background:transparent;color:var(--on-surface);border-color:var(--rule)}
-.btn-ghost:hover{background:var(--ink);color:var(--surface);border-color:var(--ink)}
-.hero-media{position:relative;overflow:hidden;background:var(--shade)}
-.hero-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.12)}
-@media(max-width:900px){.hero{grid-template-columns:1fr;min-height:0}.hero-copy{border-right:none;border-bottom:2px solid var(--rule)}.hero-media{aspect-ratio:16/10}}
+/* highlight invertido, el gesto de la referencia */
+.hl{background:var(--ink);color:var(--cream);padding:0 .22em .06em;border-radius:10px;
+    box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.on-dark .hl{background:var(--cream);color:var(--ink)}
 
-/* ---------- MARQUEE (único de la página) ---------- */
-.strip{background:#232226;background:var(--ink);color:#F2EFE9;color:var(--surface);overflow:hidden;border-bottom:2px solid var(--rule)}
-.strip-track{display:flex;gap:2.5rem;padding:12px 0;white-space:nowrap;animation:slide 38s linear infinite;width:max-content}
-.strip-track span{font-size:.75rem}
+.frame{max-width:1560px;margin:0 auto;padding:0 clamp(10px,1.6vw,22px) clamp(10px,1.6vw,22px)}
+
+/* ---------- NAV: pildora flotante ---------- */
+.nav{
+  position:sticky;top:clamp(10px,1.6vw,18px);z-index:100;
+  display:flex;align-items:center;gap:8px;
+  background:var(--paper);border:var(--bw) solid var(--line);border-radius:var(--r-pill);
+  padding:8px 8px 8px 22px;margin-bottom:clamp(14px,2vw,22px);min-height:var(--nav-h);
+}
+.brand{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 86;font-weight:900;
+  font-size:1.35rem;letter-spacing:-.03em;margin-right:auto;display:flex;align-items:center;gap:11px}
+.brand .mark{flex-shrink:0;display:block}
+.brand span{display:flex}
+.brand b{color:var(--purple-lift)}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{padding:11px 16px;border-radius:var(--r-pill);font-size:.875rem;font-weight:600;
+  transition:background .18s var(--ease),color .18s var(--ease)}
+.nav-links a:hover{background:var(--sand)}
+.nav .cta{padding:14px 26px;border-radius:var(--r-pill);background:var(--purple);color:var(--cream);
+  font-weight:700;font-size:.875rem;white-space:nowrap;border:var(--bw) solid var(--line);
+  transition:background .18s var(--ease),transform .12s var(--ease)}
+.nav .cta:hover{background:var(--ink)}
+.nav .cta:active{transform:translateY(2px)}
+.menu{display:none;position:relative}
+.menu summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;
+  padding:13px 20px;border:var(--bw) solid var(--line);border-radius:var(--r-pill);
+  background:var(--paper);font-weight:700;font-size:.875rem}
+.menu summary::-webkit-details-marker{display:none}
+.menu summary::after{content:"";width:14px;height:2px;background:currentColor;
+  box-shadow:0 5px currentColor,0 -5px currentColor}
+.menu[open] summary::after{box-shadow:none;transform:rotate(45deg)}
+.menu-panel{position:absolute;right:0;top:calc(100% + 10px);min-width:210px;
+  background:var(--paper);border:var(--bw) solid var(--line);border-radius:var(--r-sm);
+  padding:8px;display:grid;gap:2px;z-index:120}
+.menu-panel a{padding:13px 16px;border-radius:12px;font-weight:600;font-size:.9375rem}
+.menu-panel a:hover{background:var(--sand)}
+@media(max-width:1000px){
+  .nav{padding-left:16px}
+  .nav-links{display:none}
+  .menu{display:block}
+  .nav .cta{display:none}
+}
+
+/* ---------- BLOQUE: la unidad estructural ---------- */
+.block{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
+  margin-bottom:clamp(14px,2vw,22px)}
+.block-purple{background:var(--purple);color:var(--on-purple)}
+.block-teal{background:var(--teal);color:var(--on-teal)}
+.block-ink{background:var(--ink);color:var(--on-ink)}
+.block-sand{background:var(--sand);color:var(--on-sand)}
+.block-paper{background:var(--paper)}
+.pad{padding:clamp(26px,4.5vw,64px)}
+
+/* tarjeta blanca sobre bloque de color, anidada a proposito */
+.card{background:var(--paper);color:var(--on-surface);border:var(--bw) solid var(--line);
+  border-radius:var(--r-sm);padding:clamp(20px,2.6vw,32px)}
+.sub{background:var(--surface);border-radius:12px;padding:16px 18px}
+.sub + .sub{margin-top:10px}
+.sub h4{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 92;
+  text-transform:uppercase;letter-spacing:.04em;font-size:.8125rem;font-weight:800;margin-bottom:5px}
+.sub p{font-size:.9375rem;line-height:1.5}
+
+/* ---------- HERO ---------- */
+.hero{position:relative}
+.hero .pad{padding-block:clamp(44px,7vw,92px)}
+h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
+  letter-spacing:-.035em;line-height:.9;max-width:17ch}
+.lede{font-size:clamp(1.05rem,.98rem + .62vw,1.4rem);line-height:1.45;max-width:52ch;
+  margin-top:clamp(20px,2.6vw,30px);opacity:.92}
+.hero-cta{margin-top:clamp(26px,3.6vw,40px);display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:var(--cream);
+  padding:16px 30px;border:var(--bw) solid var(--line);border-radius:var(--r-pill);
+  font-weight:700;font-size:.9375rem;white-space:nowrap;
+  transition:transform .12s var(--ease),background .18s var(--ease)}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(1px)}
+.btn-light{background:var(--paper);color:var(--on-surface)}
+.btn-light:hover{background:var(--sand)}
+.btn::after{content:"\2197";font-size:1em;line-height:1}
+
+/* fila de sellos del hero */
+.seals{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(26px,3.4vw,40px)}
+.seal{display:flex;align-items:center;gap:9px;background:var(--paper);color:var(--on-surface);
+  border:var(--bw) solid var(--line);border-radius:var(--r-pill);padding:10px 18px;
+  font-size:.875rem;font-weight:600}
+.seal b{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 88;font-weight:900}
+
+/* ---------- MARQUEE ---------- */
+.strip{background:var(--ink);color:var(--cream);overflow:hidden;
+  border:var(--bw) solid var(--line);border-radius:var(--r-pill);
+  margin-bottom:clamp(14px,2vw,22px)}
+.strip-track{display:flex;gap:2.5rem;padding:14px 0 14px 2.5rem;white-space:nowrap;
+  animation:slide 42s linear infinite;width:max-content}
+.strip-track span{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
+  text-transform:uppercase;letter-spacing:.09em;font-size:.8125rem;font-weight:700}
 @keyframes slide{to{transform:translateX(-50%)}}
 .strip:hover .strip-track,.strip:focus-within .strip-track{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
 
-/* ---------- CABECERA DE SECCIÓN (sin numeración) ---------- */
-.sh{padding:var(--v) var(--gutter) calc(var(--v)*.45)}
-.sh-open{padding-top:calc(var(--v)*1.6)}
-.sh h2{text-wrap:balance;font-size:var(--t-l);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.92;max-width:20ch}
-.sh p{margin-top:16px;font-size:.9375rem;line-height:1.5;max-width:62ch}
+/* ---------- CABECERA DE SECCION ---------- */
+.sh{margin-bottom:clamp(16px,2vw,22px);padding:0 clamp(6px,1vw,14px)}
+.sh h2{font-size:var(--t-l);max-width:22ch}
+.sh p{margin-top:14px;font-size:1.0625rem;line-height:1.55;max-width:60ch;opacity:.85}
 
-/* ---------- TRABAJO: bento 3 celdas, 3 items ---------- */
-.bento{display:grid;grid-template-columns:1.4fr 1fr;grid-auto-rows:minmax(0,auto);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
-.bento>article{background:var(--surface);display:flex;flex-direction:column;position:relative;transition:background .15s,color .15s}
-.bento>article:hover{background:var(--ink);color:var(--surface)}
+/* ---------- TRABAJO ---------- */
+.bento{display:grid;grid-template-columns:1.45fr 1fr;gap:clamp(14px,2vw,22px);align-items:stretch}
+.bento article{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
+  display:flex;flex-direction:column;background:var(--paper);
+  transition:transform .22s var(--ease)}
+.bento article:hover{transform:translateY(-4px)}
 .bento .lead{grid-row:span 2}
-.bento .shot{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--shade);filter:grayscale(1) contrast(1.1);border-bottom:2px solid var(--rule)}
+.bento .tint{background:var(--teal);color:var(--on-teal)}
+.bento .shot{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--sand);
+  border-bottom:var(--bw) solid var(--line)}
 .bento .lead .shot{aspect-ratio:16/11}
+.bento .body{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;flex:1}
+.bento h3{font-size:var(--t-s);max-width:22ch}
 .bento .lead h3{font-size:var(--t-m)}
-.bento .body{padding:var(--gutter);display:flex;flex-direction:column;flex:1}
-.bento h3{text-wrap:balance;font-size:var(--t-s);font-weight:800;text-transform:uppercase;letter-spacing:-.035em;line-height:.96;max-width:20ch}
-.bento p{margin-top:12px;font-size:.875rem;line-height:1.5;max-width:46ch}
-.bento .kind{margin-top:auto;padding-top:16px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:500}
-.bento .tint{background:var(--turq);color:var(--on-turq)}
-.bento .tint:hover{background:var(--ink);color:var(--surface)}
-@media(max-width:900px){.bento{grid-template-columns:1fr}.bento .lead{grid-row:auto}}
+.bento p{margin-top:12px;font-size:.9375rem;line-height:1.55;max-width:48ch;opacity:.88}
+.bento .kind{margin-top:auto;padding-top:20px;display:inline-flex;align-self:flex-start}
+.bento .kind span{background:var(--ink);color:var(--cream);border-radius:var(--r-pill);
+  padding:7px 15px;font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
+  text-transform:uppercase;letter-spacing:.07em;font-size:.6875rem;font-weight:700}
+.bento .tint .kind span{background:var(--paper);color:var(--ink)}
+@media(max-width:920px){.bento{grid-template-columns:1fr}.bento .lead{grid-row:auto}}
 
-/* ---------- SERVICIOS: zigzag, no 3 cards iguales ---------- */
-.zig{border-top:2px solid var(--rule)}
-.zig>div{display:grid;grid-template-columns:auto 1fr 1.1fr;gap:0;border-bottom:1px solid var(--rule);align-items:stretch}
-.zig>div:last-child{border-bottom:none}
-.zig .num{padding:var(--gutter);font-family:'JetBrains Mono',monospace;font-size:.8125rem;font-weight:700;letter-spacing:.08em;color:var(--turq-text);border-right:1px solid var(--rule);display:flex;align-items:flex-start;min-width:78px}
-.zig .name{padding:var(--gutter);border-right:1px solid var(--rule);display:flex;align-items:center}
-.zig h3{font-size:var(--t-s);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.98}
-.zig .desc{padding:var(--gutter);display:flex;flex-direction:column;justify-content:center}
-.zig .desc p{font-size:.9375rem;line-height:1.5;max-width:52ch}
-.zig .what{margin-top:12px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.07em;font-size:.75rem;line-height:1.7}
-.zig>div:hover{background:var(--shade)}
-@media(max-width:900px){
-  .zig>div{grid-template-columns:1fr}
-  .zig .num{min-width:0;padding:var(--gutter) var(--gutter) 0;border-right:none}
-  .zig .name{border-right:none;padding-top:8px}
-  .zig .desc{border-top:1px solid var(--rule);padding-top:20px}
-}
+/* ---------- SERVICIOS: bloque morado con tarjetas ---------- */
+.svc{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(26px,3.4vw,52px);align-items:start}
+.svc-intro{position:sticky;top:calc(var(--nav-h) + 34px)}
+.svc-intro h2{font-size:var(--t-l)}
+.svc-intro p{margin-top:16px;font-size:1.0625rem;line-height:1.55;max-width:38ch;opacity:.9}
+.svc-list{display:grid;gap:clamp(10px,1.4vw,14px)}
+.svc-item{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
+.svc-num{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 88;font-weight:900;
+  font-size:1.5rem;line-height:1;background:var(--ink);color:var(--cream);
+  width:52px;height:52px;display:grid;place-items:center;border-radius:14px;flex-shrink:0}
+.svc-item h3{font-size:var(--t-s)}
+.svc-item p{margin-top:9px;font-size:.9375rem;line-height:1.55;max-width:52ch;opacity:.9}
+.tags{margin-top:13px;display:flex;flex-wrap:wrap;gap:7px}
+.tags span{background:var(--surface);border-radius:var(--r-pill);padding:6px 13px;
+  font-size:.75rem;font-weight:600}
+@media(max-width:920px){.svc{grid-template-columns:1fr}.svc-intro{position:static}.svc-intro p{max-width:60ch}}
 
-/* ---------- MÉTODO: 4 tarjetas, sin tabla de hairlines ---------- */
-.method{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
-.method>div{background:var(--surface);padding:var(--gutter);display:flex;flex-direction:column;min-height:clamp(220px,24vw,290px)}
-.method .step{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.1em;font-weight:700;color:var(--turq-text);margin-bottom:auto}
-.method h3{font-size:var(--t-s);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;line-height:.98;margin-bottom:12px}
-.method p{font-size:.875rem;line-height:1.55}
-.method>div:nth-child(4){background:var(--turq);color:var(--on-turq)}
-.method>div:nth-child(4) .step{color:var(--on-turq);opacity:.65}
-@media(max-width:980px){.method{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.method{grid-template-columns:1fr}}
+/* ---------- METODO: 4 pasos, color rotativo ---------- */
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,22px)}
+.method>div{border:var(--bw) solid var(--line);border-radius:var(--r);
+  padding:clamp(26px,3vw,38px);display:flex;flex-direction:column;
+  min-height:clamp(250px,26vw,320px);background:var(--paper)}
+.method>div:nth-child(1){background:var(--sand)}
+.method>div:nth-child(2){background:var(--teal);color:var(--on-teal)}
+.method>div:nth-child(3){background:var(--ink);color:var(--on-ink)}
+.method .step{display:inline-flex;align-self:flex-start;background:var(--ink);color:var(--cream);
+  border-radius:var(--r-pill);padding:6px 14px;
+  font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
+  text-transform:uppercase;letter-spacing:.08em;font-size:.6875rem;font-weight:700}
+.method>div:nth-child(3) .step{background:var(--cream);color:var(--ink)}
+.method h3{font-size:var(--t-m);margin-top:clamp(24px,3vw,40px);margin-bottom:14px;max-width:16ch}
+.method p{font-size:.9375rem;line-height:1.55;opacity:.9;margin-top:auto;padding-top:18px}
+@media(max-width:940px){.method{grid-template-columns:1fr}}
 
-/* ---------- PRINCIPIOS: stack tipográfico ---------- */
-.prin{border-top:2px solid var(--rule)}
-.prin>div{padding:clamp(22px,3vw,34px) var(--gutter);border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr 1.3fr;gap:var(--gutter);align-items:baseline}
-.prin>div:last-child{border-bottom:none}
-.prin h3{font-size:var(--t-m);font-weight:900;text-transform:uppercase;letter-spacing:-.045em;line-height:.94}
-.prin p{font-size:.9375rem;line-height:1.5;max-width:54ch}
-@media(max-width:820px){.prin>div{grid-template-columns:1fr;gap:12px}}
+/* ---------- PRINCIPIOS ---------- */
+.prin{display:grid;gap:clamp(10px,1.4vw,14px)}
+.prin>div{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(18px,2.6vw,36px);
+  align-items:start;background:var(--paper);border-radius:var(--r-sm);
+  padding:clamp(20px,2.4vw,30px)}
+.prin h3{font-size:var(--t-m)}
+.prin p{font-size:1rem;line-height:1.55;max-width:56ch;opacity:.88}
+@media(max-width:860px){.prin>div{grid-template-columns:1fr;gap:10px}}
 
 /* ---------- EQUIPO ---------- */
-.people{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
-.people>figure{background:var(--surface);display:flex;flex-direction:column}
-.people img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--shade);filter:grayscale(1) contrast(1.1);border-bottom:2px solid var(--rule)}
-.people .q{padding:var(--gutter);display:flex;flex-direction:column;flex:1}
-.people blockquote{font-size:clamp(1rem,1.9vw,1.35rem);font-weight:600;letter-spacing:-.02em;line-height:1.24;max-width:34ch}
-.people figcaption{margin-top:auto;padding-top:20px;display:flex;flex-direction:column;gap:4px}
-.people .who{font-weight:800;text-transform:uppercase;letter-spacing:-.02em;font-size:.9375rem}
-@media(max-width:820px){.people{grid-template-columns:1fr}}
+.people{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,22px)}
+.people figure{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
+  background:var(--paper);display:flex;flex-direction:column}
+.people img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--sand);
+  border-bottom:var(--bw) solid var(--line)}
+.people .q{padding:clamp(22px,2.6vw,34px);display:flex;flex-direction:column;flex:1}
+.people blockquote{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 84;
+  font-weight:700;font-size:clamp(1.1rem,1rem + .85vw,1.5rem);letter-spacing:-.02em;
+  line-height:1.16;max-width:32ch}
+.people figcaption{margin-top:auto;padding-top:24px;display:flex;flex-direction:column;gap:3px}
+.people .who{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 92;
+  font-weight:800;font-size:1rem}
+.people .role{font-size:.875rem;opacity:.7}
+@media(max-width:860px){.people{grid-template-columns:1fr}}
 
 /* ---------- FAQ ---------- */
-.faq{border-top:2px solid var(--rule)}
-.faq details{border-bottom:1px solid var(--rule)}
-.faq summary{padding:20px var(--gutter);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-weight:600;font-size:clamp(.95rem,1.6vw,1.1rem);letter-spacing:-.015em;transition:background .12s}
+.faq{display:grid;gap:clamp(9px,1.2vw,12px)}
+.faq details{background:var(--paper);border-radius:var(--r-sm);overflow:hidden}
+.faq summary{padding:20px clamp(20px,2.4vw,28px);cursor:pointer;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 90;
+  font-weight:700;font-size:clamp(1rem,.96rem + .3vw,1.15rem);letter-spacing:-.015em}
 .faq summary::-webkit-details-marker{display:none}
-.faq summary:hover{background:var(--shade)}
-.faq summary::after{content:"+" / "";font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.25rem;flex-shrink:0}
-.faq details[open] summary{background:var(--ink);color:var(--surface)}
-.faq details[open] summary::after{content:"\2212" / "";color:var(--turq)}  /* sobre tinta: 6.08:1 */
-.faq .ans-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s cubic-bezier(.22,1,.36,1)}
+.faq summary::after{content:"+";font-family:'Archivo',sans-serif;font-weight:900;
+  font-size:1.5rem;line-height:1;flex-shrink:0;transition:transform .25s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq .ans-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease)}
 .faq details[open] .ans-wrap{grid-template-rows:1fr}
-.faq .ans{overflow:hidden;min-height:0;font-size:.9375rem;line-height:1.55;max-width:66ch}
-.faq .ans>p{padding:16px var(--gutter) 22px}
-@media(prefers-reduced-motion:reduce){.faq .ans-wrap{transition:none}}
+.faq .ans{overflow:hidden;min-height:0}
+.faq .ans>p{padding:0 clamp(20px,2.4vw,28px) 24px;font-size:1rem;line-height:1.6;
+  max-width:68ch;opacity:.88}
+@media(prefers-reduced-motion:reduce){.faq .ans-wrap,.faq summary::after{transition:none}}
 
 /* ---------- CTA ---------- */
-.cta-block{background:#232226;background:var(--ink);color:#F2EFE9;color:var(--surface);padding:clamp(40px,7vw,96px) var(--gutter);border-top:2px solid var(--rule)}
-.cta-block h2{text-wrap:balance;font-size:var(--t-xl);font-weight:900;text-transform:uppercase;line-height:.86;letter-spacing:-.05em;max-width:16ch}
-.cta-block h2 mark{background:none;color:var(--turq)}
-.cta-row{display:flex;flex-wrap:wrap;gap:var(--gutter);align-items:center;margin-top:clamp(26px,4vw,48px)}
-.cta-row .btn{border-color:var(--turq)}
-.cta-row .btn:hover{color:var(--surface);border-color:var(--turq)}
-.cta-note{font-size:.875rem;line-height:1.5;max-width:34ch}
+.cta-block h2{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
+  letter-spacing:-.035em;line-height:.9;max-width:15ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:clamp(18px,2.4vw,32px);align-items:center;
+  margin-top:clamp(28px,3.6vw,44px)}
+.cta-note{font-size:.9375rem;line-height:1.55;max-width:36ch;opacity:.85}
 
 /* ---------- NEWSLETTER ---------- */
-.news{display:grid;grid-template-columns:1fr 1.2fr;gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
-.news>div{background:var(--surface);padding:var(--gutter)}
-.news h2{font-size:var(--t-s);font-weight:900;text-transform:uppercase;letter-spacing:-.04em;line-height:.95;margin-bottom:12px}
-.news p{font-size:.875rem;line-height:1.5;max-width:40ch}
-.news form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.news label{display:block;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.8125rem;font-weight:600;margin-bottom:8px}
-.news input[type=text],.news input[type=email]{width:100%;background:var(--surface);border:2px solid var(--rule);padding:13px;font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--on-surface)}
-.news input::placeholder{color:var(--on-surface);opacity:.55}
-.news input:focus-visible{outline:3px solid var(--purp-focus);outline-offset:0;border-color:var(--purp-focus)}
-.news .full{grid-column:span 2}
-.news button{grid-column:span 2;background:var(--ink);color:var(--surface);border:2px solid var(--ink);padding:16px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:700;cursor:pointer;transition:background .12s,color .12s,transform .08s}
-.news button:hover{background:var(--turq);color:var(--on-turq);border-color:var(--turq)}
-.news button:active{transform:translateY(1px)}
-.news .consent{grid-column:span 2;display:flex;gap:12px;align-items:flex-start;font-size:.75rem;line-height:1.45}
-.news .consent input{width:auto;flex-shrink:0;margin-top:2px;accent-color:var(--purp)}
-.news-lead{font-size:.9375rem;line-height:1.5;max-width:44ch;margin-bottom:20px}
-.news-lead a{border-bottom:2px solid var(--turq)}
-.news .btn{margin-bottom:16px}
-.news .hint{font-size:.75rem;line-height:1.5;max-width:44ch}
+.news{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(22px,3vw,44px);align-items:center}
+.news h2{font-size:var(--t-m)}
+.news p{margin-top:12px;font-size:1rem;line-height:1.55;max-width:42ch;opacity:.88}
+.news .hint{margin-top:14px;font-size:.8125rem;opacity:.72;max-width:44ch}
 .news .hint a{border-bottom:1px solid currentColor}
-@media(max-width:820px){.news{grid-template-columns:1fr}.news form{grid-template-columns:1fr}.news .full,.news button,.news .consent,.news .hint{grid-column:span 1}}
+@media(max-width:860px){.news{grid-template-columns:1fr}}
 
 /* ---------- FOOTER ---------- */
-.foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--rule);border-top:2px solid var(--rule)}
-.foot-grid>div{background:var(--surface);padding:var(--gutter)}
-.foot-grid h4{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:700;margin-bottom:16px}
-.foot-grid ul{list-style:none;display:grid;gap:8px}
-.foot-grid li a{display:flex;align-items:center;min-height:44px;font-size:.875rem;font-weight:500;border-bottom:1px solid transparent;transition:border-color .12s}
-.foot-grid li .pending{display:flex;align-items:center;min-height:44px;font-size:.875rem;font-weight:500;opacity:.6}
-.foot-grid li a:hover{border-bottom-color:var(--on-surface)}
-@media(max-width:860px){.foot-grid{grid-template-columns:repeat(2,1fr)}}
+.foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(22px,3vw,40px)}
+.foot-grid h4{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
+  text-transform:uppercase;letter-spacing:.09em;font-size:.75rem;font-weight:800;
+  margin-bottom:16px;opacity:.6}
+.foot-grid ul{list-style:none;display:grid;gap:3px}
+.foot-grid li a{display:flex;align-items:center;min-height:40px;font-size:.9375rem;font-weight:500}
+.foot-grid li a:hover{text-decoration:underline;text-underline-offset:4px}
+.foot-grid li .pending{display:flex;align-items:center;min-height:40px;font-size:.9375rem;opacity:.5}
+@media(max-width:880px){.foot-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
-.legal{padding:20px var(--gutter);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:2px solid var(--rule)}
+.legal{margin-top:clamp(30px,4vw,52px);padding-top:24px;
+  border-top:2px solid color-mix(in oklch,currentColor 22%,transparent);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-size:.8125rem;opacity:.7}
 
-/* ---------- IMPRESIÓN ----------
-   Se imprime y se adjunta a expediente. Los fondos oscuros no se
-   imprimen por defecto: sin esto, el bloque de contacto sale en
-   blanco sobre blanco y las respuestas cerradas del FAQ se pierden. */
+/* kicker: el marcador tipografico del diseno */
+.kicker{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
+  text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;font-weight:700;
+  margin-bottom:clamp(16px,2vw,22px);opacity:.88}
+.kicker::before{content:"// ";opacity:.6}
+.cta-block .kicker{margin-bottom:14px}
+
+/* etiqueta de categoria en tarjetas de trabajo */
+.tag{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
+  text-transform:uppercase;letter-spacing:.09em;font-size:.6875rem;font-weight:700;
+  margin-bottom:11px;opacity:.78}
+.tint .tag{opacity:1}
+
+/* boton compacto dentro de tarjetas */
+.btn-sm{padding:11px 20px;font-size:.8125rem;background:var(--paper);color:var(--on-surface)}
+.btn-sm:hover{background:var(--sand)}
+.tint .btn-sm{background:var(--ink);color:var(--cream)}
+
+/* sufijo CL del wordmark */
+.brand .cl{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 100;
+  font-style:normal;font-weight:700;font-size:.625rem;letter-spacing:.08em;
+  border:2px solid currentColor;border-radius:6px;padding:2px 5px;
+  align-self:center;opacity:.65}
+
+/* footer: columna de marca */
+.foot-brand .foot-mark{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 86;
+  font-weight:900;font-size:1.35rem;letter-spacing:-.03em;margin-bottom:12px}
+.foot-brand p{font-size:.9375rem;line-height:1.55;max-width:34ch;opacity:.72}
+.foot-grid{grid-template-columns:1.4fr 1fr 1fr}
+@media(max-width:880px){.foot-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
+
+/* hero: el h1 ya no es el primer elemento */
+.hero h1{margin-bottom:0}
+
+/* ---------- ENTRADA ---------- */
+@media(prefers-reduced-motion:no-preference){
+  .rise{opacity:0;transform:translateY(16px);animation:rise .6s var(--ease) forwards}
+  .rise:nth-child(2){animation-delay:.06s}
+  .rise:nth-child(3){animation-delay:.12s}
+  @keyframes rise{to{opacity:1;transform:none}}
+}
+
+/* ---------- IMPRESION ---------- */
 @media print{
-  body::after,.strip,.nav .cta{display:none}
-  .nav{position:static;height:auto}
+  .strip,.nav .cta{display:none}
+  .nav{position:static}
   body{background:#fff;color:#000;font-size:11pt}
-  .frame{border:none;max-width:none}
-  .cta-block{background:#fff;color:#000;border:2px solid #000}
-  .cta-block h2 mark,h1 mark,.brand b{color:#000;-webkit-text-stroke:0}
-  .method>div:nth-child(4),.bento .tint{background:#fff;color:#000;border:2px solid #000}
-  .faq details{display:block}
-  .faq .ans{display:block}
-  .faq details summary::after{content:""}
-  .hero{min-height:0}
-  .hero-media,.bento .shot,.people img{filter:none}
-  a[href^="mailto"]::after{content:" (" attr(href) ")";font-size:.85em;font-weight:400}
+  .frame{padding:0}
+  .block,.card,.method>div,.bento article,.people figure{
+    background:#fff!important;color:#000!important;border:2px solid #000}
+  .hl,.btn,.seal,.svc-num,.method .step,.bento .kind span{
+    background:#fff!important;color:#000!important;border:1px solid #000}
+  .faq .ans-wrap{grid-template-rows:1fr}
+  .faq summary::after{content:""}
+  a[href^="mailto"]::after{content:" (" attr(href) ")";font-size:.85em}
   section,figure,.method>div,.prin>div{break-inside:avoid}
   h1,h2,h3{break-after:avoid}
 }
 </style>
 </head>
 <body>
-<a class="skip mono meta" href="#main">Saltar al contenido</a>
+<a class="skip" href="#main">Saltar al contenido</a>
 <div class="frame">
 
   <nav class="nav">
-    <a href="#main" class="brand">ua<b>la</b>bi</a>
-    <div class="nav-links mono">
+    <a href="#main" class="brand">
+      <svg class="mark" viewBox="0 0 70 70" width="36" height="36" aria-hidden="true" focusable="false">
+        <defs><clipPath id="ua-clip"><rect width="70" height="70" rx="20"/></clipPath></defs>
+        <g clip-path="url(#ua-clip)">
+          <rect width="70" height="70" rx="20" fill="#3FAEC6"/>
+          <path d="M30.7322 16.8095L14.6753 8.27192L30.0979 -1.36571L30.7322 16.8095Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+          <path d="M77.2627 30.7328L43.8024 39.6984L52.768 6.23783L77.2627 30.7328Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+          <path d="M13.893 78.8922L9.89265 33.1684L51.4915 52.5659L13.893 78.8922Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+        </g>
+        <rect x="1.5" y="1.5" width="67" height="67" rx="18.5" fill="none" stroke="#232226" stroke-width="3"/>
+      </svg>
+      <span>ualabi</span>
+      <em class="cl">CL</em>
+    </a>
+    <div class="nav-links">
       <a href="#trabajo">Trabajo</a>
       <a href="#servicios">Servicios</a>
       <a href="#metodo">Método</a>
-      <a href="#equipo">Equipo</a>
-      <a href="#faq">Preguntas</a>
     </div>
-    <a href="#contacto" class="cta mono">Escríbenos</a>
+    <a href="#contacto" class="cta">Escríbenos</a>
+    <details class="menu">
+      <summary aria-label="Abrir menú">Menú</summary>
+      <div class="menu-panel">
+        <a href="#trabajo">Trabajo</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#metodo">Método</a>
+        <a href="#contacto">Escríbenos</a>
+      </div>
+    </details>
   </nav>
 
   <main id="main">
 
-  <!-- HERO: split asimétrico. 3 elementos de texto, cabe en viewport -->
-  <header class="hero">
-    <div class="hero-copy">
-      <h1>Diseño que <mark>llega</mark> a producción</h1>
-      <p class="lede">Consultora chilena de diseño. Trabajamos con municipios, servicios públicos y empresas para convertir un problema difuso en un servicio que funciona y que su equipo puede sostener.</p>
-      <div class="hero-cta">
-        <a class="btn" href="#contacto">Escríbenos</a>
-        <a class="btn btn-ghost" href="#metodo">Ver el método</a>
+  <!-- HERO -->
+  <header class="block block-purple hero on-dark">
+    <div class="pad">
+      <p class="kicker rise">Consultoría de diseño e innovación corporativa</p>
+      <h1 class="rise">Diseño, innovación e <span class="hl">inteligencia artificial</span> para empresas</h1>
+      <p class="lede rise">Acompañamos a empresas en el diseño de productos digitales, la transformación de procesos con IA y el desarrollo de capacidades organizacionales.</p>
+      <div class="hero-cta rise">
+        <a class="btn btn-light" href="#contacto">Conversemos</a>
+        <a class="btn" href="#servicios">Ver servicios</a>
       </div>
-    </div>
-    <div class="hero-media">
-      <!-- TODO: reemplazar por foto real de sesión de trabajo, 1400x1200 -->
-      <img src="https://picsum.photos/seed/ualabi-taller-cocreacion/1400/1200"
-           srcset="https://picsum.photos/seed/ualabi-taller-cocreacion/700/600 700w,
-                   https://picsum.photos/seed/ualabi-taller-cocreacion/1400/1200 1400w"
-           sizes="(max-width:900px) 100vw, 45vw"
-           alt="Equipo en sesión de trabajo colaborativo" width="1400" height="1200"
-           fetchpriority="high" decoding="async">
     </div>
   </header>
 
   <div class="strip">
-    <div class="strip-track mono">
-      <span>Investigación aplicada</span><span>Diseño de servicios</span><span>Prototipado</span>
-      <span>Innovación pública</span><span>Producto digital</span><span>Facilitación</span>
-      <span aria-hidden="true">Investigación aplicada</span><span aria-hidden="true">Diseño de servicios</span><span aria-hidden="true">Prototipado</span>
-      <span aria-hidden="true">Innovación pública</span><span aria-hidden="true">Producto digital</span><span aria-hidden="true">Facilitación</span>
+    <div class="strip-track">
+      <span>Productos digitales</span><span>Procesos con IA</span><span>Innovación</span>
+      <span>Capacidades organizacionales</span><span>UX/UI</span><span>Estrategia</span>
+      <span>Prototipado</span><span>Inteligencia artificial</span>
+      <span aria-hidden="true">Productos digitales</span><span aria-hidden="true">Procesos con IA</span><span aria-hidden="true">Innovación</span>
+      <span aria-hidden="true">Capacidades organizacionales</span><span aria-hidden="true">UX/UI</span><span aria-hidden="true">Estrategia</span>
+      <span aria-hidden="true">Prototipado</span><span aria-hidden="true">Inteligencia artificial</span>
     </div>
   </div>
 
-  <!-- TRABAJO: bento 3 celdas para 3 items -->
+  <!-- TRABAJO -->
   <section id="trabajo">
     <div class="sh">
       <h2>Trabajo reciente</h2>
       <p>Proyectos con entidades públicas y privadas. Cada uno terminó con algo funcionando, no con un informe.</p>
     </div>
     <div class="bento">
-      <!-- mock: casos de ejemplo, reemplazar por proyectos reales -->
       <article class="lead">
-        <img class="shot" src="https://picsum.photos/seed/ualabi-tramite-municipal/1200/825" alt="Funcionarios revisando un flujo de trámite en papel" width="1200" height="825" loading="lazy">
+        <img class="shot" src="work-lead.jpg" alt="Módulos de autoatención instalados en una oficina de atención de público" width="1248" height="832" loading="lazy">
         <div class="body">
-          <h3>Un trámite municipal, rediseñado desde la fila</h3>
-          <p>Mapeamos el recorrido completo del usuario, identificamos los puntos de fricción evitables y prototipamos una versión más corta que se probó en ventanilla antes de programar nada.</p>
-          <div class="kind">Sector público, diseño de servicios</div>
+          <p class="tag">Producto digital, UX/UI</p>
+          <h3>Plataforma digital para gestión de clientes corporativos</h3>
+          <p>Rediseñamos la experiencia de atención del Departamento de Patentes. Implementamos un piloto de autoatención física que redujo el tiempo de espera promedio de 42 a 12 minutos.</p>
+          <div class="kind"><a class="btn btn-sm" href="#contacto">Ver caso de estudio</a></div>
         </div>
       </article>
       <article>
         <div class="body">
-          <h3>La innovación no es una jornada de post-its</h3>
-          <p>Por qué los talleres de creatividad rara vez sobreviven al lunes siguiente, y qué estructura hace falta para que una idea llegue a producción.</p>
-          <div class="kind">Artículo</div>
+          <p class="tag">Artículo, metodología</p>
+          <h3>IA aplicada: cuando automatizar no es la respuesta obvia</h3>
+          <p>Nuestra postura crítica sobre los talleres creativos sin impacto real. Abordamos cómo estructurar dinámicas que se conviertan en código y normativa.</p>
+          <div class="kind"><a class="btn btn-sm" href="#contacto">Leer artículo</a></div>
         </div>
       </article>
       <article class="tint">
-        <img class="shot" src="https://picsum.photos/seed/ualabi-equipo-interno/900/560" alt="Equipo interno trabajando frente a una pizarra" width="900" height="560" loading="lazy">
         <div class="body">
-          <h3>Un piloto que sobrevivió al cambio de administración</h3>
-          <p>Transferencia metodológica a un equipo interno. La iniciativa siguió operando después de terminado nuestro contrato.</p>
-          <div class="kind">Capacidad instalada</div>
+          <p class="tag">Procesos con IA, transformación</p>
+          <h3>Transformación de procesos internos con IA generativa</h3>
+          <p>Cómo entrenamos a funcionarios de carrera para sostener la plataforma de distribución de subsidios sociales, blindando la operación ante contingencias políticas.</p>
+          <div class="kind"><a class="btn btn-sm" href="#contacto">Ver transferencia</a></div>
         </div>
       </article>
     </div>
   </section>
 
-  <!-- SERVICIOS: filas, no tres cards iguales -->
-  <section id="servicios">
-    <div class="sh">
-      <h2>Tres formas de trabajar juntos</h2>
-      <p>La mayoría de los proyectos parte en la primera y avanza. También se pueden contratar por separado.</p>
-    </div>
-    <div class="zig">
-      <div>
-        <div class="num" aria-hidden="true">01</div>
-        <div class="name"><h3>Diagnóstico e investigación</h3></div>
-        <div class="desc">
-          <p>Entendemos el problema antes de diseñar la solución. Levantamiento con usuarios, mapeo de actores y análisis del contexto institucional.</p>
-          <div class="what">Entrevistas / Blueprint de servicio / Mapa de actores</div>
-        </div>
+  <!-- SERVICIOS -->
+  <section id="servicios" class="block block-teal">
+    <div class="pad svc">
+      <div class="svc-intro">
+        <h2>Qué hacemos</h2>
+        <p>Cuatro líneas de servicio pensadas para acompañar a empresas en diseño, transformación y capacidad.</p>
       </div>
-      <div>
-        <div class="num" aria-hidden="true">02</div>
-        <div class="name"><h3>Diseño de productos</h3></div>
-        <div class="desc">
-          <p>Del concepto al prototipo funcional. Definición de propuesta de valor, arquitectura de la experiencia y validación con usuarios reales.</p>
-          <div class="what">Prototipo / Interfaz / Pruebas con usuarios</div>
+      <div class="svc-list">
+        <div class="card svc-item">
+          <div class="svc-num" aria-hidden="true">01</div>
+          <div>
+            <h3>Productos digitales</h3>
+            <p>Diseño y desarrollo de productos que responden a necesidades reales. Estrategia, experiencia de usuario, puesta en marcha y escalamiento responsable, financiero y técnico.</p>
+            <div class="tags"><span>Estrategia</span><span>UX/UI</span><span>Prototipado</span><span>Escalamiento</span></div>
+          </div>
         </div>
-      </div>
-      <div>
-        <div class="num" aria-hidden="true">03</div>
-        <div class="name"><h3>Innovación e implementación</h3></div>
-        <div class="desc">
-          <p>Instalamos capacidad en el equipo interno. Facilitación, pilotos acotados y transferencia metodológica para sostener la iniciativa.</p>
-          <div class="what">Piloto / Formación / Acompañamiento</div>
+        <div class="card svc-item">
+          <div class="svc-num" aria-hidden="true">02</div>
+          <div>
+            <h3>Procesos con IA</h3>
+            <p>Repensar los procesos organizacionales en el contexto de la inteligencia artificial. Identificar oportunidades y articular soluciones para sacar el máximo potencial.</p>
+            <div class="tags"><span>Análisis de oportunidad</span><span>Arquitectura de proceso</span><span>Validación operativa</span><span>Gobernanza</span></div>
+          </div>
+        </div>
+        <div class="card svc-item">
+          <div class="svc-num" aria-hidden="true">03</div>
+          <div>
+            <h3>Innovación</h3>
+            <p>Metodologías para involucrar actores clave en el desarrollo. Identificar procesos críticos y co-crear soluciones con las personas que las van a operar.</p>
+            <div class="tags"><span>Talleres estratégicos</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
+          </div>
+        </div>
+        <div class="card svc-item">
+          <div class="svc-num" aria-hidden="true">04</div>
+          <div>
+            <h3>Capacidades organizacionales</h3>
+            <p>Desarrollo de capacidades a nivel organizacional en inteligencia artificial. Formación, habilitación y acompañamiento de equipos internos.</p>
+            <div class="tags"><span>Formación</span><span>Habilitación</span><span>Acompañamiento</span><span>Gobernanza</span></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MÉTODO: 4 tarjetas -->
+  <!-- METODO -->
   <section id="metodo">
     <div class="sh">
-      <h2>Cómo avanza un proyecto</h2>
-      <p>Ciclos cortos con entregables tangibles. Cada fase termina en algo que se puede revisar, no en una presentación de avance.</p>
+      <h2>Cómo trabajamos</h2>
+      <p>Un método estructurado para reducir el riesgo técnico y político antes de la escala.</p>
     </div>
     <div class="method">
       <div>
-        <div class="step">Fase 01</div>
-        <h3>Comprender</h3>
-        <p>Inmersión en el contexto de la entidad. Entrevistas, revisión de antecedentes y definición conjunta del desafío a resolver.</p>
+        <span class="step">01</span>
+        <h3>Entendemos antes de proponer</h3>
+        <p>Nos sumergimos en el contexto del negocio y sus usuarios antes de diseñar cualquier solución.</p>
       </div>
       <div>
-        <div class="step">Fase 02</div>
-        <h3>Explorar</h3>
-        <p>Generación divergente de alternativas. Referentes, sesiones de co-creación y selección de conceptos con criterios explícitos.</p>
+        <span class="step">02</span>
+        <h3>Construimos para validar</h3>
+        <p>Prototipos funcionales que se prueban con usuarios reales antes de comprometer inversión.</p>
       </div>
       <div>
-        <div class="step">Fase 03</div>
-        <h3>Prototipar</h3>
-        <p>Versiones tangibles y baratas. Se prueban con usuarios antes de comprometer presupuesto de implementación.</p>
+        <span class="step">03</span>
+        <h3>Transferimos capacidad</h3>
+        <p>El objetivo es que el equipo interno pueda sostener y evolucionar lo que construimos juntos.</p>
       </div>
-      <div>
-        <div class="step">Fase 04</div>
-        <h3>Implementar</h3>
-        <p>Piloto acotado, medición de resultados y transferencia al equipo interno para que la iniciativa siga viva sin nosotros.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PRINCIPIOS -->
-  <section id="principios">
-    <div class="sh">
-      <h2>En qué creemos</h2>
-    </div>
-    <div class="prin">
-      <div><h3>Evidencia antes que opinión</h3><p>Ninguna decisión de diseño se sostiene sola. Si no hay dato o usuario que lo respalde, es una hipótesis y se trata como tal.</p></div>
-      <div><h3>Mostrar antes que describir</h3><p>Un prototipo a medio terminar que alguien puede usar enseña más que un PowerPoint impecable. En la segunda reunión ya hay algo que tocar.</p></div>
-      <div><h3>Capacidad instalada</h3><p>El objetivo no es que nos necesiten. Es que el equipo interno pueda repetir el proceso cuando nos vayamos.</p></div>
-      <div><h3>La normativa no es excusa</h3><p>Presupuesto, plazos y marco legal son parte del problema a resolver, no la razón para no resolverlo. Diseñamos dentro de lo que sí se puede hacer.</p></div>
-    </div>
-  </section>
-
-  <!-- EQUIPO -->
-  <section id="equipo">
-    <div class="sh sh-open">
-      <h2>Quiénes trabajan contigo</h2>
-    </div>
-    <div class="people">
-      <!-- TODO: reemplazar nombres, cargos y retratos por los reales -->
-      <figure>
-        <img src="https://picsum.photos/seed/ualabi-retrato-uno/800/600" alt="" width="800" height="600" loading="lazy">
-        <div class="q">
-          <blockquote>La mayoría de las entidades no tiene un problema de ideas. Tiene un problema de método para llevarlas a algo real.</blockquote>
-          <figcaption>
-            <span class="who">Nombre por definir</span>
-            <span class="mono meta">Socio fundador</span>
-          </figcaption>
-        </div>
-      </figure>
-      <figure>
-        <img src="https://picsum.photos/seed/ualabi-retrato-dos/800/600" alt="" width="800" height="600" loading="lazy">
-        <div class="q">
-          <blockquote>Nuestro mejor resultado es que el equipo interno no vuelva a llamarnos porque ya aprendió a hacerlo.</blockquote>
-          <figcaption>
-            <span class="who">Nombre por definir</span>
-            <span class="mono meta">Dirección de diseño</span>
-          </figcaption>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq">
-    <div class="sh">
-      <h2>Preguntas frecuentes</h2>
-    </div>
-    <div class="faq">
-      <details>
-        <summary>¿Qué es el diseño centrado en las personas y cómo lo aplican?</summary>
-        <div class="ans-wrap"><div class="ans"><p>Es partir del problema real de quien usa el servicio, no del organigrama de quien lo entrega. En la práctica significa que la primera semana la pasamos con usuarios y funcionarios, no en una sala definiendo alcance.</p></div></div>
-      </details>
-      <details>
-        <summary>¿Trabajan con entidades públicas y privadas por igual?</summary>
-        <div class="ans-wrap"><div class="ans"><p>Sí. El método es el mismo y cambian las restricciones. En el sector público el borde suele ser normativo y de plazos. En el privado, de presupuesto y tiempo de salida al mercado. Ambos son material de diseño.</p></div></div>
-      </details>
-      <details>
-        <summary>¿Cuánto dura un proyecto típico?</summary>
-        <div class="ans-wrap"><div class="ans"><p>Trabajamos en ciclos cortos con puntos de control claros. Preferimos eso antes que contratos largos sin entregables intermedios. Si el desafío es mayor, se divide en ciclos encadenados.</p></div></div>
-      </details>
-      <details>
-        <summary>¿Qué recibimos al terminar?</summary>
-        <div class="ans-wrap"><div class="ans"><p>Un prototipo validado, la evidencia que lo respalda y la documentación del método para que el equipo interno pueda repetirlo. No entregamos informes de doscientas páginas.</p></div></div>
-      </details>
     </div>
   </section>
 
   <!-- CTA -->
-  <section id="contacto" class="cta-block">
-    <h2>¿Tienen un <mark>problema</mark> sin resolver?</h2>
-    <div class="cta-row">
-      <a class="btn" href="mailto:hola@ualabi.cl?subject=Conversaci%C3%B3n%20inicial%20con%20ualabi&amp;body=Cu%C3%A9ntenos%20brevemente%3A%0A%0AInstituci%C3%B3n%3A%0AProblema%20a%20resolver%3A%0APlazo%20estimado%3A%0A">Escribir a hola@ualabi.cl</a>
-      <p class="cta-note">Respondemos en 48 horas hábiles. La primera sesión de diagnóstico no tiene costo y no compromete contratación.</p>
-    </div>
-  </section>
-
-  <!-- NEWSLETTER -->
-  <section class="news" aria-labelledby="news-title">
-    <div>
-      <h2 id="news-title">Suscríbete</h2>
-      <p>Notas sobre diseño, innovación pública y lo que aprendemos en cada proyecto. Escribimos cuando hay algo que decir.</p>
-    </div>
-    <div>
-      <!-- Sin backend todavia. mailto con POST falla en Safari, asi que
-           va un enlace directo con asunto y cuerpo precargados.
-           Al conectar un endpoint (Formspree, Worker), restituir el
-           formulario con sus estados de exito y de error. -->
-      <p class="news-lead">Escriba a <a href="mailto:hola@ualabi.cl?subject=Suscripci%C3%B3n%20a%20las%20notas">hola@ualabi.cl</a> con el asunto <em>Suscripción</em> y lo agregamos.</p>
-      <a class="btn" href="mailto:hola@ualabi.cl?subject=Suscripci%C3%B3n%20a%20las%20notas&amp;body=Quiero%20recibir%20las%20notas%20de%20ualabi.%0A%0ANombre%3A%0AInstituci%C3%B3n%3A%0A">Suscribirme por correo</a>
-      <p class="hint">Sus datos no se comparten con terceros y puede pedir la baja cuando quiera.</p>
+  <section id="contacto" class="block block-ink cta-block on-dark">
+    <div class="pad">
+      <p class="kicker">Hablemos de su próximo paso de innovación</p>
+      <h2>¿Tienen un <span class="hl">desafío</span> de producto, procesos o IA?</h2>
+      <div class="cta-row">
+        <a class="btn btn-light" href="mailto:hola@ualabi.cl?subject=Conversaci%C3%B3n%20inicial%20con%20ualabi&amp;body=Cu%C3%A9ntenos%20brevemente%3A%0A%0AEmpresa%3A%0ADesaf%C3%ADo%3A%0APlazo%20estimado%3A%0A">Escribir a hola@ualabi.cl</a>
+        <p class="cta-note">Primera conversación sin costo ni compromiso.</p>
+      </div>
     </div>
   </section>
 
   </main>
 
-  <footer>
-    <div class="foot-grid">
-      <div>
-        <h4>Servicios</h4>
-        <ul>
-          <li><a href="#servicios">Diagnóstico e investigación</a></li>
-          <li><a href="#servicios">Diseño de productos</a></li>
-          <li><a href="#servicios">Innovación e implementación</a></li>
-          <li><a href="#metodo">Facilitación</a></li>
-        </ul>
+  <footer class="block block-paper">
+    <div class="pad">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <p class="foot-mark">ualabi</p>
+          <p>Consultoría chilena de diseño de servicios y productos digitales.</p>
+        </div>
+        <div>
+          <h4>Servicios</h4>
+          <ul>
+            <li><a href="#servicios">Productos digitales</a></li>
+            <li><a href="#servicios">Procesos con IA</a></li>
+            <li><a href="#servicios">Innovación</a></li>
+            <li><a href="#servicios">Capacidades organizacionales</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contacto</h4>
+          <ul>
+            <li><a href="mailto:hola@ualabi.cl">hola@ualabi.cl</a></li>
+            <li><span class="pending">Santiago, Chile</span></li>
+          </ul>
+        </div>
       </div>
-      <div>
-        <h4>ualabi</h4>
-        <ul>
-          <li><a href="#equipo">Equipo</a></li>
-          <li><a href="#trabajo">Trabajo</a></li>
-          <li><a href="#principios">Principios</a></li>
-          <li><a href="#faq">Preguntas frecuentes</a></li>
-        </ul>
+      <div class="legal">
+        <span>© 2026 ualabi</span>
+        <span>Consultoría de innovación, ualabi.cl</span>
       </div>
-      <div>
-        <h4>Contacto</h4>
-        <ul>
-          <li><a href="mailto:hola@ualabi.cl">hola@ualabi.cl</a></li>
-          <li><a href="#contacto">Escríbenos</a></li>
-          <li><span class="pending">LinkedIn</span></li>
-          <li><span class="pending">Instagram</span></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Legal</h4>
-        <ul>
-          <li><span class="pending">Política de privacidad</span></li>
-          <li><span class="pending">Términos y condiciones</span></li>
-          <li><span class="pending">Uso de cookies</span></li>
-          <li><span class="pending">Accesibilidad</span></li>
-        </ul>
-      </div>
-    </div>
-    <div class="legal mono meta">
-      <span>© 2026 ualabi</span>
-      <span>Santiago, Chile</span>
     </div>
   </footer>
 

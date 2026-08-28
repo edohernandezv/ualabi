@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70" width="70" height="70" role="img" aria-label="ualabi">
+  <defs>
+    <clipPath id="ua-clip"><rect width="70" height="70" rx="20"/></clipPath>
+  </defs>
+  <g clip-path="url(#ua-clip)">
+    <rect width="70" height="70" rx="20" fill="#3FAEC6"/>
+    <path d="M30.7322 16.8095L14.6753 8.27192L30.0979 -1.36571L30.7322 16.8095Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+    <path d="M77.2627 30.7328L43.8024 39.6984L52.768 6.23783L77.2627 30.7328Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+    <path d="M13.893 78.8922L9.89265 33.1684L51.4915 52.5659L13.893 78.8922Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+  </g>
+  <rect x="1.5" y="1.5" width="67" height="67" rx="18.5" fill="none" stroke="#232226" stroke-width="3"/>
+</svg>
