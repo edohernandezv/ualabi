@@ -598,6 +598,16 @@ main>section:nth-of-type(4){--skew:.11deg}
 .term-hint{font-family:'Azeret Mono',ui-monospace,monospace;
   font-size:.75rem;opacity:.5;letter-spacing:.02em}
 
+/* ---------- IMAGEN DE SECCION ----------
+   Una landing sin imagenes no es minimalismo, es trabajo a medias.
+   En escala de grises para que no compitan con el acento. */
+.shot-wide{width:100%;aspect-ratio:21/9;object-fit:cover;
+  border-radius:var(--r-sm);
+  border:var(--bw) solid color-mix(in srgb,#232226 16%,transparent);
+  filter:grayscale(1) contrast(1.04);margin-top:var(--sp-l)}
+@media(prefers-color-scheme:dark){
+  .shot-wide{filter:grayscale(1) contrast(1.04) brightness(.88)}}
+
 /* ---------- SERVICIOS EN BENTO ----------
    El intro ocupa una celda, no una columna entera: antes dejaba
    unos 700px vacios mientras las tarjetas bajaban por la derecha.
@@ -866,6 +876,9 @@ main>section:nth-of-type(4){--skew:.11deg}
           </div>
         </div>
       </div>
+      <img class="shot-wide" loading="lazy" decoding="async" width="1600" height="686"
+        src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&amp;fit=crop&amp;w=1600&amp;q=78"
+        alt="Equipo trabajando en laptops alrededor de una mesa, con código en una de las pantallas">
     </div>
   </section>
 
@@ -932,6 +945,9 @@ main>section:nth-of-type(4){--skew:.11deg}
         <p>El equipo interno queda capaz de sostener y hacer crecer lo que construimos juntos.</p>
       </div>
     </div>
+      <img class="shot-wide" loading="lazy" decoding="async" width="1600" height="686"
+        src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&amp;fit=crop&amp;w=1600&amp;q=78"
+        alt="Dos personas revisando una interfaz en pantalla durante una sesión de trabajo">
     </div>
   </section>
 
