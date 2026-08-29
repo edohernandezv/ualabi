@@ -15,12 +15,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Azeret+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   ualabi — maximalismo estructural
-   Bloques de color plenos, bordes gruesos, radio generoso.
-   Paleta de marca: tinta 232226, morado 83389B, turquesa 3FAEC6,
+   ualabi
+   Superficies claras separadas por hairlines. El color de marca
+   entra como velo de fondo por seccion y como acento en detalle,
+   nunca como superficie plena.
+   Paleta: tinta 232226, morado 83389B, turquesa 3FAEC6,
    arena E4DBD2, crema F6F0EA.
-   Cada seccion toma un color y lo lleva entero. La rotacion
-   cromatica es la estructura, no la decoracion.
+   Tipografia: Archivo variable para display, Public Sans para
+   cuerpo, Azeret Mono para metadatos y el tratamiento terminal.
    ============================================================ */
 :root{
   /* marca, en OKLCH: chroma controlada, mismo matiz que el hex */
@@ -536,13 +538,6 @@ main>section:nth-of-type(4){--skew:.11deg}
    las cabeceras de seccion llevan ruta, y los bloques abren con una
    barra como la de una ventana. */
 
-/* ruta de seccion, antes del titulo */
-.sh::before{
-  content:attr(data-path);
-  display:block;font-family:'Azeret Mono',ui-monospace,monospace;
-  font-size:.75rem;font-weight:400;letter-spacing:.02em;
-  color:var(--accent);opacity:.72;margin-bottom:10px;
-}
 
 /* barra de ventana en los bloques con superficie propia */
 .win{position:relative;padding-top:38px}
@@ -773,7 +768,7 @@ main>section:nth-of-type(4){--skew:.11deg}
     <div class="pad">
       <p class="kicker rise">Trabajamos en</p>
       <h1 class="rise" aria-label="Trabajamos en innovación, ingeniería y tecnología"><span class="type" data-words="Innovación,Ingeniería,Tecnología" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret"></span></span></h1>
-      <p class="lede rise">Automatizar un proceso roto <span class="hl">lo rompe más rápido</span>. Entendemos el proceso antes de meterle IA, y el equipo interno queda capaz de sostener lo que construimos.</p>
+      <p class="lede rise">Automatizar un proceso roto <span class="hl">lo rompe más rápido</span>. Entendemos el proceso antes de meterle IA.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">Conversemos</a>
         <a class="btn" href="#servicios">Ver servicios</a>
@@ -794,14 +789,6 @@ main>section:nth-of-type(4){--skew:.11deg}
     </div>
   </div>
 
-  <div class="strip" aria-hidden="true">
-    <div class="strip-track">
-      <span>Entrevistas</span><span>Blueprint de servicio</span><span>Prototipado</span>
-      <span>Validación con usuarios</span><span>Piloto</span><span>Transferencia</span>
-      <span>Entrevistas</span><span>Blueprint de servicio</span><span>Prototipado</span>
-      <span>Validación con usuarios</span><span>Piloto</span><span>Transferencia</span>
-    </div>
-  </div>
 
   <svg class="rule" viewBox="0 0 1200 14" preserveAspectRatio="none" aria-hidden="true">
     <path d="M4 8 C 160 4, 300 11, 470 7 S 760 3, 930 9 S 1120 6, 1196 8"
@@ -812,7 +799,7 @@ main>section:nth-of-type(4){--skew:.11deg}
   
 
   <!-- SERVICIOS -->
-  <section id="servicios" class="stack stack-1 block block-teal win" data-win="ualabi — servicios">
+  <section id="servicios" class="stack stack-1 block block-teal win" data-win="ualabi / servicios">
     <div class="win-dots" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="pad svc">
             <!-- Mismo modelo del hero, en chico. Decorativo. -->
@@ -884,7 +871,7 @@ main>section:nth-of-type(4){--skew:.11deg}
 
 <section id="trabajo" class="stack stack-2 block block-paper">
     <div class="pad">
-    <div class="sh" data-path="~/trabajo" data-path="~/servicios" data-reveal>
+    <div class="sh" data-reveal>
       <h2>Trabajo reciente</h2>
       <p>Cada proyecto terminó con algo operando.</p>
     </div>
@@ -921,10 +908,10 @@ main>section:nth-of-type(4){--skew:.11deg}
   </section>
 
   <!-- METODO -->
-  <section id="metodo" class="stack stack-3 block block-sand win" data-win="ualabi — metodo">
+  <section id="metodo" class="stack stack-3 block block-sand win" data-win="ualabi / metodo">
     <div class="win-dots" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="pad">
-    <div class="sh" data-path="~/metodo" data-reveal>
+    <div class="sh" data-reveal>
       <h2>Cómo trabajamos</h2>
       <p>Reducir el riesgo antes de comprometer presupuesto.</p>
     </div>
@@ -958,7 +945,7 @@ main>section:nth-of-type(4){--skew:.11deg}
       <h2>¿Tienen un <span class="hl">desafío</span> de producto, procesos o IA?</h2>
       <form class="term" data-reveal id="prompt">
         <div class="term-bar" aria-hidden="true">
-          <i></i><i></i><i></i><span>ualabi — nuevo proyecto</span>
+          <i></i><i></i><i></i><span>ualabi / nuevo proyecto</span>
         </div>
         <div class="term-body">
           <label class="term-line" for="q">
@@ -977,7 +964,7 @@ main>section:nth-of-type(4){--skew:.11deg}
 
 <section id="notas" class="stack stack-5 block block-paper">
     <div class="pad">
-      <div class="sh" data-path="~/notas" data-reveal>
+      <div class="sh" data-reveal>
         <h2>Notas</h2>
         <p>Lo que aprendemos en cada proyecto. Escribimos cuando hay algo que decir.</p>
       </div>
