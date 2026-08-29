@@ -240,7 +240,10 @@ h1,h2,h3,.display{
 .hero{position:relative}
 .hero .pad{padding-block:clamp(52px,7.5vw,104px)}
 h1{font-size:var(--t-mono);font-weight:500;
-  letter-spacing:-.03em;line-height:1.1;max-width:none}
+  letter-spacing:-.03em;line-height:1.1;max-width:none;
+  /* una linea reservada: la lista corta entra en movil y la larga en
+     desktop, asi que ninguna palabra envuelve */
+  min-height:calc(var(--t-mono) * 1.1)}
 .lede{font-size:clamp(1.05rem,.98rem + .62vw,1.4rem);line-height:1.45;max-width:58ch;
   margin-top:clamp(20px,2.6vw,30px);opacity:.92}
 .hero-cta{margin-top:clamp(26px,3.6vw,40px);display:flex;flex-wrap:wrap;gap:12px}
@@ -777,7 +780,7 @@ main>section:nth-of-type(4){--skew:.11deg}
   <header class="block block-sky hero">
     <div class="pad">
       <p class="kicker rise">Trabajamos en</p>
-      <h1 class="rise" aria-label="Trabajamos en diseño, innovación, ingeniería, tecnología e inteligencia artificial"><span class="type" data-words="Diseño,Innovación,Ingeniería,Tecnología,IA" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret" aria-hidden="true"></span></span></h1>
+      <h1 class="rise" aria-label="Trabajamos en diseño, innovación, ingeniería, tecnología e inteligencia artificial"><span class="type" data-words="Diseño,Innovación,Ingeniería,Tecnología,IA" data-words-wide="Diseño,Innovación,Ingeniería,Tecnología,Inteligencia artificial" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret" aria-hidden="true"></span></span></h1>
       <p class="lede rise">Automatizar un proceso roto <span class="hl">lo rompe más rápido</span>. Entendemos el proceso antes de meterle IA.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">Conversemos</a>
@@ -1072,7 +1075,18 @@ if (!REDUCE) {
     const type = document.querySelector('.type');
     if (type) {
       const out = type.querySelector('.type-out');
-      const words = (type.dataset.words || '').split(',').filter(Boolean);
+      /* En movil la frase larga no cabe en una linea: 23 caracteres
+         pedirian bajar el titular a 1.5rem, mas chico que el parrafo.
+         Ahi va IA, que la pagina ya usa en el resto del texto. */
+      const ancha = window.matchMedia('(min-width:900px)');
+      const listas = {
+        corta: (type.dataset.words || '').split(',').filter(Boolean),
+        larga: (type.dataset.wordsWide || '').split(',').filter(Boolean)
+      };
+      let words = ancha.matches && listas.larga.length ? listas.larga : listas.corta;
+      ancha.addEventListener('change', (e) => {
+        words = e.matches && listas.larga.length ? listas.larga : listas.corta;
+      });
       if (out && words.length > 1) {
         let i = 0, prev = null;
 
@@ -1126,10 +1140,16 @@ if (!REDUCE) {
           }
         };
 
+        /* Cada palabra ocupa siete segundos de punta a punta. La pausa
+           se ajusta a su largo: escribir y borrar cuesta mas en las
+           palabras largas, asi que se descuenta de la espera. */
+        const CICLO = 7000;
         const cycle = async () => {
           const word = words[i];
+          const t0 = performance.now();
           await write(word);
-          await new Promise(r => setTimeout(r, 1150));
+          const gasto = (word.length * 46) + ((word.length + 1) * 26);
+          await new Promise(r => setTimeout(r, Math.max(400, CICLO - gasto)));
           await erase(word);
           i = (i + 1) % words.length;
           cycle();
