@@ -655,350 +655,376 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   </footer>
 
 </div>
-<script>
-/* Blob de plastilina, WebGL.
-   Deformacion por vertice en el vertex shader: ruido lento de base
-   (la masa "respira"), abolladura suave donde esta el puntero y
-   hendidura persistente donde se hizo click, que se relaja sola.
-   Decorativo: si algo falla, el hero queda intacto. */
-(function () {
-  var host = document.getElementById('blob');
-  if (!host) return;
-  if (window.matchMedia('(max-width:1100px)').matches) return;
-  if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+<script type="module">
+/* Logo de plasticina, flat-lay.
+   Geometria 2D extruida poco, camara casi cenital, luz difusa grande.
+   Las piezas no se tocan: el hueco entre ellas es lo que separa los
+   colores, y el AO vive ahi. Decorativo: si falla, la pagina sigue. */
+const PRESET = {
+  palette: { teal: '#2BA3C0', purple: '#8B3A9B', frame: '#1C1A1D' },
+  geometry: {
+    depth: 0.30, bevelThickness: 0.085, bevelSize: 0.085,
+    bevelSegments: 12, curveSegments: 32,
+    cornerRadius: 0.16,   // subir si se ve cortado con cuchillo
+    gap: 0.030,           // separacion entre piezas, el parametro clave
+    frameDepth: 0.46, frameWidth: 0.34, tileSize: 3.2, squircleN: 4.2
+  },
+  material: {
+    roughness: 0.86, metalness: 0.0,
+    clearcoat: 0.06, clearcoatRoughness: 0.85,
+    sheen: 0.35, sheenRoughness: 1.0,
+    normalScale: 0.30, envMapIntensity: 0.85
+  },
+  noise: { size: 512, coarse: 0.62, fine: 0.5, repeat: 0.42 },
+  camera: { fov: 19, position: [0.9, 28, 2.8], groupTilt: [-0.035, 0.02, 0.0] },
+  lights: { ambient: 0.55, softbox: 3.2, softboxPos: [-2.5, 8, 3], key: 0.9,
+            keyPos: [-4, 9, 4] },
+  post: { exposure: 1.05 }
+};
 
-  // WebGL disponible?
+const host = document.getElementById('blob');
+if (host &&
+    !window.matchMedia('(max-width:1100px)').matches &&
+    !window.matchMedia('(prefers-reduced-motion:reduce)').matches) {
   try {
-    var probe = document.createElement('canvas');
-    if (!(probe.getContext('webgl') || probe.getContext('experimental-webgl'))) return;
+    const probe = document.createElement('canvas');
+    if (probe.getContext('webgl2') || probe.getContext('webgl')) boot();
+  } catch (e) { /* sin webgl, la pagina funciona igual */ }
+}
+
+async function boot() {
+  let THREE;
+  try {
+    THREE = await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js');
   } catch (e) { return; }
 
-  var load = function (src) {
-    return new Promise(function (res, rej) {
-      var t = document.createElement('script');
-      t.src = src; t.onload = res; t.onerror = rej;
-      document.head.appendChild(t);
+  /* --- normal map procedural: abolladuras grandes + grano de huella --- */
+  function clayNormalMap(o, repeatOverride) {
+    const size = o.size, c = document.createElement('canvas');
+    c.width = c.height = size;
+    const ctx = c.getContext('2d'), img = ctx.createImageData(size, size);
+    const rnd = (x, y) => {
+      const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+      return n - Math.floor(n);
+    };
+    const smooth = (x, y, s) => {
+      const xi = Math.floor(x * s), yi = Math.floor(y * s);
+      const xf = x * s - xi, yf = y * s - yi;
+      const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+      const a = rnd(xi, yi), b = rnd(xi + 1, yi);
+      const cc = rnd(xi, yi + 1), d = rnd(xi + 1, yi + 1);
+      return a * (1 - u) * (1 - v) + b * u * (1 - v) + cc * (1 - u) * v + d * u * v;
+    };
+    const h = new Float32Array(size * size);
+    for (let y = 0; y < size; y++)
+      for (let x = 0; x < size; x++)
+        h[y * size + x] = smooth(x / size, y / size, 8) * o.coarse +
+                          smooth(x / size, y / size, 48) * o.fine;
+    for (let y = 0; y < size; y++)
+      for (let x = 0; x < size; x++) {
+        const i = (y * size + x) * 4;
+        const l = h[y * size + ((x - 1 + size) % size)];
+        const r = h[y * size + ((x + 1) % size)];
+        const u2 = h[((y - 1 + size) % size) * size + x];
+        const d2 = h[((y + 1) % size) * size + x];
+        let nx = (l - r) * 2, ny = (u2 - d2) * 2, nz = 1;
+        const len = Math.hypot(nx, ny, nz);
+        img.data[i]     = (nx / len * 0.5 + 0.5) * 255;
+        img.data[i + 1] = (ny / len * 0.5 + 0.5) * 255;
+        img.data[i + 2] = (nz / len * 0.5 + 0.5) * 255;
+        img.data[i + 3] = 255;
+      }
+    ctx.putImageData(img, 0, 0);
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    const rp = repeatOverride || o.repeat;
+    tex.repeat.set(rp, rp);
+    return tex;
+  }
+
+  /* --- poligono con esquinas redondeadas: la plasticina no tiene puntas --- */
+  function roundedShape(pts, r) {
+    const n = pts.length;
+    const v = (i) => new THREE.Vector2(...pts[(i + n) % n]);
+    const shape = new THREE.Shape();
+    for (let i = 0; i < n; i++) {
+      const p0 = v(i - 1), p1 = v(i), p2 = v(i + 1);
+      const d0 = new THREE.Vector2().subVectors(p0, p1);
+      const d2 = new THREE.Vector2().subVectors(p2, p1);
+      const r0 = Math.min(r, d0.length() * 0.45);
+      const r2 = Math.min(r, d2.length() * 0.45);
+      const a = p1.clone().addScaledVector(d0.normalize(), r0);
+      const b = p1.clone().addScaledVector(d2.normalize(), r2);
+      i === 0 ? shape.moveTo(a.x, a.y) : shape.lineTo(a.x, a.y);
+      shape.quadraticCurveTo(p1.x, p1.y, b.x, b.y);
+    }
+    shape.closePath();
+    return shape;
+  }
+
+  /* superelipse: el cuadrado del logo, con el redondeo de su SVG */
+  function squirclePoints(size, n = 4.2, seg = 120) {
+    const pts = [];
+    for (let i = 0; i < seg; i++) {
+      const t = (i / seg) * Math.PI * 2;
+      const c = Math.cos(t), s = Math.sin(t);
+      pts.push([
+        Math.sign(c) * Math.pow(Math.abs(c), 2 / n) * size,
+        Math.sign(s) * Math.pow(Math.abs(s), 2 / n) * size
+      ]);
+    }
+    return pts;
+  }
+
+  function extrudeClay(shape, g, depth) {
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth: depth || g.depth, bevelEnabled: true,
+      bevelThickness: g.bevelThickness, bevelSize: g.bevelSize, bevelOffset: 0,
+      bevelSegments: g.bevelSegments, curveSegments: g.curveSegments
     });
-  };
+    geo.rotateX(-Math.PI / 2);
+    geo.computeVertexNormals();
+    return geo;
+  }
 
-  var start = function (host, opt) {
+  /* encoge hacia el centroide para abrir el hueco entre piezas */
+  function shrink(pts, gap) {
+    const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
+    const cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+    return pts.map(([x, y]) => {
+      const dx = x - cx, dy = y - cy, l = Math.hypot(dx, dy) || 1;
+      return [x - (dx / l) * gap, y - (dy / l) * gap];
+    });
+  }
+
+  function frameShape(g) {
+    const outer = roundedShape(squirclePoints(g.tileSize + g.frameWidth, g.squircleN), 0.02);
+    const inner = new THREE.Path(
+      squirclePoints(g.tileSize, g.squircleN).map(([x, y]) => new THREE.Vector2(x, y))
+    );
+    inner.closePath();
+    outer.holes.push(inner);
+    return outer;
+  }
+
+  /* material de plasticina: mate, con velo graso y SSS de borde */
+  function clayMaterial(color, over, sssColor, normalRepeat) {
+    const M = Object.assign({}, PRESET.material, over || {});
+    const mat = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color(color),
+      roughness: M.roughness, metalness: M.metalness,
+      clearcoat: M.clearcoat, clearcoatRoughness: M.clearcoatRoughness,
+      sheen: M.sheen, sheenRoughness: M.sheenRoughness,
+      normalMap: clayNormalMap(PRESET.noise, normalRepeat),
+      normalScale: new THREE.Vector2(M.normalScale, M.normalScale),
+      envMapIntensity: M.envMapIntensity
+    });
+    const u = {
+      uSSSColor: { value: new THREE.Color(sssColor || color) },
+      uSSSIntensity: { value: 0.13 }, uSSSPower: { value: 3.0 }
+    };
+    mat.onBeforeCompile = (sh) => {
+      Object.assign(sh.uniforms, u);
+      sh.fragmentShader = sh.fragmentShader
+        .replace('void main() {',
+          'uniform vec3 uSSSColor;uniform float uSSSIntensity;uniform float uSSSPower;\nvoid main() {')
+        .replace('#include <opaque_fragment>',
+          'float clayFres = 1.0 - abs(dot(normalize(vNormal), normalize(vViewPosition)));\n' +
+          'outgoingLight += uSSSColor * pow(clayFres, uSSSPower) * uSSSIntensity;\n' +
+          '#include <opaque_fragment>');
+    };
+    mat.customProgramCacheKey = () => 'clay-' + color;
+    return mat;
+  }
+
+  /* Los tres triangulos del logo, en coordenadas del tile (-1..1).
+     Tomados del SVG de marca. */
+  const TRIS = [
+    [[-0.62, 0.86], [0.02, 0.86], [0.02, 0.30]],
+    [[0.24, 0.80], [0.94, 0.24], [0.94, -0.12], [0.18, -0.02]],
+    [[-0.78, -0.12], [0.40, -0.68], [-0.78, -1.00]]
+  ];
+
+  function build(host, opt) {
     opt = opt || {};
-    var W = host.clientWidth, H = host.clientHeight;
+    const W = host.clientWidth, H = host.clientHeight;
     if (!W || !H) return;
+    const g = Object.assign({}, PRESET.geometry);
+    if (opt.lo) { g.bevelSegments = 6; g.curveSegments = 16; }
+    const S = g.tileSize;
 
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
-    camera.position.z = opt.zoom || 7.4;
+    const scene = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(PRESET.camera.fov, W / H, 1, 60);
+    cam.position.set(...(opt.camPos || PRESET.camera.position));
+    cam.lookAt(0, 0, 0);
 
-    var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(W, H);
+    // Sin AO en post (necesitaria bundler), la sombra suave es lo unico
+    // que oscurece las juntas entre piezas. Es el efecto dominante.
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    // Neutral, no ACES: ACES apaga los morados y cianes saturados
+    renderer.toneMapping = THREE.NeutralToneMapping || THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = PRESET.post.exposure;
     host.appendChild(renderer.domElement);
 
-    // hasta 4 hendiduras vivas a la vez
-    var MAX = 4;
-    var dents = [];
-    for (var i = 0; i < MAX; i++) dents.push({ p: new THREE.Vector3(), s: 0 });
+    const group = new THREE.Group();
+    group.rotation.set(...PRESET.camera.groupTilt);
+    scene.add(group);
 
-    var uniforms = {
-      uTime:     { value: 0 },
-      uPointer:  { value: new THREE.Vector3(999, 999, 999) },
-      uPress:    { value: 0 },
-      uDentPos:  { value: dents.map(function (d) { return d.p; }) },
-      uDentStr:  { value: dents.map(function () { return 0; }) },
-      uTeal:     { value: new THREE.Color('#3FAEC6') },
-      uPurple:   { value: new THREE.Color('#83389B') },
-      uInk:      { value: new THREE.Color('#232226') }
-    };
+    // marco oscuro que sobresale
+    const frame = new THREE.Mesh(
+      extrudeClay(frameShape(g), g, g.frameDepth),
+      clayMaterial(PRESET.palette.frame, { roughness: 0.92 }, '#3a2b3d')
+    );
+    frame.castShadow = true; frame.receiveShadow = true;
+    group.add(frame);
 
-    var vert = [
-      'uniform float uTime;',
-      'uniform vec3 uPointer;',
-      'uniform float uPress;',
-      'uniform vec3 uDentPos[' + MAX + '];',
-      'uniform float uDentStr[' + MAX + '];',
-      'varying vec3 vNormal;',
-      'varying vec3 vPos;',
-      'varying float vDent;',
-      'varying vec3 vWorld;',
-      'varying float vRidge;',
-      // ruido simplex 3D, Ashima
-      'vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}',
-      'vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}',
-      'vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}',
-      'vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}',
-      'float snoise(vec3 v){',
-      '  const vec2 C=vec2(1.0/6.0,1.0/3.0); const vec4 D=vec4(0.0,0.5,1.0,2.0);',
-      '  vec3 i=floor(v+dot(v,C.yyy)); vec3 x0=v-i+dot(i,C.xxx);',
-      '  vec3 g=step(x0.yzx,x0.xyz); vec3 l=1.0-g;',
-      '  vec3 i1=min(g.xyz,l.zxy); vec3 i2=max(g.xyz,l.zxy);',
-      '  vec3 x1=x0-i1+C.xxx; vec3 x2=x0-i2+C.yyy; vec3 x3=x0-D.yyy;',
-      '  i=mod289(i);',
-      '  vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));',
-      '  float n_=0.142857142857; vec3 ns=n_*D.wyz-D.xzx;',
-      '  vec4 j=p-49.0*floor(p*ns.z*ns.z);',
-      '  vec4 x_=floor(j*ns.z); vec4 y_=floor(j-7.0*x_);',
-      '  vec4 x=x_*ns.x+ns.yyyy; vec4 y=y_*ns.x+ns.yyyy; vec4 h=1.0-abs(x)-abs(y);',
-      '  vec4 b0=vec4(x.xy,y.xy); vec4 b1=vec4(x.zw,y.zw);',
-      '  vec4 s0=floor(b0)*2.0+1.0; vec4 s1=floor(b1)*2.0+1.0; vec4 sh=-step(h,vec4(0.0));',
-      '  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy; vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;',
-      '  vec3 p0=vec3(a0.xy,h.x); vec3 p1=vec3(a0.zw,h.y); vec3 p2=vec3(a1.xy,h.z); vec3 p3=vec3(a1.zw,h.w);',
-      '  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));',
-      '  p0*=norm.x; p1*=norm.y; p2*=norm.z; p3*=norm.w;',
-      '  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0); m=m*m;',
-      '  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));',
-      '}',
-      'void main(){',
-      '  vNormal = normal; vPos = position;',
-      // masa que respira, lento
-      '  float breathe = snoise(position*0.65 + uTime*0.16) * 0.115;',
-      '  breathe += snoise(position*1.7 + uTime*0.1) * 0.035;',
-      // abolladura blanda bajo el puntero
-      '  float d = distance(position, uPointer);',
-      '  float press = smoothstep(2.1, 0.0, d) * uPress * 0.62;',
-      // hendiduras persistentes del click
-      '  float dent = 0.0;',
-      '  float ridge = 0.0;',
-      '  for (int i = 0; i < ' + MAX + '; i++) {',
-      '    float dd = distance(position, uDentPos[i]);',
-      '    float core = smoothstep(0.95, 0.0, dd);',
-      // crestas de la yema: anillos dentro de la huella
-      '    float lines = sin(dd * 26.0) * 0.5 + 0.5;',
-      '    ridge += lines * core * uDentStr[i];',
-      // borde levantado, la masa se desplaza hacia afuera
-      '    float lip = smoothstep(1.35, 0.95, dd) * smoothstep(0.7, 1.05, dd);',
-      '    dent += (core - lip * 0.55) * uDentStr[i];',
-      '  }',
-      '  vDent = dent;',
-      '  vRidge = ridge;',
-      '  float disp = breathe - press - dent * 0.62 + ridge * 0.035;',
-      '  vec3 pos = position + normal * disp;',
-      '  vec4 wp = modelMatrix * vec4(pos,1.0);',
-      '  vWorld = wp.xyz;',
-      '  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos,1.0);',
-      '}'
-    ].join('\n');
+    // loseta base turquesa
+    const base = new THREE.Mesh(
+      extrudeClay(roundedShape(squirclePoints(S - 0.02, g.squircleN), 0.02), g),
+      clayMaterial(PRESET.palette.teal, null, '#5fd0e6')
+    );
+    base.position.y = 0.06;
+    base.castShadow = true; base.receiveShadow = true;
+    group.add(base);
 
-    var frag = [
-      'uniform vec3 uTeal; uniform vec3 uPurple; uniform vec3 uInk;',
-      'uniform float uTime;',
-      'varying vec3 vNormal; varying vec3 vPos; varying float vDent;',
-      'varying vec3 vWorld; varying float vRidge;',
-      // ruido de valor, barato, para grano y huellas
-      'float hash(vec3 p){ p=fract(p*0.3183099+vec3(0.71,0.113,0.419)); p*=17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }',
-      'float vnoise(vec3 x){',
-      '  vec3 p=floor(x); vec3 f=fract(x); f=f*f*(3.0-2.0*f);',
-      '  return mix(mix(mix(hash(p+vec3(0,0,0)),hash(p+vec3(1,0,0)),f.x),',
-      '                 mix(hash(p+vec3(0,1,0)),hash(p+vec3(1,1,0)),f.x),f.y),',
-      '             mix(mix(hash(p+vec3(0,0,1)),hash(p+vec3(1,0,1)),f.x),',
-      '                 mix(hash(p+vec3(0,1,1)),hash(p+vec3(1,1,1)),f.x),f.y),f.z);',
-      '}',
-      'float fbm(vec3 p){',
-      '  float v=0.0, a=0.5;',
-      '  for(int i=0;i<5;i++){ v+=a*vnoise(p); p*=2.03; a*=0.5; }',
-      '  return v;',
-      '}',
-      'void main(){',
-      '  vec3 n = normalize(vNormal);',
-      // --- relieve: grano fino + huellas de dedo, perturban la normal ---
-      '  float grain = fbm(vPos*4.5);',
-      '  float prints = fbm(vPos*3.2 + 11.3);',
-      '  float bumps = grain*0.35 + prints*0.65;',
-      // gradiente del ruido para inclinar la normal, da relieve real
-      '  float e = 0.09;',
-      '  float bx = fbm(vec3(vPos.x+e,vPos.y,vPos.z)*9.0) - fbm(vec3(vPos.x-e,vPos.y,vPos.z)*9.0);',
-      '  float by = fbm(vec3(vPos.x,vPos.y+e,vPos.z)*9.0) - fbm(vec3(vPos.x,vPos.y-e,vPos.z)*9.0);',
-      '  float bz = fbm(vec3(vPos.x,vPos.y,vPos.z+e)*9.0) - fbm(vec3(vPos.x,vPos.y,vPos.z-e)*9.0);',
-      '  n = normalize(n + vec3(bx,by,bz)*0.22);',
-      // --- color: plastilina amasada, las vetas no se mezclan del todo ---
-      '  vec3 sp = vec3(vPos.x*0.55, vPos.y*2.4, vPos.z*0.55);',
-      '  float knead = fbm(sp*0.85 + vec3(0.0, uTime*0.025, 0.0));',
-      '  float swirl = fbm(sp*1.5 + knead*3.1);',
-      '  float band = smoothstep(0.40, 0.62, swirl);',
-      '  vec3 base = mix(uTeal, uTeal*1.04, band);',
-      // tres triangulos morados de la marca, solo en la cara que mira al frente
-      '  vec2 q = vPos.xy;',
-      // triangulo por interseccion de tres semiplanos, con rotacion
-      '  float tri = 0.0;',
-      '  vec2 p1 = q - vec2(-0.52, 0.62);',
-      '  float a1 = -0.5;',
-      '  p1 = mat2(cos(a1),-sin(a1),sin(a1),cos(a1)) * p1;',
-      '  float t1 = min(min(p1.y + 0.17, 0.30 - p1.y*0.5 - p1.x*0.87), 0.30 - p1.y*0.5 + p1.x*0.87);',
-      '  tri = max(tri, smoothstep(0.0, 0.055, t1));',
-      '  vec2 p2 = q - vec2(0.58, 0.06);',
-      '  float a2 = 2.3;',
-      '  p2 = mat2(cos(a2),-sin(a2),sin(a2),cos(a2)) * p2;',
-      '  float t2 = min(min(p2.y + 0.20, 0.35 - p2.y*0.5 - p2.x*0.87), 0.35 - p2.y*0.5 + p2.x*0.87);',
-      '  tri = max(tri, smoothstep(0.0, 0.055, t2));',
-      '  vec2 p3 = q - vec2(-0.14, -0.62);',
-      '  float a3 = 3.9;',
-      '  p3 = mat2(cos(a3),-sin(a3),sin(a3),cos(a3)) * p3;',
-      '  float t3 = min(min(p3.y + 0.19, 0.33 - p3.y*0.5 - p3.x*0.87), 0.33 - p3.y*0.5 + p3.x*0.87);',
-      '  tri = max(tri, smoothstep(0.0, 0.055, t3));',
-      '  float face = smoothstep(0.15, 0.55, vNormal.z);',
-      '  base = mix(base, uPurple, tri * face * 0.92);',
-      // grumos mas claros, masa sin amasar del todo
-      '  base = mix(base, base*1.07, smoothstep(0.5,0.9,prints));',
-      // --- luz: mate, difusa, casi sin especular ---
-      '  vec3 L1 = normalize(vec3(-0.45, 0.9, 0.55));',
-      '  vec3 L2 = normalize(vec3(0.7, -0.3, 0.4));',
-      '  float d1 = max(dot(n,L1),0.0);',
-      '  float d2 = max(dot(n,L2),0.0)*0.30;',
-      // wrap lighting: la luz envuelve, tipico de material subsuperficial
-      '  float wrap = (d1*0.5+0.5)*0.82 + d2;',
-      '  vec3 col = base * wrap;',
-      // oclusion en los valles del grano, lo que da aspecto de masa
-      '  col *= 0.96 + 0.04*smoothstep(0.2,0.8,bumps);',
-      // --- hendidura: mas oscura y comprimida ---
-      '  float dentMask = clamp(vDent,0.0,1.0);',
-      '  col = mix(col, col*0.52, dentMask*0.80);',
-      '  col *= 1.0 - vRidge * 0.16;',
-      '  col = mix(col, uInk, dentMask*0.20);',
-      // --- especular ancho y debil: plastilina brilla poco y disperso ---
-      '  vec3 V = normalize(cameraPosition - vWorld);',
-      '  vec3 H = normalize(L1 + V);',
-      '  float spec = pow(max(dot(n,H),0.0), 8.0) * 0.20;',
-      '  spec += pow(max(dot(n,H),0.0), 40.0) * 0.10;',
-      '  spec *= (1.0 - dentMask*0.75);',
-      '  col += spec;',
-      // borde apenas iluminado
-      '  float rim = pow(1.0 - max(dot(n,V),0.0), 3.2);',
-      '  col += rim * 0.09;',
-      '  gl_FragColor = vec4(col, 1.0);',
-      '}'
-    ].join('\n');
-
-    // Forma del logo: cuadrado de esquinas muy redondeadas, extruido.
-    // Se subdivide fino porque la deformacion es por vertice.
-    var shape = new THREE.Shape();
-    (function (w, r) {
-      var h = w;
-      shape.moveTo(-w + r, -h);
-      shape.lineTo(w - r, -h);
-      shape.quadraticCurveTo(w, -h, w, -h + r);
-      shape.lineTo(w, h - r);
-      shape.quadraticCurveTo(w, h, w - r, h);
-      shape.lineTo(-w + r, h);
-      shape.quadraticCurveTo(-w, h, -w, h - r);
-      shape.lineTo(-w, -h + r);
-      shape.quadraticCurveTo(-w, -h, -w + r, -h);
-    })(1.55, 0.62);
-
-    var geo = new THREE.ExtrudeGeometry(shape, {
-      depth: 1.15, bevelEnabled: true, bevelThickness: 0.42,
-      bevelSize: 0.38, bevelSegments: 14, curveSegments: 46, steps: 6
+    // triangulos morados, separados de la base por el gap
+    const tris = [];
+    TRIS.forEach((pts, i) => {
+      const scaled = pts.map(([x, y]) => [x * S, y * S]);
+      const geo = extrudeClay(roundedShape(shrink(scaled, g.gap * S * 0.5), g.cornerRadius * S * 0.16), g);
+      const m = new THREE.Mesh(geo, clayMaterial(PRESET.palette.purple, null, '#c07ad4'));
+      m.position.y = 0.06 + 0.16 + (i % 2) * 0.012;   // z desigual, no perfecto
+      m.rotation.y = (i % 2 ? 1 : -1) * 0.007;        // jitter
+      m.castShadow = true; m.receiveShadow = true;
+      group.add(m);
+      tris.push(m);
     });
-    geo.center();
-    geo = geo.toNonIndexed();
-    geo.computeVertexNormals();
-    var mat = new THREE.ShaderMaterial({
-      uniforms: uniforms, vertexShader: vert, fragmentShader: frag
-    });
-    var mesh = new THREE.Mesh(geo, mat);
-    scene.add(mesh);
 
-    // --- puntero ---
-    var ray = new THREE.Raycaster();
-    var ndc = new THREE.Vector2();
-    var pressTarget = 0, pressNow = 0;
-    var cv = renderer.domElement;
+    // luz: softbox cenital grande, casi sin specular
+    scene.add(new THREE.AmbientLight(0xffffff, PRESET.lights.ambient));
+    const key = new THREE.DirectionalLight(0xffffff, PRESET.lights.key);
+    key.position.set(...PRESET.lights.keyPos);
+    key.castShadow = true;
+    key.shadow.mapSize.set(opt.lo ? 1024 : 2048, opt.lo ? 1024 : 2048);
+    key.shadow.camera.left = -6; key.shadow.camera.right = 6;
+    key.shadow.camera.top = 6; key.shadow.camera.bottom = -6;
+    key.shadow.camera.near = 1; key.shadow.camera.far = 30;
+    key.shadow.bias = -0.0006; key.shadow.normalBias = 0.02;
+    key.shadow.radius = 4;
+    scene.add(key);
+    // segunda luz cenital para que las juntas tengan sombra propia
+    const top = new THREE.DirectionalLight(0xffffff, 0.55);
+    top.position.set(1.2, 12, 2.4);
+    top.castShadow = true;
+    top.shadow.mapSize.set(opt.lo ? 1024 : 2048, opt.lo ? 1024 : 2048);
+    top.shadow.camera.left = -6; top.shadow.camera.right = 6;
+    top.shadow.camera.top = 6; top.shadow.camera.bottom = -6;
+    top.shadow.camera.near = 1; top.shadow.camera.far = 30;
+    top.shadow.bias = -0.0006; top.shadow.normalBias = 0.02;
+    top.shadow.radius = 3;
+    scene.add(top);
 
-    function hit(ev) {
-      var r = cv.getBoundingClientRect();
-      ndc.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
-      ndc.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
-      ray.setFromCamera(ndc, camera);
-      var h = ray.intersectObject(mesh);
-      return h.length ? h[0].point.clone() : null;
+    // entorno: el softbox que da el highlight ancho
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envScene = new THREE.Scene();
+    envScene.background = new THREE.Color('#efe9e0');
+    const box = new THREE.Mesh(
+      new THREE.PlaneGeometry(14, 14),
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+    box.position.set(...PRESET.lights.softboxPos);
+    box.lookAt(0, 0, 0);
+    envScene.add(box);
+    scene.environment = pmrem.fromScene(envScene, 0.05).texture;
+
+    // --- huella al tocar ---
+    const dents = [];
+    const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+    const cv = renderer.domElement;
+    const targets = [base].concat(tris);
+    const bases = new Map();
+    targets.forEach((m) => bases.set(m, m.geometry.attributes.position.array.slice()));
+
+    if (!opt.deco) {
+      cv.addEventListener('pointerdown', (ev) => {
+        const r = cv.getBoundingClientRect();
+        ndc.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
+        ndc.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+        ray.setFromCamera(ndc, cam);
+        const h = ray.intersectObjects(targets);
+        if (!h.length) return;
+        const mesh = h[0].object;
+        dents.push({ mesh, p: mesh.worldToLocal(h[0].point.clone()), s: 1 });
+        if (dents.length > 4) dents.shift();
+      });
     }
 
-    if (!opt.deco) cv.addEventListener('pointermove', function (ev) {
-      var p = hit(ev);
-      if (p) { uniforms.uPointer.value.copy(p); pressTarget = 1; }
-      else pressTarget = 0;
-    });
-    if (!opt.deco) cv.addEventListener('pointerleave', function () { pressTarget = 0; });
+    function applyDents() {
+      targets.forEach((mesh) => {
+        const mine = dents.filter((d) => d.mesh === mesh);
+        const pos = mesh.geometry.attributes.position;
+        const a = pos.array, b = bases.get(mesh);
+        for (let i = 0; i < a.length; i += 3) {
+          let oy = 0;
+          for (const d of mine) {
+            const dx = b[i] - d.p.x, dz = b[i + 2] - d.p.z;
+            const dist = Math.hypot(dx, dz);
+            if (dist > 0.9) continue;
+            let f = Math.max(0, 1 - dist / 0.9);
+            oy -= f * f * (3 - 2 * f) * d.s * 0.19;
+          }
+          a[i] = b[i]; a[i + 1] = b[i + 1] + oy; a[i + 2] = b[i + 2];
+        }
+        pos.needsUpdate = true;
+        mesh.geometry.computeVertexNormals();
+      });
+    }
 
-    // click: hendidura que queda y se relaja sola
-    var slot = 0;
-    if (!opt.deco) cv.addEventListener('pointerdown', function (ev) {
-      var p = hit(ev);
-      if (!p) return;
-      var d = dents[slot % MAX];
-      d.p.copy(p); d.s = 1.0;
-      slot++;
-      if (window.gsap) {
-        gsap.fromTo(mesh.scale, { x: 0.955, y: 0.955, z: 0.955 },
-          { x: 1, y: 1, z: 1, duration: 1.15, ease: 'elastic.out(1,0.42)' });
-      }
-    });
-
-    // --- loop ---
-    var clock = new THREE.Clock();
-    var raf;
-    function tick() {
+    let raf, dirty = false;
+    function tick(now) {
       raf = requestAnimationFrame(tick);
-      var t = clock.getElapsedTime();
-      uniforms.uTime.value = t;
-
-      pressNow += (pressTarget - pressNow) * 0.11;
-      uniforms.uPress.value = pressNow;
-
-      // la plastilina recupera forma despacio
-      for (var i = 0; i < MAX; i++) {
-        if (dents[i].s > 0.001) dents[i].s *= 0.992;
-        uniforms.uDentStr.value[i] = dents[i].s;
+      const t = (now || 0) * 0.001;
+      let live = false;
+      for (let k = dents.length - 1; k >= 0; k--) {
+        dents[k].s *= 0.987;
+        if (dents[k].s < 0.02) dents.splice(k, 1); else live = true;
       }
-
-      var ph = opt.phase || 0;
-      mesh.rotation.y = Math.sin(t * 0.22 + ph) * 0.42 + 0.18;
-      mesh.rotation.x = Math.sin(t * 0.17 + ph) * 0.20;
-      renderer.render(scene, camera);
+      if (live || dirty) { applyDents(); dirty = live; }
+      const ph = opt.phase || 0;
+      group.rotation.y = PRESET.camera.groupTilt[1] + Math.sin(t * 0.16 + ph) * 0.10;
+      group.rotation.x = PRESET.camera.groupTilt[0] + Math.sin(t * 0.13 + ph) * 0.035;
+      renderer.render(scene, cam);
     }
-    tick();
+    tick(0);
     host.classList.add('ready');
 
-    // pausar fuera de pantalla, no quemar bateria
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (es) {
-        es.forEach(function (e) {
-          if (e.isIntersecting) { if (!raf) tick(); }
-          else { cancelAnimationFrame(raf); raf = null; }
-        });
-      }).observe(host);
+      new IntersectionObserver((es) => es.forEach((e) => {
+        if (e.isIntersecting) { if (!raf) tick(0); }
+        else { cancelAnimationFrame(raf); raf = null; }
+      })).observe(host);
     }
-
-    var rt;
-    window.addEventListener('resize', function () {
+    let rt;
+    window.addEventListener('resize', () => {
       clearTimeout(rt);
-      rt = setTimeout(function () {
-        var w = host.clientWidth, h = host.clientHeight;
+      rt = setTimeout(() => {
+        const w = host.clientWidth, h = host.clientHeight;
         if (!w || !h) return;
-        camera.aspect = w / h; camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
+        cam.aspect = w / h; cam.updateProjectionMatrix(); renderer.setSize(w, h);
       }, 160);
     });
-  };
+  }
 
-  var boot = function () {
-    load('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js')
-      .then(function () {
-        return load('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js')
-          .catch(function () {}); // gsap es opcional
-      })
-      .then(function () {
-        start(host, {});
-        var decos = document.querySelectorAll('.svc-deco');
-        for (var i = 0; i < decos.length; i++) {
-          start(decos[i], { deco: true, lo: true, zoom: 6.6, phase: 1.4 * (i + 1) });
-        }
-      })
-      .catch(function () { /* sin blob, el hero funciona igual */ });
-  };
-
-  if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 2600 });
-  else setTimeout(boot, 1200);
-})();
+  build(host, {});
+  document.querySelectorAll('.svc-deco').forEach((el, i) => {
+    build(el, { deco: true, lo: true, phase: 1.4 * (i + 1), camPos: [0.8, 31, 2.6] });
+  });
+}
 </script>
 </body>
 
