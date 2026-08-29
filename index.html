@@ -1085,22 +1085,32 @@ if (!REDUCE) {
           return prev ? prev.chars : [];
         };
 
-        const write = async (word) => {
-          for (let n = 1; n <= word.length; n++) {
-            const chars = render(word.slice(0, n));
-            const last = chars[chars.length - 1];
-            if (last) animate(last,
-              { opacity: [0, 1], filter: ['blur(5px)', 'blur(0px)'] },
-              { duration: .18, ease: 'easeOut' });
-            await new Promise(r => setTimeout(r, 68));
-          }
-        };
+        /* scramble: cada letra pasa por caracteres al azar antes de
+           asentarse. Las que ya cayeron se quedan quietas, asi que la
+           palabra se resuelve de izquierda a derecha. */
+        const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>_$#*';
+        const rnd = () => POOL[(Math.random() * POOL.length) | 0];
 
-        const erase = async (word) => {
-          for (let n = word.length; n >= 0; n--) {
-            render(word.slice(0, n));
-            await new Promise(r => setTimeout(r, 32));
+        const write = async (word) => {
+          const total = word.length;
+          for (let n = 1; n <= total; n++) {
+            /* lo resuelto + una cabeza de tres letras revueltas */
+            const head = word.slice(0, n);
+            const tail = Array.from(
+              { length: Math.min(3, total - n) }, rnd).join('');
+            const chars = render(head + tail);
+            /* la ultima fija entra con desenfoque; las revueltas van tenues */
+            chars.forEach((c, k) => {
+              if (k === n - 1) {
+                animate(c, { opacity: [0, 1], filter: ['blur(5px)', 'blur(0px)'] },
+                  { duration: .16, ease: 'easeOut' });
+              } else if (k >= n) {
+                c.style.opacity = '.45';
+              }
+            });
+            await new Promise(r => setTimeout(r, 62));
           }
+          render(word);
         };
 
         const cycle = async () => {
