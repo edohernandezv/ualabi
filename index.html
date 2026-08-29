@@ -471,6 +471,68 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
 .hero .pad{position:relative;z-index:2}
 @media(max-width:1000px){.hero-mark{display:none}}
 
+/* ---------- TEXTURA Y DESVIACION ----------
+   La perfeccion geometrica es lo que delata una plantilla. Estas
+   reglas meten grano, rotaciones de fracciones de grado y trazos
+   con temblor: nada que se note al mirar, todo que se nota al leer. */
+
+/* grano de papel sobre toda la pagina */
+body::after{
+  content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;
+  opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+@media(prefers-color-scheme:dark){body::after{mix-blend-mode:screen;opacity:.035}}
+
+/* los bloques no estan perfectamente a escuadra */
+.block{transform:rotate(var(--skew,0deg))}
+main>section:nth-of-type(1){--skew:-.12deg}
+main>section:nth-of-type(2){--skew:.09deg}
+main>section:nth-of-type(3){--skew:-.07deg}
+main>section:nth-of-type(4){--skew:.11deg}
+.hero{--skew:.05deg}
+
+/* las tarjetas de trabajo tampoco */
+.bento article:nth-child(1){transform:rotate(-.15deg)}
+.bento article:nth-child(2){transform:rotate(.2deg)}
+.bento article:nth-child(3){transform:rotate(-.1deg)}
+.bento article:hover{transform:translateY(-3px) rotate(0deg)}
+
+/* las tarjetas terminal, con su propia inclinacion */
+.svc-list .card:nth-child(odd){transform:rotate(-.1deg)}
+.svc-list .card:nth-child(even){transform:rotate(.13deg)}
+
+/* subrayado del titular: trazo con temblor, no un rectangulo */
+.hl{background:none;padding:0 .06em;position:relative;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hl::after{
+  content:"";position:absolute;left:-.02em;right:-.02em;bottom:.04em;height:.34em;
+  background:color-mix(in srgb, #3FAEC6 42%, transparent);
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 22' preserveAspectRatio='none'%3E%3Cpath d='M2 15 C 44 9, 88 17, 132 12 S 214 8, 258 14 S 288 12, 298 9 L 298 20 C 250 17, 200 21, 150 18 S 60 21, 2 19 Z' fill='%23000'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 22' preserveAspectRatio='none'%3E%3Cpath d='M2 15 C 44 9, 88 17, 132 12 S 214 8, 258 14 S 288 12, 298 9 L 298 20 C 250 17, 200 21, 150 18 S 60 21, 2 19 Z' fill='%23000'/%3E%3C/svg%3E");
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;
+  mix-blend-mode:multiply;pointer-events:none;
+}
+@media(prefers-color-scheme:dark){.hl::after{mix-blend-mode:screen}}
+.on-dark .hl::after{background:color-mix(in srgb, #3FAEC6 62%, transparent)}
+
+/* separador entre secciones: linea dibujada, no un border */
+.rule{display:block;width:100%;height:14px;margin:var(--sp-m) 0;
+  opacity:.28;color:var(--on-surface)}
+
+@media(prefers-reduced-motion:reduce){
+  .block,.bento article,.svc-list .card{transform:none}
+}
+
+/* dato circulado a mano, como quien marca lo que importa */
+.circled{position:relative;white-space:nowrap}
+.circled::after{
+  content:"";position:absolute;left:-.35em;right:-.35em;top:-.28em;bottom:-.3em;
+  border:1.8px solid color-mix(in srgb, #83389B 62%, transparent);
+  border-radius:52% 48% 49% 51% / 58% 42% 56% 44%;
+  transform:rotate(-1.4deg);pointer-events:none;
+}
+
 /* ---------- ENTRADA ---------- */
 /* El contenido es visible por defecto. La animacion solo desplaza:
    si no corre (impresion, PDF, captura headless), el texto sigue ahi.
@@ -579,6 +641,11 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
     </div>
   </div>
 
+  <svg class="rule" viewBox="0 0 1200 14" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M4 8 C 160 4, 300 11, 470 7 S 760 3, 930 9 S 1120 6, 1196 8"
+          fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </svg>
+
   <!-- TRABAJO -->
   <section id="trabajo" class="block block-paper">
     <div class="pad">
@@ -594,7 +661,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
         <div class="body">
           <p class="tag">Producto digital, UX/UI</p>
           <h3>Plataforma de gestión para clientes corporativos</h3>
-          <p>Rediseñamos el flujo de atención de una operación B2B. El piloto de autoatención bajó el tiempo de espera promedio de 42 a 12 minutos.</p>
+          <p>Rediseñamos el flujo de atención de una operación B2B. El piloto de autoatención bajó el tiempo de espera promedio de <span class="circled">42 a 12 minutos</span>.</p>
           <div class="kind"><a class="btn btn-sm" href="#contacto">Ver caso de estudio</a></div>
         </div>
       </article>
