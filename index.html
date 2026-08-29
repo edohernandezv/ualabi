@@ -19,8 +19,9 @@
    Superficies claras separadas por hairlines. El color de marca
    entra como velo de fondo por seccion y como acento en detalle,
    nunca como superficie plena.
-   Paleta: tinta 232226, morado 83389B, turquesa 3FAEC6,
-   arena E4DBD2, crema F6F0EA.
+   Paleta: solo los cuatro colores del logo. Tinta 232226, morado
+   83389B, turquesa 3FAEC6 y la crema F6F0EA de fondo. Todo lo demas
+   son velos de esos mismos, mezclados contra blanco.
    Tipografia: dos familias. Archivo variable para display y
    Azeret Mono para todo lo demas, cuerpo incluido: la pagina vende
    ingenieria, y los parrafos son cortos, asi que la mono aguanta.
@@ -29,7 +30,6 @@
   /* marca, en OKLCH: chroma controlada, mismo matiz que el hex */
   --ink:oklch(20.5% .012 305);          /* #232226 */
   --purple:oklch(43.5% .175 313);       /* #83389B */
-  --purple-lift:oklch(56% .175 313);    /* morado que respira sobre tinta */
   --teal:oklch(72% .098 218);           /* #3FAEC6 */
   --teal-deep:oklch(46% .078 218);      /* acento sobre superficie tenida: 4.5:1 */
   /* Velos de marca. Se mezclan en sRGB contra blanco: en OKLCH el
@@ -39,9 +39,7 @@
   --tint-purple-soft:color-mix(in srgb, #83389B 9%, #FFFFFF);
   --purple-deep:oklch(40% .16 313);     /* morado legible como texto */
   --accent:var(--teal-deep);            /* cada bloque redefine el suyo */
-  --sand:oklch(88.5% .019 76);          /* #E4DBD2 */
-  --amber:oklch(84% .155 88);           /* acento, no esta en el logo */
-  --on-amber:oklch(20.5% .012 305);
+  --wash:color-mix(in srgb, #3FAEC6 12%, #FFFFFF);  /* superficie de hover */
   --cream:oklch(95.8% .012 85);         /* #F6F0EA */
 
   --surface:var(--cream);
@@ -84,8 +82,7 @@
     --surface:oklch(17.5% .012 305);
     --on-surface:var(--cream);
     --paper:oklch(24% .014 305);
-    --sand:oklch(30% .018 76);
-    --amber:oklch(78% .15 88);
+    --wash:color-mix(in srgb, #3FAEC6 16%, #232226);
     --line:oklch(99% .006 85);
     --ink:oklch(13% .01 305);
     --on-sand:var(--cream);
@@ -94,7 +91,6 @@
     --tint-teal:color-mix(in srgb, #3FAEC6 14%, #232226);
     --tint-purple:color-mix(in srgb, #83389B 18%, #232226);
     --tint-purple-soft:color-mix(in srgb, #83389B 9%, #232226);
-    --purple-lift:oklch(68% .15 313);
   }
 }
 
@@ -115,7 +111,7 @@ body{
 }
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%;height:auto}
-:focus-visible{outline:3px solid var(--purple-lift);outline-offset:3px}
+:focus-visible{outline:3px solid var(--purple-deep);outline-offset:3px}
 .skip{position:absolute;left:-9999px}
 /* visible solo para lectores de pantalla */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
@@ -152,11 +148,11 @@ h1,h2,h3,.display{
   font-size:1.35rem;letter-spacing:-.03em;margin-right:auto;display:flex;align-items:center;gap:11px}
 .brand .mark{flex-shrink:0;display:block}
 .brand span{display:flex}
-.brand b{color:var(--purple-lift)}
+.brand b{color:var(--purple-deep)}
 .nav-links{display:flex;align-items:center;gap:2px}
 .nav-links a{padding:11px 16px;border-radius:var(--r-pill);font-size:.875rem;font-weight:600;
   transition:background .18s var(--ease),color .18s var(--ease)}
-.nav-links a:hover{background:var(--sand)}
+.nav-links a:hover{background:var(--wash)}
 .nav .cta{padding:13px 24px;border-radius:var(--r-pill);background:var(--ink);color:var(--cream);
   font-weight:500;font-size:.875rem;white-space:nowrap;border:var(--bw) solid var(--line);
   transition:background .18s var(--ease),transform .12s var(--ease)}
@@ -174,7 +170,7 @@ h1,h2,h3,.display{
   background:var(--paper);border:var(--bw) solid var(--line);border-radius:var(--r-sm);
   padding:8px;display:grid;gap:2px;z-index:120}
 .menu-panel a{padding:13px 16px;border-radius:12px;font-weight:600;font-size:.9375rem}
-.menu-panel a:hover{background:var(--sand)}
+.menu-panel a:hover{background:var(--wash)}
 @media(max-width:1000px){
   .nav{padding-left:16px}
   .nav-links{display:none}
@@ -254,7 +250,7 @@ h1{font-size:var(--t-mono);font-weight:500;
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(1px)}
 .btn-light{background:var(--paper);color:var(--on-surface)}
-.btn-light:hover{background:var(--sand)}
+.btn-light:hover{background:var(--wash)}
 .btn::after{content:"\2197";font-size:1em;line-height:1}
 
 /* fila de sellos del hero */
@@ -289,7 +285,7 @@ h1{font-size:var(--t-mono);font-weight:500;
 .bento article:hover{transform:translateY(-4px)}
 .bento .lead{grid-row:span 2}
 .bento .tint{background:var(--surface)}
-.bento .shot{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--sand);
+.bento .shot{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--wash);
   border-bottom:var(--bw) solid var(--line)}
 .bento .lead .shot{aspect-ratio:16/11}
 .bento .body{padding:var(--sp-l);display:flex;flex-direction:column;flex:1;
@@ -352,7 +348,7 @@ h1{font-size:var(--t-mono);font-weight:500;
 .people{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-m)}
 .people figure{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
   background:var(--paper);display:flex;flex-direction:column}
-.people img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--sand);
+.people img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--wash);
   border-bottom:var(--bw) solid var(--line)}
 .people .q{padding:var(--sp-l);display:flex;flex-direction:column;flex:1}
 .people blockquote{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 84;
@@ -446,7 +442,7 @@ h1{font-size:var(--t-mono);font-weight:500;
 
 /* boton compacto dentro de tarjetas */
 .btn-sm{padding:11px 20px;font-size:.8125rem;background:var(--paper);color:var(--on-surface)}
-.btn-sm:hover{background:var(--sand)}
+.btn-sm:hover{background:var(--wash)}
 
 
 /* sufijo CL del wordmark */
