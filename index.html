@@ -110,6 +110,9 @@ a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%;height:auto}
 :focus-visible{outline:3px solid var(--purple-lift);outline-offset:3px}
 .skip{position:absolute;left:-9999px}
+/* visible solo para lectores de pantalla */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .skip:focus{left:12px;top:12px;z-index:10000;background:var(--ink);color:var(--cream);padding:14px 22px;border-radius:var(--r-pill)}
 
 /* display: Archivo condensado por eje de ancho */
@@ -568,6 +571,38 @@ main>section:nth-of-type(4){--skew:.11deg}
   font-size:.75rem;font-weight:400;opacity:.32;margin-left:2px;
 }
 
+/* ---------- CTA COMO TERMINAL ----------
+   La pregunta pasa a ser un prompt. Sin backend, lo que escriben
+   viaja precargado en el mailto: no se simula un envio que no existe. */
+.term{border:var(--bw) solid color-mix(in srgb,#F6F0EA 22%,transparent);
+  border-radius:12px;overflow:hidden;max-width:62ch;margin-top:var(--sp-l)}
+.term-bar{display:flex;align-items:center;gap:7px;padding:9px 13px;
+  border-bottom:var(--bw) solid color-mix(in srgb,#F6F0EA 16%,transparent);
+  background:color-mix(in srgb,#F6F0EA 5%,transparent)}
+.term-bar i{width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  border:1px solid color-mix(in srgb,#F6F0EA 32%,transparent)}
+.term-bar span{font-family:'Azeret Mono',ui-monospace,monospace;
+  font-size:.6875rem;opacity:.45;margin-left:5px;letter-spacing:.02em}
+.term-body{padding:clamp(18px,2.2vw,26px)}
+.term-line{display:flex;align-items:flex-start;gap:10px;
+  font-family:'Azeret Mono',ui-monospace,monospace;font-size:.9375rem;line-height:1.6}
+.term-line::before{content:"$";opacity:.5;flex-shrink:0;padding-top:2px}
+.term-input{flex:1;background:none;border:0;padding:0;resize:none;
+  font:inherit;color:inherit;min-height:4.8em;outline:none}
+.term-input::placeholder{color:currentColor;opacity:.55}
+.term-foot{display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+  margin-top:16px;padding-top:14px;
+  border-top:var(--bw) solid color-mix(in srgb,#F6F0EA 14%,transparent)}
+.term-send{display:inline-flex;align-items:center;gap:9px;cursor:pointer;
+  background:var(--cream);color:var(--ink);border:0;
+  padding:13px 24px;border-radius:var(--r-pill);
+  font-family:inherit;font-size:.9375rem;font-weight:500;
+  transition:transform .12s var(--ease)}
+.term-send:hover{transform:translateY(-2px)}
+.term-send:active{transform:translateY(1px)}
+.term-hint{font-family:'Azeret Mono',ui-monospace,monospace;
+  font-size:.75rem;opacity:.5;letter-spacing:.02em}
+
 /* ---------- SERVICIOS EN BENTO ----------
    El intro ocupa una celda, no una columna entera: antes dejaba
    unos 700px vacios mientras las tarjetas bajaban por la derecha.
@@ -736,8 +771,8 @@ main>section:nth-of-type(4){--skew:.11deg}
   <!-- HERO -->
   <header class="block block-sky hero">
     <div class="pad">
-      <p class="kicker rise">Le ayudamos con</p>
-      <h1 class="rise" aria-label="Le ayudamos con innovación, ingeniería y tecnología"><span class="type" data-words="Innovación,Ingeniería,Tecnología" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret"></span></span></h1>
+      <p class="kicker rise">Trabajamos en</p>
+      <h1 class="rise" aria-label="Trabajamos en innovación, ingeniería y tecnología"><span class="type" data-words="Innovación,Ingeniería,Tecnología" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret"></span></span></h1>
       <p class="lede rise">Automatizar un proceso roto <span class="hl">lo rompe más rápido</span>. Entendemos el proceso antes de meterle IA, y el equipo interno queda capaz de sostener lo que construimos.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">Conversemos</a>
@@ -921,10 +956,22 @@ main>section:nth-of-type(4){--skew:.11deg}
     <div class="pad">
       <p class="kicker">Hablemos de su próximo paso</p>
       <h2>¿Tienen un <span class="hl">desafío</span> de producto, procesos o IA?</h2>
-      <div class="cta-row" data-reveal>
-        <a class="btn btn-light" href="mailto:hola@ualabi.cl?subject=Conversaci%C3%B3n%20inicial%20con%20ualabi&amp;body=Cu%C3%A9ntenos%20brevemente%3A%0A%0AEmpresa%3A%0ADesaf%C3%ADo%3A%0APlazo%20estimado%3A%0A">Escribir a hola@ualabi.cl</a>
-        <p class="cta-note">La primera conversación no tiene costo.</p>
-      </div>
+      <form class="term" data-reveal id="prompt">
+        <div class="term-bar" aria-hidden="true">
+          <i></i><i></i><i></i><span>ualabi — nuevo proyecto</span>
+        </div>
+        <div class="term-body">
+          <label class="term-line" for="q">
+            <span class="sr-only">Cuéntenos qué necesita</span>
+            <textarea class="term-input" id="q" name="q" rows="3"
+              placeholder="Tenemos un proceso de aprobaciones que toma tres semanas y nadie sabe por qué…"></textarea>
+          </label>
+          <div class="term-foot">
+            <button class="term-send" type="submit">Enviar &#8599;</button>
+            <span class="term-hint">Abre su correo. La primera conversación no tiene costo.</span>
+          </div>
+        </div>
+      </form>
     </div>
   </section>
 
@@ -985,6 +1032,22 @@ main>section:nth-of-type(4){--skew:.11deg}
 
 </div>
 <script>
+/* El prompt del CTA abre el correo con lo escrito. Sin backend no hay
+   envio real, asi que no se finge uno: se delega al cliente de correo. */
+(function () {
+  var f = document.getElementById('prompt');
+  if (!f) return;
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var q = (f.querySelector('#q').value || '').trim();
+    var body = q ? q + '\n\n---\nEmpresa:\nPlazo estimado:\n'
+                 : 'Cuéntenos brevemente:\n\nEmpresa:\nDesafío:\nPlazo estimado:\n';
+    window.location.href = 'mailto:hola@ualabi.cl'
+      + '?subject=' + encodeURIComponent('Nuevo proyecto con ualabi')
+      + '&body=' + encodeURIComponent(body);
+  });
+})();
+
 /* Escritura en terminal del hero. El HTML ya trae la primera palabra,
    asi que sin JS o con reduced-motion el titular queda completo. */
 (function () {
