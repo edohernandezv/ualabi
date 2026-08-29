@@ -659,15 +659,11 @@ main>section:nth-of-type(4){--skew:.11deg}
 /* ---------- HERO: ESCRITURA EN TERMINAL ----------
    La palabra se escribe y se borra en bucle. El texto inicial esta en
    el HTML: si el script no corre, el titular sigue completo. */
-.type{display:inline-flex;align-items:baseline;white-space:nowrap}
+.type{display:inline-block;white-space:nowrap}
+.type-out{display:inline-block}
+/* cada letra entra por separado: las envuelve animejs/text */
+.type-out .letter{display:inline-block;will-change:transform,opacity}
 .type-out{color:var(--accent)}
-.caret{display:inline-block;width:.06em;min-width:3px;height:.82em;
-  background:currentColor;margin-left:.08em;opacity:.65;
-  align-self:center;flex-shrink:0}
-@media(prefers-reduced-motion:no-preference){
-  .caret{animation:caret 1s steps(1) infinite}
-  @keyframes caret{0%,100%{opacity:.65}50%{opacity:0}}
-}
 
 /* ---------- MOVIMIENTO ----------
    Reveal progresivo al entrar en viewport y apilado de secciones al
@@ -769,7 +765,7 @@ main>section:nth-of-type(4){--skew:.11deg}
   <header class="block block-sky hero">
     <div class="pad">
       <p class="kicker rise">Trabajamos en</p>
-      <h1 class="rise" aria-label="Trabajamos en innovación, ingeniería y tecnología"><span class="type" data-words="Innovación,Ingeniería,Tecnología" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret"></span></span></h1>
+      <h1 class="rise" aria-label="Trabajamos en innovación, ingeniería y tecnología"><span class="type" data-words="Innovación,Ingeniería,Tecnología" aria-hidden="true"><span class="type-out">Innovación</span></span></h1>
       <p class="lede rise">Automatizar un proceso roto <span class="hl">lo rompe más rápido</span>. Entendemos el proceso antes de meterle IA.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">Conversemos</a>
@@ -1034,8 +1030,12 @@ main>section:nth-of-type(4){--skew:.11deg}
 const REDUCE = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 if (!REDUCE) {
   try {
-    const { animate, scroll, inView, stagger, hover } =
+    const { animate, scroll, scrollInfo, inView, stagger, hover } =
       await import('https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm');
+    /* animejs solo por su modulo de texto: 12.8 KB, no el paquete
+       completo de 120 KB. Es lo unico que Motion no trae. */
+    const { split } =
+      await import('https://cdn.jsdelivr.net/npm/animejs@4.5.0/text/+esm');
 
     const EASE = [0.16, 1, 0.3, 1];
 
@@ -1053,21 +1053,36 @@ if (!REDUCE) {
         { duration: .55, ease: EASE, delay: stagger(0.07) });
     }, { margin: '0px 0px -10% 0px', amount: 0.12 });
 
-    /* 2. Hero que se escribe. El HTML trae la primera palabra. */
+    /* 2. El titular se ensambla letra por letra y rota entre las tres
+       palabras. Cada letra entra por separado, asi que la palabra se
+       arma en vez de aparecer de golpe. */
     const type = document.querySelector('.type');
     if (type) {
       const out = type.querySelector('.type-out');
       const words = (type.dataset.words || '').split(',').filter(Boolean);
       if (out && words.length > 1) {
-        let i = 0, ch = words[0].length, dir = -1;
-        const step = () => {
-          ch += dir;
-          if (ch < 0) { dir = 1; ch = 0; i = (i + 1) % words.length; }
-          else if (ch > words[i].length) { dir = -1; ch = words[i].length; }
-          out.textContent = words[i].slice(0, ch);
-          setTimeout(step, ch === words[i].length && dir === -1 ? 1500 : (dir > 0 ? 70 : 35));
+        let i = 0, prev = null;
+        const show = (word) => {
+          /* split() deja un span oculto con el texto original para
+             lectores de pantalla. Hay que revertirlo antes de volver a
+             dividir, o cada vuelta acumula una copia mas. */
+          if (prev) prev.revert();
+          out.textContent = word;
+          prev = split(out, { chars: { class: 'letter' } });
+          animate(prev.chars,
+            { opacity: [0, 1], y: [-14, 0], filter: ['blur(6px)', 'blur(0px)'] },
+            { duration: .5, ease: [0.16, 1, 0.3, 1], delay: stagger(0.035) });
+          return prev.chars;
         };
-        setTimeout(step, 1400);
+        const cycle = () => {
+          const chars = show(words[i]);
+          setTimeout(() => {
+            animate(chars, { opacity: 0, y: 10 },
+              { duration: .3, ease: 'easeIn', delay: stagger(0.018) })
+              .then(() => { i = (i + 1) % words.length; cycle(); });
+          }, 2400);
+        };
+        setTimeout(cycle, 900);
       }
     }
 
@@ -1112,6 +1127,19 @@ if (!REDUCE) {
       animate(el, { y: -4 }, { type: 'spring', stiffness: 320, damping: 24 });
       return () => animate(el, { y: 0 }, { type: 'spring', stiffness: 320, damping: 26 });
     });
+
+    /* 6. El hero se desvanece y sube mientras se scrollea: marca la
+       transicion del titular a la pagina en vez de cortarla seco. */
+    const hero = document.querySelector('.hero .pad');
+    if (hero) {
+      scroll(
+        (p) => {
+          hero.style.opacity = String(1 - Math.min(p * 1.35, 1));
+          hero.style.transform = `translateY(${p * -46}px)`;
+        },
+        { target: document.querySelector('.hero'), offset: ['start start', 'end start'] }
+      );
+    }
 
   } catch (e) {
     /* sin Motion la pagina queda quieta y completa */
