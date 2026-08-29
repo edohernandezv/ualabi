@@ -1113,6 +1113,19 @@ if (!REDUCE) {
           render(word);
         };
 
+        /* borrado: la palabra se deshace en caracteres al azar antes
+           de vaciarse, igual que se resolvio al escribirse. */
+        const erase = async (word) => {
+          for (let n = word.length; n >= 0; n--) {
+            const head = word.slice(0, n);
+            const tail = Array.from(
+              { length: Math.min(2, word.length - n) }, rnd).join('');
+            const chars = render(head + tail);
+            chars.forEach((c, k) => { if (k >= n) c.style.opacity = '.45'; });
+            await new Promise(r => setTimeout(r, 26));
+          }
+        };
+
         const cycle = async () => {
           const word = words[i];
           await write(word);
