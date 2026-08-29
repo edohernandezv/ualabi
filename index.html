@@ -34,12 +34,12 @@
   --teal-deep:oklch(46% .078 218);      /* acento sobre superficie tenida: 4.5:1 */
   /* Velos de marca. Se mezclan en sRGB contra blanco: en OKLCH el
      matiz calido de la crema arrastraba el turquesa hacia el verde. */
-  --tint-teal:color-mix(in srgb, #3FAEC6 20%, #FFFFFF);
-  --tint-purple:color-mix(in srgb, #83389B 16%, #FFFFFF);
-  --tint-purple-soft:color-mix(in srgb, #83389B 9%, #FFFFFF);
+  --tint-teal:color-mix(in srgb, #3FAEC6 42%, #FFFFFF);
+  --tint-purple:color-mix(in srgb, #83389B 38%, #FFFFFF);
+  --tint-purple-soft:color-mix(in srgb, #83389B 22%, #FFFFFF);
   --purple-deep:oklch(40% .16 313);     /* morado legible como texto */
   --accent:var(--teal-deep);            /* cada bloque redefine el suyo */
-  --wash:color-mix(in srgb, #3FAEC6 12%, #FFFFFF);  /* superficie de hover */
+  --wash:color-mix(in srgb, #3FAEC6 26%, #FFFFFF);  /* superficie de hover */
   --cream:oklch(95.8% .012 85);         /* #F6F0EA */
 
   --surface:var(--cream);
@@ -82,15 +82,15 @@
     --surface:oklch(17.5% .012 305);
     --on-surface:var(--cream);
     --paper:oklch(24% .014 305);
-    --wash:color-mix(in srgb, #3FAEC6 16%, #232226);
+    --wash:color-mix(in srgb, #3FAEC6 22%, #232226);
     --line:oklch(99% .006 85);
     --ink:oklch(13% .01 305);
     --on-sand:var(--cream);
     --teal-deep:var(--teal);
     --purple-deep:oklch(72% .14 313);
-    --tint-teal:color-mix(in srgb, #3FAEC6 14%, #232226);
-    --tint-purple:color-mix(in srgb, #83389B 18%, #232226);
-    --tint-purple-soft:color-mix(in srgb, #83389B 9%, #232226);
+    --tint-teal:color-mix(in srgb, #3FAEC6 22%, #232226);
+    --tint-purple:color-mix(in srgb, #83389B 26%, #232226);
+    --tint-purple-soft:color-mix(in srgb, #83389B 15%, #232226);
   }
 }
 
@@ -190,10 +190,10 @@ h1,h2,h3,.display{
      cruzaba turquesa con morado y en la zona de mezcla no ganaba
      ninguno: salia un gris que no esta en la paleta. */
   background:
-    radial-gradient(105% 80% at 78% 10%,
+    radial-gradient(112% 88% at 76% 8%,
       var(--tint-teal) 0%,
-      color-mix(in srgb, #3FAEC6 8%, #FFFFFF) 46%,
-      var(--cream) 78%),
+      color-mix(in srgb, #3FAEC6 24%, #FFFFFF) 52%,
+      var(--cream) 88%),
     var(--cream);
   color:var(--ink);
 }
