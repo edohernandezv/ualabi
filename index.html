@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Public+Sans:wght@400;500;600&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Geist+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Geist+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    ualabi — maximalismo estructural
@@ -45,25 +45,25 @@
   --on-sand:var(--ink);
 
   --line:var(--ink);
-  --bw:3px;                              /* borde estructural */
-  --bw-lg:4px;
+  --bw:1.5px;                            /* hairline, no marco grueso */
+  --bw-lg:2px;
 
-  --r:28px;                              /* radio grande, sticker */
-  --r-sm:16px;
+  --r:18px;                              /* radio contenido */
+  --r-sm:12px;
   --r-pill:999px;
 
   /* escala de espaciado: cuatro pasos, nada fuera de aqui */
   --sp-s:clamp(10px,1.4vw,16px);
   --sp-m:clamp(16px,2vw,22px);
-  --sp-l:clamp(26px,3.4vw,44px);
-  --sp-xl:clamp(40px,5.5vw,72px);
+  --sp-l:clamp(30px,4vw,56px);
+  --sp-xl:clamp(56px,7vw,104px);
   --gutter:clamp(18px,4vw,56px);
   /* escala 1.28, fluida 360 -> 1600 */
   --s-fluid:clamp(0rem,(100vw - 22.5rem)/56,1rem);
   --t-s:calc(1.1rem  + var(--s-fluid)*.42);
   --t-m:calc(1.45rem + var(--s-fluid)*.95);
-  --t-l:calc(2rem    + var(--s-fluid)*2.1);
-  --t-xl:calc(2.9rem + var(--s-fluid)*4.3);
+  --t-l:calc(1.7rem  + var(--s-fluid)*1.3);
+  --t-xl:calc(2.4rem + var(--s-fluid)*2.6);
   --v:clamp(40px,7vw,104px);
   --nav-h:4.5rem;
   --ease:cubic-bezier(.22,1,.36,1);
@@ -104,18 +104,19 @@ img{display:block;max-width:100%;height:auto}
 /* display: Archivo condensado por eje de ancho */
 h1,h2,h3,.display{
   font-family:'Archivo',system-ui,sans-serif;
-  font-variation-settings:'wdth' 78;
-  font-weight:800;letter-spacing:-.025em;line-height:.94;text-wrap:balance;
+  font-variation-settings:'wdth' 92;
+  font-weight:700;letter-spacing:-.02em;line-height:1.04;text-wrap:balance;
 }
-.label{
-  font-family:'Archivo',system-ui,sans-serif;font-variation-settings:'wdth' 100;
-  text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;font-weight:700;
+.label,.kicker,.tag,.step,.svc-num,.date,.foot-grid h4,.legal,.strip-track span,.brand .cl{
+  font-family:'Geist Mono',ui-monospace,SFMono-Regular,monospace;
+  font-variation-settings:normal;
 }
+.label{text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:500}
 
 /* highlight invertido, el gesto de la referencia */
-.hl{background:var(--ink);color:var(--cream);padding:0 .22em .06em;border-radius:10px;
-    box-decoration-break:clone;-webkit-box-decoration-break:clone}
-.on-dark .hl{background:var(--cream);color:var(--ink)}
+.hl{background:linear-gradient(transparent 62%, color-mix(in oklch,var(--teal) 42%,transparent) 0);
+  padding:0 .04em}
+.on-dark .hl{background:linear-gradient(transparent 62%, color-mix(in oklch,var(--teal) 55%,transparent) 0)}
 
 .frame{max-width:1560px;margin:0 auto;padding:0 clamp(10px,1.6vw,22px) clamp(10px,1.6vw,22px)}
 
@@ -135,10 +136,10 @@ h1,h2,h3,.display{
 .nav-links a{padding:11px 16px;border-radius:var(--r-pill);font-size:.875rem;font-weight:600;
   transition:background .18s var(--ease),color .18s var(--ease)}
 .nav-links a:hover{background:var(--sand)}
-.nav .cta{padding:14px 26px;border-radius:var(--r-pill);background:var(--purple);color:var(--cream);
-  font-weight:700;font-size:.875rem;white-space:nowrap;border:var(--bw) solid var(--line);
+.nav .cta{padding:13px 24px;border-radius:var(--r-pill);background:var(--ink);color:var(--cream);
+  font-weight:500;font-size:.875rem;white-space:nowrap;border:var(--bw) solid var(--line);
   transition:background .18s var(--ease),transform .12s var(--ease)}
-.nav .cta:hover{background:var(--ink)}
+.nav .cta:hover{background:var(--purple)}
 .nav .cta:active{transform:translateY(2px)}
 .menu{display:none;position:relative}
 .menu summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;
@@ -163,39 +164,26 @@ h1,h2,h3,.display{
 /* ---------- BLOQUE: la unidad estructural ---------- */
 .block{position:relative;border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
   margin-bottom:var(--sp-m)}
-.block-purple{background:var(--purple);color:var(--on-purple)}
+.block-purple{background:var(--paper)}
 /* El hero no es un color plano: lleva un degradado suave del celeste
    de marca y una malla tenue que le da sustrato al blob. */
 .block-sky{
   background:
-    radial-gradient(120% 92% at 76% 16%,
-      color-mix(in oklch, var(--teal) 58%, white) 0%,
-      color-mix(in oklch, var(--teal) 30%, white) 26%,
-      color-mix(in oklch, var(--teal) 12%, white) 44%,
-      transparent 62%),
-    radial-gradient(95% 85% at 6% 94%,
-      color-mix(in oklch, var(--purple) 24%, transparent) 0%,
-      color-mix(in oklch, var(--purple) 10%, transparent) 34%,
-      transparent 64%),
-    var(--teal);
+    radial-gradient(115% 85% at 76% 14%,
+      color-mix(in oklch, var(--teal) 14%, transparent) 0%,
+      color-mix(in oklch, var(--teal) 5%, transparent) 42%,
+      transparent 66%),
+    var(--paper);
   color:var(--ink);
 }
 .block-sky::after{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-  opacity:.035;mix-blend-mode:overlay;
+  opacity:.025;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.block-sky::before{
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
-  background-image:
-    linear-gradient(color-mix(in oklch,var(--ink) 8%,transparent) 1px,transparent 1px),
-    linear-gradient(90deg,color-mix(in oklch,var(--ink) 8%,transparent) 1px,transparent 1px);
-  background-size:52px 52px;
-  mask-image:radial-gradient(100% 80% at 30% 40%,#000 20%,transparent 75%);
-}
-.block-teal{background:var(--teal);color:var(--on-teal)}
+.block-teal{background:var(--paper)}
 .block-ink{background:var(--ink);color:var(--on-ink)}
-.block-sand{background:var(--sand);color:var(--on-sand)}
+.block-sand{background:var(--paper)}
 .block-paper{background:var(--paper)}
 .pad{padding:clamp(26px,4.5vw,64px)}
 /* el titular de seccion alinea con el contenido de los bloques */
@@ -213,14 +201,14 @@ h1,h2,h3,.display{
 /* ---------- HERO ---------- */
 .hero{position:relative}
 .hero .pad{padding-block:clamp(52px,7.5vw,104px)}
-h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
-  letter-spacing:-.035em;line-height:.9;max-width:17ch}
+h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
+  letter-spacing:-.028em;line-height:1.02;max-width:19ch}
 .lede{font-size:clamp(1.05rem,.98rem + .62vw,1.4rem);line-height:1.45;max-width:52ch;
   margin-top:clamp(20px,2.6vw,30px);opacity:.92}
 .hero-cta{margin-top:clamp(26px,3.6vw,40px);display:flex;flex-wrap:wrap;gap:12px}
 .btn{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:var(--cream);
-  padding:16px 30px;border:var(--bw) solid var(--line);border-radius:var(--r-pill);
-  font-weight:700;font-size:.9375rem;white-space:nowrap;
+  padding:15px 28px;border:var(--bw) solid var(--line);border-radius:var(--r-pill);
+  font-weight:500;font-size:.9375rem;white-space:nowrap;
   transition:transform .12s var(--ease),background .18s var(--ease)}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(1px)}
@@ -236,13 +224,13 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .seal b{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 88;font-weight:900}
 
 /* ---------- MARQUEE ---------- */
-.strip{background:var(--ink);color:var(--cream);overflow:hidden;
-  border:var(--bw) solid var(--line);border-radius:var(--r-pill);
+.strip{background:transparent;color:var(--on-surface);overflow:hidden;
+  border-block:var(--bw) solid color-mix(in oklch,var(--on-surface) 14%,transparent);border-radius:0;
   margin-bottom:var(--sp-m)}
 .strip-track{display:flex;gap:2.5rem;padding:14px 0 14px 2.5rem;white-space:nowrap;
   animation:slide 42s linear infinite;width:max-content}
 .strip-track span{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
-  text-transform:uppercase;letter-spacing:.09em;font-size:.8125rem;font-weight:700}
+  text-transform:none;letter-spacing:.02em;font-size:.75rem;font-weight:400;opacity:.62}
 @keyframes slide{to{transform:translateX(-50%)}}
 .strip:hover .strip-track,.strip:focus-within .strip-track{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
@@ -259,7 +247,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   transition:transform .22s var(--ease)}
 .bento article:hover{transform:translateY(-4px)}
 .bento .lead{grid-row:span 2}
-.bento .tint{background:var(--teal);color:var(--on-teal)}
+.bento .tint{background:var(--surface)}
 .bento .shot{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--sand);
   border-bottom:var(--bw) solid var(--line)}
 .bento .lead .shot{aspect-ratio:16/11}
@@ -270,9 +258,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .bento p{margin-top:12px;font-size:.9375rem;line-height:1.55;max-width:48ch;opacity:.88}
 .bento .kind{margin-top:clamp(20px,2.4vw,28px);display:inline-flex;align-self:flex-start}
 .bento .lead .kind{margin-top:auto;padding-top:24px}
-.bento .kind span{background:var(--ink);color:var(--cream);border-radius:var(--r-pill);
-  padding:7px 15px;font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
-  text-transform:uppercase;letter-spacing:.07em;font-size:.6875rem;font-weight:700}
+
 .bento .tint .kind span{background:var(--paper);color:var(--ink)}
 @media(max-width:920px){.bento{grid-template-columns:1fr}.bento .lead{grid-row:auto}}
 
@@ -283,15 +269,14 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .svc-intro p{margin-top:16px;font-size:1.0625rem;line-height:1.55;max-width:38ch;opacity:.9}
 .svc-list{display:grid;gap:var(--sp-s)}
 .svc-item{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
-.svc-num{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 88;font-weight:900;
-  font-size:1.5rem;line-height:1;background:var(--amber);color:var(--on-amber);
-  width:56px;height:56px;display:grid;place-items:center;border-radius:16px;flex-shrink:0;
-  border:var(--bw) solid var(--line)}
+.svc-num{font-size:.8125rem;font-weight:500;line-height:1.6;color:var(--teal-deep);
+  letter-spacing:.06em;width:auto;flex-shrink:0;padding-top:.2em}
 .svc-item h3{font-size:var(--t-s)}
 .svc-item p{margin-top:9px;font-size:.9375rem;line-height:1.55;max-width:52ch;opacity:.9}
 .tags{margin-top:13px;display:flex;flex-wrap:wrap;gap:7px}
-.tags span{background:var(--surface);border-radius:var(--r-pill);padding:7px 14px;
-  font-size:.75rem;font-weight:600;border:2px solid var(--line)}
+.tags span{font-family:'Geist Mono',ui-monospace,monospace;
+  background:transparent;border:var(--bw) solid color-mix(in oklch,var(--on-surface) 20%,transparent);
+  border-radius:var(--r-pill);padding:5px 12px;font-size:.6875rem;font-weight:400;opacity:.8}
 @media(max-width:920px){.svc{grid-template-columns:1fr}.svc-intro{position:static}.svc-intro p{max-width:60ch}}
 
 /* ---------- METODO: 4 pasos, color rotativo ---------- */
@@ -299,14 +284,14 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .method>div{border:var(--bw) solid var(--line);border-radius:var(--r);
   padding:clamp(26px,3vw,38px);display:flex;flex-direction:column;
   min-height:clamp(250px,26vw,320px);background:var(--paper)}
-.method>div:nth-child(1){background:var(--sand)}
-.method>div:nth-child(2){background:var(--teal);color:var(--on-teal)}
-.method>div:nth-child(3){background:var(--ink);color:var(--on-ink)}
-.method .step{display:inline-flex;align-self:flex-start;background:var(--ink);color:var(--cream);
-  border-radius:var(--r-pill);padding:6px 14px;
+.method>div:nth-child(1){background:var(--surface)}
+.method>div:nth-child(2){background:var(--surface)}
+.method>div:nth-child(3){background:var(--surface)}
+.method .step{display:inline-flex;align-self:flex-start;color:var(--teal-deep);
+  padding:0;
   font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
   text-transform:uppercase;letter-spacing:.08em;font-size:.6875rem;font-weight:700}
-.method>div:nth-child(3) .step{background:var(--cream);color:var(--ink)}
+
 .method h3{font-size:var(--t-m);margin-top:clamp(24px,3vw,40px);margin-bottom:14px;max-width:16ch}
 .method p{font-size:.9375rem;line-height:1.55;opacity:.9;margin-top:auto;padding-top:18px}
 @media(max-width:940px){.method{grid-template-columns:1fr}}
@@ -391,16 +376,15 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 
 /* ---------- FOOTER ---------- */
 .foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(22px,3vw,40px)}
-.foot-grid h4{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
-  text-transform:uppercase;letter-spacing:.09em;font-size:.75rem;font-weight:800;
-  margin-bottom:16px;opacity:.6}
+.foot-grid h4{text-transform:none;letter-spacing:.02em;font-size:.75rem;font-weight:400;
+  margin-bottom:18px;opacity:.55}
 .foot-grid ul{list-style:none;display:grid;gap:3px}
 .foot-grid li a{display:flex;align-items:center;min-height:40px;font-size:.9375rem;font-weight:500}
 .foot-grid li a:hover{text-decoration:underline;text-underline-offset:4px}
 .foot-grid li .pending{display:flex;align-items:center;min-height:40px;font-size:.9375rem;opacity:.5}
 @media(max-width:880px){.foot-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
-.legal{margin-top:clamp(30px,4vw,52px);padding-top:24px;
+.legal{font-size:.75rem;margin-top:var(--sp-l);padding-top:24px;
   border-top:2px solid color-mix(in oklch,currentColor 22%,transparent);
   display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
   font-size:.8125rem;opacity:.7}
@@ -413,15 +397,14 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .cta-block .kicker{margin-bottom:14px}
 
 /* etiqueta de categoria en tarjetas de trabajo */
-.tag{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
-  text-transform:uppercase;letter-spacing:.09em;font-size:.6875rem;font-weight:700;
-  margin-bottom:11px;opacity:.78}
-.tint .tag{opacity:1}
+.tag{text-transform:none;letter-spacing:.02em;font-size:.75rem;font-weight:400;
+  margin-bottom:12px;color:var(--teal-deep)}
+
 
 /* boton compacto dentro de tarjetas */
 .btn-sm{padding:11px 20px;font-size:.8125rem;background:var(--paper);color:var(--on-surface)}
 .btn-sm:hover{background:var(--sand)}
-.tint .btn-sm{background:var(--ink);color:var(--cream)}
+
 
 /* sufijo CL del wordmark */
 .brand .cl{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 100;
@@ -450,16 +433,13 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 @media(max-width:1100px){.svc-deco{display:none}}
 @media(prefers-reduced-motion:reduce){.svc-deco{display:none}}
 
-/* ---------- BLOB DE PLASTILINA ---------- */
-.blob{position:absolute;right:-4%;top:6%;width:42%;height:94%;
-  pointer-events:none;opacity:0;transition:opacity .8s var(--ease)}
-.blob.ready{opacity:1;pointer-events:auto}
-.blob canvas{display:block;width:100%;height:100%;cursor:grab}
-.blob canvas:active{cursor:grabbing}
+/* ---------- MARCA DEL HERO ---------- */
+.hero-mark{position:absolute;right:6%;top:50%;transform:translateY(-50%);
+  pointer-events:none;opacity:.95}
+.hero-mark svg{display:block;width:clamp(180px,17vw,260px);height:auto}
 .hero{position:relative;overflow:hidden}
 .hero .pad{position:relative;z-index:2}
-@media(max-width:1100px){.blob{display:none}}
-@media(prefers-reduced-motion:reduce){.blob{display:none}}
+@media(max-width:1000px){.hero-mark{display:none}}
 
 /* ---------- ENTRADA ---------- */
 /* El contenido es visible por defecto. La animacion solo desplaza:
@@ -544,7 +524,18 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
     </div>
     <!-- Blob de plastilina. Decorativo: si WebGL no carga, el hero
          funciona igual. Solo se monta en pantallas anchas. -->
-    <div class="blob" id="blob" aria-hidden="true"></div>
+    <div class="hero-mark" aria-hidden="true">
+      <svg viewBox="0 0 70 70" width="260" height="260">
+        <defs><clipPath id="hm"><rect width="70" height="70" rx="20"/></clipPath></defs>
+        <g clip-path="url(#hm)">
+          <rect width="70" height="70" rx="20" fill="#3FAEC6"/>
+          <path d="M30.7322 16.8095L14.6753 8.27192L30.0979 -1.36571L30.7322 16.8095Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+          <path d="M77.2627 30.7328L43.8024 39.6984L52.768 6.23783L77.2627 30.7328Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+          <path d="M13.893 78.8922L9.89265 33.1684L51.4915 52.5659L13.893 78.8922Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+        </g>
+        <rect x="1.5" y="1.5" width="67" height="67" rx="18.5" fill="none" stroke="#232226" stroke-width="3"/>
+      </svg>
+    </div>
   </header>
 
   <div class="strip">
@@ -605,8 +596,6 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
         <p>Cuatro líneas de trabajo. Se contratan juntas o por separado.</p>
       </div>
       <!-- Mismo modelo del hero, en chico. Decorativo. -->
-      <div class="svc-deco svc-d1" data-deco="1" aria-hidden="true"></div>
-      <div class="svc-deco svc-d2" data-deco="2" aria-hidden="true"></div>
       <div class="svc-list">
         <div class="card svc-item">
           <div class="svc-num" aria-hidden="true">01</div>
@@ -740,7 +729,6 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   </footer>
 
 </div>
-<script type="module" src="/src/main.jsx"></script>
 </body>
 
 </html>
