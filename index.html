@@ -74,6 +74,7 @@
   --t-m:calc(1.45rem + var(--s-fluid)*.95);
   --t-l:calc(1.7rem  + var(--s-fluid)*1.3);
   --t-xl:calc(2.4rem + var(--s-fluid)*2.6);
+  --t-mono:calc(2.5rem + var(--s-fluid)*3.1);  /* display en mono */
   --v:clamp(40px,7vw,104px);
   --nav-h:4.5rem;
   --ease:cubic-bezier(.22,1,.36,1);
@@ -238,8 +239,8 @@ h1,h2,h3,.display{
 /* ---------- HERO ---------- */
 .hero{position:relative}
 .hero .pad{padding-block:clamp(52px,7.5vw,104px)}
-h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
-  letter-spacing:-.028em;line-height:1.02;max-width:none}
+h1{font-size:var(--t-mono);font-weight:500;
+  letter-spacing:-.03em;line-height:1.1;max-width:none}
 .lede{font-size:clamp(1.05rem,.98rem + .62vw,1.4rem);line-height:1.45;max-width:58ch;
   margin-top:clamp(20px,2.6vw,30px);opacity:.92}
 .hero-cta{margin-top:clamp(26px,3.6vw,40px);display:flex;flex-wrap:wrap;gap:12px}
@@ -659,7 +660,12 @@ main>section:nth-of-type(4){--skew:.11deg}
 /* ---------- HERO: ESCRITURA EN TERMINAL ----------
    La palabra se escribe y se borra en bucle. El texto inicial esta en
    el HTML: si el script no corre, el titular sigue completo. */
-.type{display:inline-flex;align-items:baseline;white-space:nowrap}
+/* el titular que se escribe va en la mono: el gesto es de terminal,
+   la letra tambien. Archivo se queda para los titulos de seccion. */
+.type{display:inline-flex;align-items:baseline;white-space:nowrap;
+  font-family:'Azeret Mono',ui-monospace,SFMono-Regular,monospace;
+  font-variation-settings:normal;font-weight:500;
+  letter-spacing:-.03em}
 .caret{display:inline-block;width:.055em;min-width:3px;height:.78em;
   background:currentColor;margin-left:.09em;opacity:.6;align-self:center;flex-shrink:0}
 @media(prefers-reduced-motion:no-preference){
