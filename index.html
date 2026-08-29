@@ -777,7 +777,7 @@ main>section:nth-of-type(4){--skew:.11deg}
   <header class="block block-sky hero">
     <div class="pad">
       <p class="kicker rise">Trabajamos en</p>
-      <h1 class="rise" aria-label="Trabajamos en innovación, ingeniería y tecnología"><span class="type" data-words="Innovación,Ingeniería,Tecnología" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret" aria-hidden="true"></span></span></h1>
+      <h1 class="rise" aria-label="Trabajamos en diseño, innovación, ingeniería, tecnología e inteligencia artificial"><span class="type" data-words="Diseño,Innovación,Ingeniería,Tecnología,IA" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret" aria-hidden="true"></span></span></h1>
       <p class="lede rise">Automatizar un proceso roto <span class="hl">lo rompe más rápido</span>. Entendemos el proceso antes de meterle IA.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">Conversemos</a>
@@ -1108,7 +1108,7 @@ if (!REDUCE) {
                 c.style.opacity = '.45';
               }
             });
-            await new Promise(r => setTimeout(r, 62));
+            await new Promise(r => setTimeout(r, 46));
           }
           render(word);
         };
@@ -1116,7 +1116,7 @@ if (!REDUCE) {
         const cycle = async () => {
           const word = words[i];
           await write(word);
-          await new Promise(r => setTimeout(r, 1600));
+          await new Promise(r => setTimeout(r, 1150));
           await erase(word);
           i = (i + 1) % words.length;
           cycle();
