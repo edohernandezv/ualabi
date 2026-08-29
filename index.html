@@ -52,6 +52,11 @@
   --r-sm:16px;
   --r-pill:999px;
 
+  /* escala de espaciado: cuatro pasos, nada fuera de aqui */
+  --sp-s:clamp(10px,1.4vw,16px);
+  --sp-m:clamp(16px,2vw,22px);
+  --sp-l:clamp(26px,3.4vw,44px);
+  --sp-xl:clamp(40px,5.5vw,72px);
   --gutter:clamp(18px,4vw,56px);
   /* escala 1.28, fluida 360 -> 1600 */
   --s-fluid:clamp(0rem,(100vw - 22.5rem)/56,1rem);
@@ -119,7 +124,7 @@ h1,h2,h3,.display{
   position:sticky;top:clamp(10px,1.6vw,18px);z-index:100;
   display:flex;align-items:center;gap:8px;
   background:var(--paper);border:var(--bw) solid var(--line);border-radius:var(--r-pill);
-  padding:8px 8px 8px 22px;margin-bottom:clamp(14px,2vw,22px);min-height:var(--nav-h);
+  padding:8px 8px 8px 22px;margin-bottom:var(--sp-m);min-height:var(--nav-h);
 }
 .brand{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 86;font-weight:900;
   font-size:1.35rem;letter-spacing:-.03em;margin-right:auto;display:flex;align-items:center;gap:11px}
@@ -156,14 +161,33 @@ h1,h2,h3,.display{
 }
 
 /* ---------- BLOQUE: la unidad estructural ---------- */
-.block{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
-  margin-bottom:clamp(14px,2vw,22px)}
+.block{position:relative;border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
+  margin-bottom:var(--sp-m)}
 .block-purple{background:var(--purple);color:var(--on-purple)}
+/* El hero no es un color plano: lleva un degradado suave del celeste
+   de marca y una malla tenue que le da sustrato al blob. */
+.block-sky{
+  background:
+    radial-gradient(120% 90% at 78% 18%, color-mix(in oklch, var(--teal) 55%, white) 0%, transparent 58%),
+    radial-gradient(90% 80% at 8% 92%, color-mix(in oklch, var(--purple) 22%, transparent) 0%, transparent 60%),
+    var(--teal);
+  color:var(--ink);
+}
+.block-sky::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
+  background-image:
+    linear-gradient(color-mix(in oklch,var(--ink) 8%,transparent) 1px,transparent 1px),
+    linear-gradient(90deg,color-mix(in oklch,var(--ink) 8%,transparent) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(100% 80% at 30% 40%,#000 20%,transparent 75%);
+}
 .block-teal{background:var(--teal);color:var(--on-teal)}
 .block-ink{background:var(--ink);color:var(--on-ink)}
 .block-sand{background:var(--sand);color:var(--on-sand)}
 .block-paper{background:var(--paper)}
 .pad{padding:clamp(26px,4.5vw,64px)}
+/* el titular de seccion alinea con el contenido de los bloques */
+.sh-in{padding:0}
 
 /* tarjeta blanca sobre bloque de color, anidada a proposito */
 .card{background:var(--paper);color:var(--on-surface);border:var(--bw) solid var(--line);
@@ -176,7 +200,7 @@ h1,h2,h3,.display{
 
 /* ---------- HERO ---------- */
 .hero{position:relative}
-.hero .pad{padding-block:clamp(44px,7vw,92px)}
+.hero .pad{padding-block:clamp(52px,7.5vw,104px)}
 h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   letter-spacing:-.035em;line-height:.9;max-width:17ch}
 .lede{font-size:clamp(1.05rem,.98rem + .62vw,1.4rem);line-height:1.45;max-width:52ch;
@@ -202,7 +226,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 /* ---------- MARQUEE ---------- */
 .strip{background:var(--ink);color:var(--cream);overflow:hidden;
   border:var(--bw) solid var(--line);border-radius:var(--r-pill);
-  margin-bottom:clamp(14px,2vw,22px)}
+  margin-bottom:var(--sp-m)}
 .strip-track{display:flex;gap:2.5rem;padding:14px 0 14px 2.5rem;white-space:nowrap;
   animation:slide 42s linear infinite;width:max-content}
 .strip-track span{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
@@ -212,12 +236,12 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 @media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
 
 /* ---------- CABECERA DE SECCION ---------- */
-.sh{margin-bottom:clamp(16px,2vw,22px);padding:0 clamp(6px,1vw,14px)}
+.sh{margin-bottom:var(--sp-m);padding:0 clamp(6px,1vw,14px)}
 .sh h2{font-size:var(--t-l);max-width:22ch}
 .sh p{margin-top:14px;font-size:1.0625rem;line-height:1.55;max-width:60ch;opacity:.85}
 
 /* ---------- TRABAJO ---------- */
-.bento{display:grid;grid-template-columns:1.45fr 1fr;gap:clamp(14px,2vw,22px);align-items:stretch}
+.bento{display:grid;grid-template-columns:1.45fr 1fr;gap:var(--sp-m);align-items:stretch}
 .bento article{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
   display:flex;flex-direction:column;background:var(--paper);min-height:0;
   transition:transform .22s var(--ease)}
@@ -227,7 +251,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .bento .shot{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--sand);
   border-bottom:var(--bw) solid var(--line)}
 .bento .lead .shot{aspect-ratio:16/11}
-.bento .body{padding:clamp(22px,2.6vw,34px);display:flex;flex-direction:column;flex:1;
+.bento .body{padding:var(--sp-l);display:flex;flex-direction:column;flex:1;
   justify-content:center;gap:0}
 .bento h3{font-size:var(--t-s);max-width:22ch}
 .bento .lead h3{font-size:var(--t-m)}
@@ -245,7 +269,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .svc-intro{position:sticky;top:calc(var(--nav-h) + 34px)}
 .svc-intro h2{font-size:var(--t-l)}
 .svc-intro p{margin-top:16px;font-size:1.0625rem;line-height:1.55;max-width:38ch;opacity:.9}
-.svc-list{display:grid;gap:clamp(10px,1.4vw,14px)}
+.svc-list{display:grid;gap:var(--sp-s)}
 .svc-item{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
 .svc-num{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 88;font-weight:900;
   font-size:1.5rem;line-height:1;background:var(--amber);color:var(--on-amber);
@@ -259,7 +283,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 @media(max-width:920px){.svc{grid-template-columns:1fr}.svc-intro{position:static}.svc-intro p{max-width:60ch}}
 
 /* ---------- METODO: 4 pasos, color rotativo ---------- */
-.method{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,22px)}
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-m)}
 .method>div{border:var(--bw) solid var(--line);border-radius:var(--r);
   padding:clamp(26px,3vw,38px);display:flex;flex-direction:column;
   min-height:clamp(250px,26vw,320px);background:var(--paper)}
@@ -276,21 +300,21 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 @media(max-width:940px){.method{grid-template-columns:1fr}}
 
 /* ---------- PRINCIPIOS ---------- */
-.prin{display:grid;gap:clamp(10px,1.4vw,14px)}
+.prin{display:grid;gap:var(--sp-s)}
 .prin>div{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(18px,2.6vw,36px);
   align-items:start;background:var(--paper);border-radius:var(--r-sm);
-  padding:clamp(20px,2.4vw,30px)}
+  padding:var(--sp-l)}
 .prin h3{font-size:var(--t-m)}
 .prin p{font-size:1rem;line-height:1.55;max-width:56ch;opacity:.88}
 @media(max-width:860px){.prin>div{grid-template-columns:1fr;gap:10px}}
 
 /* ---------- EQUIPO ---------- */
-.people{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,22px)}
+.people{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-m)}
 .people figure{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
   background:var(--paper);display:flex;flex-direction:column}
 .people img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--sand);
   border-bottom:var(--bw) solid var(--line)}
-.people .q{padding:clamp(22px,2.6vw,34px);display:flex;flex-direction:column;flex:1}
+.people .q{padding:var(--sp-l);display:flex;flex-direction:column;flex:1}
 .people blockquote{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 84;
   font-weight:700;font-size:clamp(1.1rem,1rem + .85vw,1.5rem);letter-spacing:-.02em;
   line-height:1.16;max-width:32ch}
@@ -301,7 +325,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 @media(max-width:860px){.people{grid-template-columns:1fr}}
 
 /* ---------- FAQ ---------- */
-.faq{display:grid;gap:clamp(9px,1.2vw,12px)}
+.faq{display:grid;gap:var(--sp-s)}
 .faq details{background:var(--paper);border-radius:var(--r-sm);overflow:hidden}
 .faq summary{padding:20px clamp(20px,2.4vw,28px);cursor:pointer;list-style:none;
   display:flex;justify-content:space-between;align-items:center;gap:1rem;
@@ -317,6 +341,26 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 .faq .ans>p{padding:0 clamp(20px,2.4vw,28px) 24px;font-size:1rem;line-height:1.6;
   max-width:68ch;opacity:.88}
 @media(prefers-reduced-motion:reduce){.faq .ans-wrap,.faq summary::after{transition:none}}
+
+/* ---------- NOTAS: lista simple, sin tarjetas ---------- */
+.notes{display:grid}
+.notes a{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(16px,2.4vw,36px);
+  align-items:baseline;padding:clamp(18px,2.2vw,26px) 0;
+  border-top:2px solid color-mix(in oklch,var(--on-surface) 14%,transparent);
+  transition:padding-left .25s var(--ease)}
+.notes a:last-child{border-bottom:2px solid color-mix(in oklch,var(--on-surface) 14%,transparent)}
+.notes a:hover{padding-left:10px}
+.notes .date{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
+  text-transform:uppercase;letter-spacing:.08em;font-size:.6875rem;font-weight:700;
+  opacity:.6;white-space:nowrap}
+.notes h3{font-size:var(--t-s);max-width:34ch}
+.notes .go{font-size:1.1rem;opacity:.45;transition:opacity .2s var(--ease)}
+.notes a:hover .go{opacity:1}
+.notes-empty{padding:clamp(22px,3vw,34px) 0;font-size:1rem;opacity:.75;max-width:52ch}
+@media(max-width:720px){
+  .notes a{grid-template-columns:1fr auto;gap:6px}
+  .notes .date{grid-column:1/-1;order:-1}
+}
 
 /* ---------- CTA ---------- */
 .cta-block h2{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
@@ -352,7 +396,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
 /* kicker: el marcador tipografico del diseno */
 .kicker{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
   text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;font-weight:700;
-  margin-bottom:clamp(16px,2vw,22px);opacity:.88}
+  margin-bottom:var(--sp-m);opacity:.88}
 .kicker::before{content:"// ";opacity:.6}
 .cta-block .kicker{margin-bottom:14px}
 
@@ -458,6 +502,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
       <a href="#trabajo">Trabajo</a>
       <a href="#servicios">Servicios</a>
       <a href="#metodo">Método</a>
+      <a href="#notas">Notas</a>
     </div>
     <a href="#contacto" class="cta">Escríbenos</a>
     <details class="menu">
@@ -466,6 +511,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
         <a href="#trabajo">Trabajo</a>
         <a href="#servicios">Servicios</a>
         <a href="#metodo">Método</a>
+        <a href="#notas">Notas</a>
         <a href="#contacto">Escríbenos</a>
       </div>
     </details>
@@ -474,7 +520,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   <main id="main">
 
   <!-- HERO -->
-  <header class="block block-purple hero on-dark">
+  <header class="block block-sky hero">
     <div class="pad">
       <p class="kicker rise">Consultoría de diseño e innovación corporativa</p>
       <h1 class="rise">Diseño, innovación e <span class="hl">inteligencia artificial</span> para empresas</h1>
@@ -501,7 +547,8 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   </div>
 
   <!-- TRABAJO -->
-  <section id="trabajo">
+  <section id="trabajo" class="block block-paper">
+    <div class="pad">
     <div class="sh">
       <h2>Trabajo reciente</h2>
       <p>Cada proyecto terminó con algo operando.</p>
@@ -534,6 +581,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
           <div class="kind"><a class="btn btn-sm" href="#contacto">Ver transferencia</a></div>
         </div>
       </article>
+    </div>
     </div>
   </section>
 
@@ -585,7 +633,8 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
   </section>
 
   <!-- METODO -->
-  <section id="metodo">
+  <section id="metodo" class="block block-sand">
+    <div class="pad">
     <div class="sh">
       <h2>Cómo trabajamos</h2>
       <p>Reducir el riesgo antes de comprometer presupuesto.</p>
@@ -606,6 +655,30 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
         <h3>Transferimos capacidad</h3>
         <p>El equipo interno queda capaz de sostener y hacer crecer lo que construimos juntos.</p>
       </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- NOTAS -->
+  <section id="notas" class="block block-paper">
+    <div class="pad">
+      <div class="sh">
+        <h2>Notas</h2>
+        <p>Lo que aprendemos en cada proyecto. Escribimos cuando hay algo que decir.</p>
+      </div>
+      <!-- TODO: sin artículos publicados todavía. Al escribir el primero,
+           reemplazar este bloque por la lista .notes que está debajo,
+           comentada, y borrar el aviso. -->
+      <p class="notes-empty">Todavía no publicamos ninguna. La primera sale cuando termine el proyecto que estamos escribiendo.</p>
+      <!--
+      <div class="notes">
+        <a href="#">
+          <span class="date">MAR 2026</span>
+          <h3>Título de la nota</h3>
+          <span class="go" aria-hidden="true">&#8599;</span>
+        </a>
+      </div>
+      -->
     </div>
   </section>
 
