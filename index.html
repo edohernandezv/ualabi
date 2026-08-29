@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Azeret+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Azeret+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Azeret+Mono:wght@400;500;600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Azeret+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    ualabi
@@ -21,8 +21,9 @@
    nunca como superficie plena.
    Paleta: tinta 232226, morado 83389B, turquesa 3FAEC6,
    arena E4DBD2, crema F6F0EA.
-   Tipografia: Archivo variable para display, Public Sans para
-   cuerpo, Azeret Mono para metadatos y el tratamiento terminal.
+   Tipografia: dos familias. Archivo variable para display y
+   Azeret Mono para todo lo demas, cuerpo incluido: la pagina vende
+   ingenieria, y los parrafos son cortos, asi que la mono aguanta.
    ============================================================ */
 :root{
   /* marca, en OKLCH: chroma controlada, mismo matiz que el hex */
@@ -104,8 +105,11 @@ a,button,summary,input,label{touch-action:manipulation}
 html,body{overflow-x:clip}
 body{
   background:var(--surface);color:var(--on-surface);
-  font-family:'Public Sans',system-ui,sans-serif;
-  font-size:clamp(1rem,.97rem + .16vw,1.0625rem);line-height:1.55;
+  font-family:'Azeret Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* la mono es mas ancha por caracter: baja el cuerpo y sube el
+     interlineado para que el parrafo no se sienta apretado */
+  font-size:clamp(.9375rem,.91rem + .13vw,1rem);line-height:1.7;
+  letter-spacing:-.005em;
   overflow-x:hidden;-webkit-font-smoothing:antialiased;
 }
 a{color:inherit;text-decoration:none}
