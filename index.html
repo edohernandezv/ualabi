@@ -659,7 +659,13 @@ main>section:nth-of-type(4){--skew:.11deg}
 /* ---------- HERO: ESCRITURA EN TERMINAL ----------
    La palabra se escribe y se borra en bucle. El texto inicial esta en
    el HTML: si el script no corre, el titular sigue completo. */
-.type{display:inline-block;white-space:nowrap}
+.type{display:inline-flex;align-items:baseline;white-space:nowrap}
+.caret{display:inline-block;width:.055em;min-width:3px;height:.78em;
+  background:currentColor;margin-left:.09em;opacity:.6;align-self:center;flex-shrink:0}
+@media(prefers-reduced-motion:no-preference){
+  .caret{animation:caret 1s steps(1) infinite}
+  @keyframes caret{0%,100%{opacity:.6}50%{opacity:0}}
+}
 .type-out{display:inline-block}
 /* cada letra entra por separado: las envuelve animejs/text */
 .type-out .letter{display:inline-block;will-change:transform,opacity}
@@ -765,7 +771,7 @@ main>section:nth-of-type(4){--skew:.11deg}
   <header class="block block-sky hero">
     <div class="pad">
       <p class="kicker rise">Trabajamos en</p>
-      <h1 class="rise" aria-label="Trabajamos en innovación, ingeniería y tecnología"><span class="type" data-words="Innovación,Ingeniería,Tecnología" aria-hidden="true"><span class="type-out">Innovación</span></span></h1>
+      <h1 class="rise" aria-label="Trabajamos en innovación, ingeniería y tecnología"><span class="type" data-words="Innovación,Ingeniería,Tecnología" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret" aria-hidden="true"></span></span></h1>
       <p class="lede rise">Automatizar un proceso roto <span class="hl">lo rompe más rápido</span>. Entendemos el proceso antes de meterle IA.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">Conversemos</a>
@@ -1053,34 +1059,51 @@ if (!REDUCE) {
         { duration: .55, ease: EASE, delay: stagger(0.07) });
     }, { margin: '0px 0px -10% 0px', amount: 0.12 });
 
-    /* 2. El titular se ensambla letra por letra y rota entre las tres
-       palabras. Cada letra entra por separado, asi que la palabra se
-       arma en vez de aparecer de golpe. */
+    /* 2. El titular se escribe como en una terminal: letra a letra,
+       con cursor, y se borra antes de la siguiente palabra. El split
+       de animejs da el nodo de cada letra, asi que cada una entra con
+       su propio desenfoque en vez de aparecer plana. */
     const type = document.querySelector('.type');
     if (type) {
       const out = type.querySelector('.type-out');
       const words = (type.dataset.words || '').split(',').filter(Boolean);
       if (out && words.length > 1) {
         let i = 0, prev = null;
-        const show = (word) => {
+
+        const render = (text) => {
           /* split() deja un span oculto con el texto original para
-             lectores de pantalla. Hay que revertirlo antes de volver a
-             dividir, o cada vuelta acumula una copia mas. */
+             lectores de pantalla: hay que revertir antes de redividir. */
           if (prev) prev.revert();
-          out.textContent = word;
-          prev = split(out, { chars: { class: 'letter' } });
-          animate(prev.chars,
-            { opacity: [0, 1], y: [-14, 0], filter: ['blur(6px)', 'blur(0px)'] },
-            { duration: .5, ease: [0.16, 1, 0.3, 1], delay: stagger(0.035) });
-          return prev.chars;
+          out.textContent = text;
+          prev = text ? split(out, { chars: { class: 'letter' } }) : null;
+          return prev ? prev.chars : [];
         };
-        const cycle = () => {
-          const chars = show(words[i]);
-          setTimeout(() => {
-            animate(chars, { opacity: 0, y: 10 },
-              { duration: .3, ease: 'easeIn', delay: stagger(0.018) })
-              .then(() => { i = (i + 1) % words.length; cycle(); });
-          }, 2400);
+
+        const write = async (word) => {
+          for (let n = 1; n <= word.length; n++) {
+            const chars = render(word.slice(0, n));
+            const last = chars[chars.length - 1];
+            if (last) animate(last,
+              { opacity: [0, 1], filter: ['blur(5px)', 'blur(0px)'] },
+              { duration: .18, ease: 'easeOut' });
+            await new Promise(r => setTimeout(r, 68));
+          }
+        };
+
+        const erase = async (word) => {
+          for (let n = word.length; n >= 0; n--) {
+            render(word.slice(0, n));
+            await new Promise(r => setTimeout(r, 32));
+          }
+        };
+
+        const cycle = async () => {
+          const word = words[i];
+          await write(word);
+          await new Promise(r => setTimeout(r, 1600));
+          await erase(word);
+          i = (i + 1) % words.length;
+          cycle();
         };
         setTimeout(cycle, 900);
       }
