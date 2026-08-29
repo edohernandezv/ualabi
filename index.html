@@ -186,12 +186,14 @@ h1,h2,h3,.display{
 /* El hero no es un color plano: lleva un degradado suave del celeste
    de marca y una malla tenue que le da sustrato al blob. */
 .block-sky{
+  /* Un solo color de marca sobre la crema. El degradado anterior
+     cruzaba turquesa con morado y en la zona de mezcla no ganaba
+     ninguno: salia un gris que no esta en la paleta. */
   background:
-    radial-gradient(118% 88% at 74% 12%,
-      color-mix(in srgb, #3FAEC6 34%, transparent) 0%,
-      color-mix(in srgb, #3FAEC6 15%, transparent) 40%,
-      color-mix(in srgb, #83389B 7%, transparent) 68%,
-      transparent 82%),
+    radial-gradient(105% 80% at 78% 10%,
+      var(--tint-teal) 0%,
+      color-mix(in srgb, #3FAEC6 8%, #FFFFFF) 46%,
+      var(--cream) 78%),
     var(--cream);
   color:var(--ink);
 }
