@@ -231,7 +231,7 @@ h1,h2,h3,.display{
 .hero .pad{padding-block:clamp(52px,7.5vw,104px)}
 h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
   letter-spacing:-.028em;line-height:1.02;max-width:19ch}
-.lede{font-size:clamp(1.05rem,.98rem + .62vw,1.4rem);line-height:1.45;max-width:52ch;
+.lede{font-size:clamp(1.05rem,.98rem + .62vw,1.4rem);line-height:1.45;max-width:58ch;
   margin-top:clamp(20px,2.6vw,30px);opacity:.92}
 .hero-cta{margin-top:clamp(26px,3.6vw,40px);display:flex;flex-wrap:wrap;gap:12px}
 .btn{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:var(--cream);
@@ -463,13 +463,8 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
 @media(max-width:1100px){.svc-deco{display:none}}
 @media(prefers-reduced-motion:reduce){.svc-deco{display:none}}
 
-/* ---------- MARCA DEL HERO ---------- */
-.hero-mark{position:absolute;right:6%;top:50%;transform:translateY(-50%);
-  pointer-events:none;opacity:.95}
-.hero-mark svg{display:block;width:clamp(180px,17vw,260px);height:auto}
 .hero{position:relative;overflow:hidden}
 .hero .pad{position:relative;z-index:2}
-@media(max-width:1000px){.hero-mark{display:none}}
 
 /* ---------- TEXTURA Y DESVIACION ----------
    La perfeccion geometrica es lo que delata una plantilla. Estas
@@ -557,6 +552,7 @@ main>section:nth-of-type(4){--skew:.11deg}
   .stack-2{z-index:2}
   .stack-3{z-index:3}
   .stack-4{z-index:4}
+  .stack-5{z-index:5}
 }
 
 /* cursor de terminal en la barra de las tarjetas */
@@ -620,8 +616,8 @@ main>section:nth-of-type(4){--skew:.11deg}
       <em class="cl">CL</em>
     </a>
     <div class="nav-links">
-      <a href="#trabajo">Trabajo</a>
       <a href="#servicios">Servicios</a>
+      <a href="#trabajo">Trabajo</a>
       <a href="#metodo">Método</a>
       <a href="#notas">Notas</a>
     </div>
@@ -629,8 +625,8 @@ main>section:nth-of-type(4){--skew:.11deg}
     <details class="menu">
       <summary aria-label="Abrir menú">Menú</summary>
       <div class="menu-panel">
-        <a href="#trabajo">Trabajo</a>
         <a href="#servicios">Servicios</a>
+        <a href="#trabajo">Trabajo</a>
         <a href="#metodo">Método</a>
         <a href="#notas">Notas</a>
         <a href="#contacto">Escríbenos</a>
@@ -653,18 +649,6 @@ main>section:nth-of-type(4){--skew:.11deg}
     </div>
     <!-- Blob de plastilina. Decorativo: si WebGL no carga, el hero
          funciona igual. Solo se monta en pantallas anchas. -->
-    <div class="hero-mark" aria-hidden="true">
-      <svg viewBox="0 0 70 70" width="260" height="260">
-        <defs><clipPath id="hm"><rect width="70" height="70" rx="20"/></clipPath></defs>
-        <g clip-path="url(#hm)">
-          <rect width="70" height="70" rx="20" fill="#3FAEC6"/>
-          <path d="M30.7322 16.8095L14.6753 8.27192L30.0979 -1.36571L30.7322 16.8095Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
-          <path d="M77.2627 30.7328L43.8024 39.6984L52.768 6.23783L77.2627 30.7328Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
-          <path d="M13.893 78.8922L9.89265 33.1684L51.4915 52.5659L13.893 78.8922Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
-        </g>
-        <rect x="1.5" y="1.5" width="67" height="67" rx="18.5" fill="none" stroke="#232226" stroke-width="3"/>
-      </svg>
-    </div>
   </header>
 
   <div class="strip">
@@ -693,7 +677,74 @@ main>section:nth-of-type(4){--skew:.11deg}
   </svg>
 
   <!-- TRABAJO -->
-  <section id="trabajo" class="stack stack-1 block block-paper">
+  
+
+  <!-- SERVICIOS -->
+  <section id="servicios" class="stack stack-1 block block-teal">
+    <div class="pad svc">
+      <div class="svc-intro">
+        <h2>Qué hacemos</h2>
+        <p>Cuatro líneas de trabajo. Se contratan juntas o por separado.</p>
+      </div>
+      <!-- Mismo modelo del hero, en chico. Decorativo. -->
+      <div class="svc-list" data-reveal-group>
+        <div class="card svc-item">
+          <div class="card-bar" aria-hidden="true">
+            <i></i><i></i><i></i><span>productos-digitales<i class="cursor"></i></span>
+          </div>
+          <div class="card-body">
+            <div class="svc-head">
+              <span class="svc-num" aria-hidden="true">01</span>
+            </div>
+            <h3>Productos digitales</h3>
+            <p>Descubrimiento, diseño y puesta en marcha. Termina con el producto operando y medido, no con un prototipo.</p>
+            <div class="tags"><span>Estrategia</span><span>UX/UI</span><span>Prototipado</span><span>Escalamiento</span></div>
+          </div>
+        </div>
+        <div class="card svc-item">
+          <div class="card-bar" aria-hidden="true">
+            <i></i><i></i><i></i><span>procesos-ia<i class="cursor"></i></span>
+          </div>
+          <div class="card-body">
+            <div class="svc-head">
+              <span class="svc-num" aria-hidden="true">02</span>
+            </div>
+            <h3>Procesos con IA</h3>
+            <p>Auditoría de procesos, mapa de oportunidades y pilotos acotados. Algunos conviene rediseñarlos antes de automatizar; otros, dejarlos como están.</p>
+            <div class="tags"><span>Análisis de oportunidad</span><span>Arquitectura de proceso</span><span>Validación operativa</span><span>Gobernanza</span></div>
+          </div>
+        </div>
+        <div class="card svc-item">
+          <div class="card-bar" aria-hidden="true">
+            <i></i><i></i><i></i><span>innovacion<i class="cursor"></i></span>
+          </div>
+          <div class="card-body">
+            <div class="svc-head">
+              <span class="svc-num" aria-hidden="true">03</span>
+            </div>
+            <h3>Innovación</h3>
+            <p>Talleres con quienes operan el proceso, no solo con quienes lo aprueban. Sale un roadmap con responsables y fechas.</p>
+            <div class="tags"><span>Talleres estratégicos</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
+          </div>
+        </div>
+        <div class="card svc-item">
+          <div class="card-bar" aria-hidden="true">
+            <i></i><i></i><i></i><span>capacidades<i class="cursor"></i></span>
+          </div>
+          <div class="card-body">
+            <div class="svc-head">
+              <span class="svc-num" aria-hidden="true">04</span>
+            </div>
+            <h3>Capacidades organizacionales</h3>
+            <p>Formación, acompañamiento y criterios de gobernanza para que el equipo interno decida por su cuenta dónde usar IA y dónde no.</p>
+            <div class="tags"><span>Formación</span><span>Habilitación</span><span>Acompañamiento</span><span>Gobernanza</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section id="trabajo" class="stack stack-2 block block-paper">
     <div class="pad">
     <div class="sh" data-reveal>
       <h2>Trabajo reciente</h2>
@@ -731,71 +782,6 @@ main>section:nth-of-type(4){--skew:.11deg}
     </div>
   </section>
 
-  <!-- SERVICIOS -->
-  <section id="servicios" class="stack stack-2 block block-teal">
-    <div class="pad svc">
-      <div class="svc-intro">
-        <h2>Qué hacemos</h2>
-        <p>Cuatro líneas de trabajo. Se contratan juntas o por separado.</p>
-      </div>
-      <!-- Mismo modelo del hero, en chico. Decorativo. -->
-      <div class="svc-list" data-reveal-group>
-        <div class="card svc-item">
-          <div class="card-bar" aria-hidden="true">
-            <i></i><i></i><i></i><span>productos-digitales<i class="cursor"></i></span>
-          </div>
-          <div class="card-body">
-            <div class="svc-head">
-              <span class="svc-num" aria-hidden="true">01</span>
-            </div>
-            <h3>Productos digitales</h3>
-            <p>Del concepto al producto en operación. Crecimiento que el negocio pueda pagar y el equipo mantener.</p>
-            <div class="tags"><span>Estrategia</span><span>UX/UI</span><span>Prototipado</span><span>Escalamiento</span></div>
-          </div>
-        </div>
-        <div class="card svc-item">
-          <div class="card-bar" aria-hidden="true">
-            <i></i><i></i><i></i><span>procesos-ia<i class="cursor"></i></span>
-          </div>
-          <div class="card-body">
-            <div class="svc-head">
-              <span class="svc-num" aria-hidden="true">02</span>
-            </div>
-            <h3>Procesos con IA</h3>
-            <p>Identificamos en qué procesos la IA rinde. Algunos conviene rediseñarlos antes, otros conviene dejarlos como están.</p>
-            <div class="tags"><span>Análisis de oportunidad</span><span>Arquitectura de proceso</span><span>Validación operativa</span><span>Gobernanza</span></div>
-          </div>
-        </div>
-        <div class="card svc-item">
-          <div class="card-bar" aria-hidden="true">
-            <i></i><i></i><i></i><span>innovacion<i class="cursor"></i></span>
-          </div>
-          <div class="card-body">
-            <div class="svc-head">
-              <span class="svc-num" aria-hidden="true">03</span>
-            </div>
-            <h3>Innovación</h3>
-            <p>Diseñamos con las personas que van a operar el proceso, además de quienes lo aprueban.</p>
-            <div class="tags"><span>Talleres estratégicos</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
-          </div>
-        </div>
-        <div class="card svc-item">
-          <div class="card-bar" aria-hidden="true">
-            <i></i><i></i><i></i><span>capacidades<i class="cursor"></i></span>
-          </div>
-          <div class="card-body">
-            <div class="svc-head">
-              <span class="svc-num" aria-hidden="true">04</span>
-            </div>
-            <h3>Capacidades organizacionales</h3>
-            <p>Formamos al equipo interno para que decida por su cuenta dónde usar IA.</p>
-            <div class="tags"><span>Formación</span><span>Habilitación</span><span>Acompañamiento</span><span>Gobernanza</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- METODO -->
   <section id="metodo" class="stack stack-3 block block-sand">
     <div class="pad">
@@ -824,7 +810,21 @@ main>section:nth-of-type(4){--skew:.11deg}
   </section>
 
   <!-- NOTAS -->
-  <section id="notas" class="stack stack-4 block block-paper">
+  
+
+  <!-- CTA -->
+  <section id="contacto" class="block block-ink cta-block on-dark">
+    <div class="pad">
+      <p class="kicker">Hablemos de su próximo paso</p>
+      <h2>¿Tienen un <span class="hl">desafío</span> de producto, procesos o IA?</h2>
+      <div class="cta-row" data-reveal>
+        <a class="btn btn-light" href="mailto:hola@ualabi.cl?subject=Conversaci%C3%B3n%20inicial%20con%20ualabi&amp;body=Cu%C3%A9ntenos%20brevemente%3A%0A%0AEmpresa%3A%0ADesaf%C3%ADo%3A%0APlazo%20estimado%3A%0A">Escribir a hola@ualabi.cl</a>
+        <p class="cta-note">La primera conversación no tiene costo.</p>
+      </div>
+    </div>
+  </section>
+
+<section id="notas" class="stack stack-5 block block-paper">
     <div class="pad">
       <div class="sh" data-reveal>
         <h2>Notas</h2>
@@ -843,18 +843,6 @@ main>section:nth-of-type(4){--skew:.11deg}
         </a>
       </div>
       -->
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section id="contacto" class="block block-ink cta-block on-dark">
-    <div class="pad">
-      <p class="kicker">Hablemos de su próximo paso</p>
-      <h2>¿Tienen un <span class="hl">desafío</span> de producto, procesos o IA?</h2>
-      <div class="cta-row" data-reveal>
-        <a class="btn btn-light" href="mailto:hola@ualabi.cl?subject=Conversaci%C3%B3n%20inicial%20con%20ualabi&amp;body=Cu%C3%A9ntenos%20brevemente%3A%0A%0AEmpresa%3A%0ADesaf%C3%ADo%3A%0APlazo%20estimado%3A%0A">Escribir a hola@ualabi.cl</a>
-        <p class="cta-note">La primera conversación no tiene costo.</p>
-      </div>
     </div>
   </section>
 
