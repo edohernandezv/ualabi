@@ -28,7 +28,14 @@
   --purple:oklch(43.5% .175 313);       /* #83389B */
   --purple-lift:oklch(56% .175 313);    /* morado que respira sobre tinta */
   --teal:oklch(72% .098 218);           /* #3FAEC6 */
-  --teal-deep:oklch(52% .085 218);      /* turquesa legible como texto sobre crema */
+  --teal-deep:oklch(46% .078 218);      /* acento sobre superficie tenida: 4.5:1 */
+  /* Velos de marca. Se mezclan en sRGB contra blanco: en OKLCH el
+     matiz calido de la crema arrastraba el turquesa hacia el verde. */
+  --tint-teal:color-mix(in srgb, #3FAEC6 20%, #FFFFFF);
+  --tint-purple:color-mix(in srgb, #83389B 16%, #FFFFFF);
+  --tint-purple-soft:color-mix(in srgb, #83389B 9%, #FFFFFF);
+  --purple-deep:oklch(40% .16 313);     /* morado legible como texto */
+  --accent:var(--teal-deep);            /* cada bloque redefine el suyo */
   --sand:oklch(88.5% .019 76);          /* #E4DBD2 */
   --amber:oklch(84% .155 88);           /* acento, no esta en el logo */
   --on-amber:oklch(20.5% .012 305);
@@ -79,6 +86,10 @@
     --ink:oklch(13% .01 305);
     --on-sand:var(--cream);
     --teal-deep:var(--teal);
+    --purple-deep:oklch(72% .14 313);
+    --tint-teal:color-mix(in srgb, #3FAEC6 14%, #232226);
+    --tint-purple:color-mix(in srgb, #83389B 18%, #232226);
+    --tint-purple-soft:color-mix(in srgb, #83389B 9%, #232226);
     --purple-lift:oklch(68% .15 313);
   }
 }
@@ -164,16 +175,18 @@ h1,h2,h3,.display{
 /* ---------- BLOQUE: la unidad estructural ---------- */
 .block{position:relative;border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
   margin-bottom:var(--sp-m)}
-.block-purple{background:var(--paper)}
+.block-purple{background:var(--tint-purple);
+  --accent:var(--purple-deep)}
 /* El hero no es un color plano: lleva un degradado suave del celeste
    de marca y una malla tenue que le da sustrato al blob. */
 .block-sky{
   background:
-    radial-gradient(115% 85% at 76% 14%,
-      color-mix(in oklch, var(--teal) 14%, transparent) 0%,
-      color-mix(in oklch, var(--teal) 5%, transparent) 42%,
-      transparent 66%),
-    var(--paper);
+    radial-gradient(118% 88% at 74% 12%,
+      color-mix(in srgb, #3FAEC6 34%, transparent) 0%,
+      color-mix(in srgb, #3FAEC6 15%, transparent) 40%,
+      color-mix(in srgb, #83389B 7%, transparent) 68%,
+      transparent 82%),
+    var(--cream);
   color:var(--ink);
 }
 .block-sky::after{
@@ -181,17 +194,32 @@ h1,h2,h3,.display{
   opacity:.025;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.block-teal{background:var(--paper)}
+.block-teal{background:var(--tint-teal);
+  --accent:var(--teal-deep)}
 .block-ink{background:var(--ink);color:var(--on-ink)}
-.block-sand{background:var(--paper)}
+.block-sand{background:var(--tint-purple-soft);
+  --accent:var(--purple-deep)}
 .block-paper{background:var(--paper)}
 .pad{padding:clamp(26px,4.5vw,64px)}
 /* el titular de seccion alinea con el contenido de los bloques */
 .sh-in{padding:0}
 
 /* tarjeta blanca sobre bloque de color, anidada a proposito */
-.card{background:var(--paper);color:var(--on-surface);border:var(--bw) solid var(--line);
-  border-radius:var(--r-sm);padding:clamp(20px,2.6vw,32px)}
+/* Tarjetas con tratamiento de terminal: barra de titulo con puntos y
+   prompt monoespaciado. La marca dice que la innovacion no es una
+   jornada de post-its, asi que las tarjetas no deberian parecer una. */
+.card{background:var(--cream);color:var(--on-surface);
+  border:var(--bw) solid color-mix(in srgb, #232226 22%, transparent);
+  border-radius:10px;padding:0;overflow:hidden}
+.card-bar{display:flex;align-items:center;gap:7px;padding:9px 13px;width:100%;box-sizing:border-box;
+  border-bottom:var(--bw) solid color-mix(in srgb, #232226 14%, transparent);
+  background:color-mix(in srgb, #232226 3%, transparent)}
+.card-bar i{width:9px;height:9px;border-radius:50%;flex-shrink:0;
+  border:1px solid color-mix(in srgb, #232226 30%, transparent)}
+.card-bar span{font-family:'Geist Mono',ui-monospace,monospace;
+  font-size:.6875rem;opacity:.45;margin-left:5px;letter-spacing:.02em}
+.card-body{padding:clamp(20px,2.4vw,30px);width:100%}
+.svc-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
 .sub{background:var(--surface);border-radius:12px;padding:16px 18px}
 .sub + .sub{margin-top:10px}
 .sub h4{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 92;
@@ -268,9 +296,11 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
 .svc-intro h2{font-size:var(--t-l)}
 .svc-intro p{margin-top:16px;font-size:1.0625rem;line-height:1.55;max-width:38ch;opacity:.9}
 .svc-list{display:grid;gap:var(--sp-s)}
-.svc-item{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
-.svc-num{font-size:.8125rem;font-weight:500;line-height:1.6;color:var(--teal-deep);
-  letter-spacing:.06em;width:auto;flex-shrink:0;padding-top:.2em}
+.svc-item{display:flex;flex-direction:column}
+.svc-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+.svc-num{font-family:'Geist Mono',ui-monospace,monospace;font-size:.8125rem;
+  font-weight:500;color:var(--accent);letter-spacing:.02em;flex-shrink:0}
+.svc-num::before{content:"$ ";opacity:.45}
 .svc-item h3{font-size:var(--t-s)}
 .svc-item p{margin-top:9px;font-size:.9375rem;line-height:1.55;max-width:52ch;opacity:.9}
 .tags{margin-top:13px;display:flex;flex-wrap:wrap;gap:7px}
@@ -287,7 +317,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
 .method>div:nth-child(1){background:var(--surface)}
 .method>div:nth-child(2){background:var(--surface)}
 .method>div:nth-child(3){background:var(--surface)}
-.method .step{display:inline-flex;align-self:flex-start;color:var(--teal-deep);
+.method .step{display:inline-flex;align-self:flex-start;color:var(--accent);
   padding:0;
   font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
   text-transform:uppercase;letter-spacing:.08em;font-size:.6875rem;font-weight:700}
@@ -398,7 +428,7 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
 
 /* etiqueta de categoria en tarjetas de trabajo */
 .tag{text-transform:none;letter-spacing:.02em;font-size:.75rem;font-weight:400;
-  margin-bottom:12px;color:var(--teal-deep)}
+  margin-bottom:12px;color:var(--accent)}
 
 
 /* boton compacto dentro de tarjetas */
@@ -598,32 +628,52 @@ h1{font-size:var(--t-xl);font-variation-settings:'wdth' 88;font-weight:800;
       <!-- Mismo modelo del hero, en chico. Decorativo. -->
       <div class="svc-list">
         <div class="card svc-item">
-          <div class="svc-num" aria-hidden="true">01</div>
-          <div>
+          <div class="card-bar" aria-hidden="true">
+            <i></i><i></i><i></i><span>productos-digitales</span>
+          </div>
+          <div class="card-body">
+            <div class="svc-head">
+              <span class="svc-num" aria-hidden="true">01</span>
+            </div>
             <h3>Productos digitales</h3>
             <p>Del concepto al producto en operación. Crecimiento que el negocio pueda pagar y el equipo mantener.</p>
             <div class="tags"><span>Estrategia</span><span>UX/UI</span><span>Prototipado</span><span>Escalamiento</span></div>
           </div>
         </div>
         <div class="card svc-item">
-          <div class="svc-num" aria-hidden="true">02</div>
-          <div>
+          <div class="card-bar" aria-hidden="true">
+            <i></i><i></i><i></i><span>procesos-ia</span>
+          </div>
+          <div class="card-body">
+            <div class="svc-head">
+              <span class="svc-num" aria-hidden="true">02</span>
+            </div>
             <h3>Procesos con IA</h3>
             <p>Identificamos en qué procesos la IA rinde. Algunos conviene rediseñarlos antes, otros conviene dejarlos como están.</p>
             <div class="tags"><span>Análisis de oportunidad</span><span>Arquitectura de proceso</span><span>Validación operativa</span><span>Gobernanza</span></div>
           </div>
         </div>
         <div class="card svc-item">
-          <div class="svc-num" aria-hidden="true">03</div>
-          <div>
+          <div class="card-bar" aria-hidden="true">
+            <i></i><i></i><i></i><span>innovacion</span>
+          </div>
+          <div class="card-body">
+            <div class="svc-head">
+              <span class="svc-num" aria-hidden="true">03</span>
+            </div>
             <h3>Innovación</h3>
             <p>Diseñamos con las personas que van a operar el proceso, además de quienes lo aprueban.</p>
             <div class="tags"><span>Talleres estratégicos</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
           </div>
         </div>
         <div class="card svc-item">
-          <div class="svc-num" aria-hidden="true">04</div>
-          <div>
+          <div class="card-bar" aria-hidden="true">
+            <i></i><i></i><i></i><span>capacidades</span>
+          </div>
+          <div class="card-body">
+            <div class="svc-head">
+              <span class="svc-num" aria-hidden="true">04</span>
+            </div>
             <h3>Capacidades organizacionales</h3>
             <p>Formamos al equipo interno para que decida por su cuenta dónde usar IA.</p>
             <div class="tags"><span>Formación</span><span>Habilitación</span><span>Acompañamiento</span><span>Gobernanza</span></div>
