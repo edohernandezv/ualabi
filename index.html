@@ -673,18 +673,6 @@ main>section:nth-of-type(4){--skew:.11deg}
    Reveal progresivo al entrar en viewport y apilado de secciones al
    scrollear. Todo cae con prefers-reduced-motion. */
 
-/* reveal: el contenido entra cuando lo miras */
-@media(prefers-reduced-motion:no-preference){
-  [data-reveal]{opacity:0;transform:translateY(18px);
-    transition:opacity .7s var(--ease),transform .7s var(--ease)}
-  [data-reveal].seen{opacity:1;transform:none}
-  [data-reveal-group]>*{opacity:0;transform:translateY(14px);
-    transition:opacity .6s var(--ease),transform .6s var(--ease)}
-  [data-reveal-group].seen>*{opacity:1;transform:none}
-  [data-reveal-group].seen>*:nth-child(2){transition-delay:.08s}
-  [data-reveal-group].seen>*:nth-child(3){transition-delay:.16s}
-  [data-reveal-group].seen>*:nth-child(4){transition-delay:.24s}
-}
 
 /* apilado: cada seccion se fija mientras la siguiente sube encima */
 @media(min-width:900px) and (prefers-reduced-motion:no-preference){
@@ -900,7 +888,7 @@ main>section:nth-of-type(4){--skew:.11deg}
         <div class="body">
           <p class="tag">Producto digital, UX/UI</p>
           <h3>Plataforma de gestión para clientes corporativos</h3>
-          <p>Rediseñamos el flujo de atención de una operación B2B. El piloto de autoatención bajó el tiempo de espera promedio de <span class="circled">42 a 12 minutos</span>.</p>
+          <p>Rediseñamos el flujo de atención de una operación B2B. El piloto de autoatención bajó el tiempo de espera promedio de <span class="circled">42 a <span data-count="12" data-from="42">12</span> minutos</span>.</p>
           <div class="kind"><a class="btn btn-sm" href="#contacto">Ver caso de estudio</a></div>
         </div>
       </article>
@@ -1038,63 +1026,112 @@ main>section:nth-of-type(4){--skew:.11deg}
   </footer>
 
 </div>
-<script>
-/* El prompt del CTA abre el correo con lo escrito. Sin backend no hay
-   envio real, asi que no se finge uno: se delega al cliente de correo. */
+<script type="module">
+/* Sistema de animacion con Motion.
+   El contenido es visible por defecto en el CSS: si el modulo no
+   carga, la pagina queda completa y quieta. La animacion nunca
+   decide si el texto existe. */
+const REDUCE = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+if (!REDUCE) {
+  try {
+    const { animate, scroll, inView, stagger, hover } =
+      await import('https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm');
+
+    const EASE = [0.16, 1, 0.3, 1];
+
+    /* 1. Reveal al entrar en viewport.
+       Comunica jerarquia: el contenido llega cuando se mira. */
+    inView('[data-reveal]', (el) => {
+      animate(el, { opacity: [0, 1], y: [18, 0] }, { duration: .65, ease: EASE });
+    }, { margin: '0px 0px -12% 0px', amount: 0.15 });
+
+    /* Grupos escalonados: el orden de lectura se vuelve visible. */
+    inView('[data-reveal-group]', (el) => {
+      const kids = el.children;
+      if (!kids.length) return;
+      animate(kids, { opacity: [0, 1], y: [14, 0] },
+        { duration: .55, ease: EASE, delay: stagger(0.07) });
+    }, { margin: '0px 0px -10% 0px', amount: 0.12 });
+
+    /* 2. Hero que se escribe. El HTML trae la primera palabra. */
+    const type = document.querySelector('.type');
+    if (type) {
+      const out = type.querySelector('.type-out');
+      const words = (type.dataset.words || '').split(',').filter(Boolean);
+      if (out && words.length > 1) {
+        let i = 0, ch = words[0].length, dir = -1;
+        const step = () => {
+          ch += dir;
+          if (ch < 0) { dir = 1; ch = 0; i = (i + 1) % words.length; }
+          else if (ch > words[i].length) { dir = -1; ch = words[i].length; }
+          out.textContent = words[i].slice(0, ch);
+          setTimeout(step, ch === words[i].length && dir === -1 ? 1500 : (dir > 0 ? 70 : 35));
+        };
+        setTimeout(step, 1400);
+      }
+    }
+
+    /* 3. El marquee responde al scroll: acelera con el movimiento y
+       cambia de sentido segun hacia donde va la pagina. El resto del
+       tiempo corre solo. */
+    const track = document.querySelector('.strip-track');
+    if (track) {
+      let base = 0, vel = 0, last = 0;
+      track.style.animation = 'none';
+      scroll((progress, info) => {
+        vel = (info?.y?.velocity ?? 0) / 1000;
+      });
+      const tick = () => {
+        base -= 0.45 + vel * 0.9;
+        const w = track.scrollWidth / 2;
+        if (base <= -w) base += w;
+        if (base > 0) base -= w;
+        track.style.transform = `translateX(${base}px)`;
+        vel *= 0.92;
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    /* 4. El dato del caso cuenta al entrar. Es el unico numero duro
+       de la pagina: animarlo lo subraya. */
+    const dato = document.querySelector('[data-count]');
+    if (dato) {
+      inView(dato, (el) => {
+        const from = +el.dataset.from, to = +el.dataset.count;
+        animate(from, to, {
+          duration: 1.1, ease: EASE,
+          onUpdate: (v) => { el.textContent = Math.round(v); }
+        });
+      }, { amount: 0.9 });
+    }
+
+    /* 5. Las tarjetas responden al puntero con fisica, no con una
+       curva fija: el rebote da la sensacion de peso. */
+    hover('.bento article, .svc-list .card', (el) => {
+      animate(el, { y: -4 }, { type: 'spring', stiffness: 320, damping: 24 });
+      return () => animate(el, { y: 0 }, { type: 'spring', stiffness: 320, damping: 26 });
+    });
+
+  } catch (e) {
+    /* sin Motion la pagina queda quieta y completa */
+  }
+}
+
+/* El prompt del CTA abre el correo con lo escrito. Va fuera del
+   bloque de animacion: no debe depender de que Motion cargue. */
 (function () {
-  var f = document.getElementById('prompt');
+  const f = document.getElementById('prompt');
   if (!f) return;
-  f.addEventListener('submit', function (e) {
+  f.addEventListener('submit', (e) => {
     e.preventDefault();
-    var q = (f.querySelector('#q').value || '').trim();
-    var body = q ? q + '\n\n---\nEmpresa:\nPlazo estimado:\n'
-                 : 'Cuéntenos brevemente:\n\nEmpresa:\nDesafío:\nPlazo estimado:\n';
+    const q = (f.querySelector('#q').value || '').trim();
+    const body = q ? q + '\n\n---\nEmpresa:\nPlazo estimado:\n'
+                   : 'Cuéntenos brevemente:\n\nEmpresa:\nDesafío:\nPlazo estimado:\n';
     window.location.href = 'mailto:hola@ualabi.cl'
       + '?subject=' + encodeURIComponent('Nuevo proyecto con ualabi')
       + '&body=' + encodeURIComponent(body);
   });
-})();
-
-/* Escritura en terminal del hero. El HTML ya trae la primera palabra,
-   asi que sin JS o con reduced-motion el titular queda completo. */
-(function () {
-  var host = document.querySelector('.type');
-  if (!host) return;
-  if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  var out = host.querySelector('.type-out');
-  var words = (host.dataset.words || '').split(',').filter(Boolean);
-  if (words.length < 2 || !out) return;
-
-  var i = 0, ch = words[0].length, dir = -1, hold = 0;
-  function step() {
-    if (hold > 0) { hold--; return setTimeout(step, 40); }
-    ch += dir;
-    if (ch < 0) {                       // borrada: pasa a la siguiente
-      dir = 1; ch = 0; i = (i + 1) % words.length;
-    } else if (ch > words[i].length) {  // escrita: espera antes de borrar
-      dir = -1; ch = words[i].length; hold = 34;
-    }
-    out.textContent = words[i].slice(0, ch);
-    setTimeout(step, dir > 0 ? 68 : 34);
-  }
-  setTimeout(step, 1400);
-})();
-
-/* Reveal al entrar en viewport. Si no hay IntersectionObserver o el
-   usuario pidió menos movimiento, todo queda visible de entrada. */
-(function () {
-  var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  var els = document.querySelectorAll('[data-reveal],[data-reveal-group]');
-  if (reduce || !('IntersectionObserver' in window)) {
-    for (var i = 0; i < els.length; i++) els[i].classList.add('seen');
-    return;
-  }
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target); }
-    });
-  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
-  for (var j = 0; j < els.length; j++) io.observe(els[j]);
 })();
 </script>
 </body>
