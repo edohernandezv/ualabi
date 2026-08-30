@@ -336,7 +336,6 @@ h1{font-size:var(--t-mono);font-weight:500;
 .method h3{font-size:var(--t-m);margin-top:clamp(24px,3vw,40px);margin-bottom:14px;max-width:16ch}
 .method p{font-size:.9375rem;line-height:1.55;opacity:.9;margin-top:auto;padding-top:18px}
 
-
 /* ---------- PRINCIPIOS ---------- */
 .prin{display:grid;gap:var(--sp-s)}
 .prin>div{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(18px,2.6vw,36px);
@@ -441,11 +440,9 @@ h1{font-size:var(--t-mono);font-weight:500;
 .tag{text-transform:none;letter-spacing:.02em;font-size:.75rem;font-weight:400;
   margin-bottom:12px;color:var(--accent)}
 
-
 /* boton compacto dentro de tarjetas */
 .btn-sm{padding:11px 20px;font-size:.8125rem;background:var(--paper);color:var(--on-surface)}
 .btn-sm:hover{background:var(--wash)}
-
 
 /* sufijo CL del wordmark */
 .brand .cl{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 100;
@@ -544,7 +541,6 @@ main>section:nth-of-type(4){--skew:.11deg}
    las cabeceras de seccion llevan ruta, y los bloques abren con una
    barra como la de una ventana. */
 
-
 /* barra de ventana en los bloques con superficie propia */
 .win{position:relative;padding-top:38px}
 .win::before{
@@ -603,6 +599,29 @@ main>section:nth-of-type(4){--skew:.11deg}
 .term-send:active{transform:translateY(1px)}
 .term-hint{font-family:'Azeret Mono',ui-monospace,monospace;
   font-size:.75rem;opacity:.5;letter-spacing:.02em}
+
+/* ---------- HISTORIAS DEL EQUIPO ----------
+   No son casos de venta: son proyectos anteriores de cada persona.
+   Van en columna simple, sin foto, porque lo que pesa es el texto. */
+.stories{display:grid;gap:var(--sp-m)}
+.story{padding:var(--sp-l) 0;
+  border-top:var(--bw) solid color-mix(in srgb,#232226 16%,transparent)}
+.story:last-child{border-bottom:var(--bw) solid color-mix(in srgb,#232226 16%,transparent)}
+.story h3{font-size:var(--t-s);margin-bottom:10px;max-width:26ch}
+.story p{font-size:1rem;line-height:1.7;max-width:62ch}
+.story-learn{margin-top:14px;color:var(--accent)}
+.story-learn b{font-weight:500}
+@media(min-width:900px){
+  /* dos columnas: quien y que a la izquierda, el relato completo a la
+     derecha. Antes el titulo caia a una fila propia y el aprendizaje
+     se separaba del parrafo. */
+  .story{display:grid;grid-template-columns:.72fr 1.28fr;
+    gap:0 var(--sp-l);align-items:start}
+  .story .tag{grid-column:1;grid-row:1;margin:0}
+  .story h3{grid-column:1;grid-row:2;margin-top:8px}
+  .story>p:not(.tag):not(.story-learn){grid-column:2;grid-row:1/4;margin:0}
+  .story-learn{grid-column:2;grid-row:4;margin-top:14px}
+}
 
 /* ---------- IMAGEN DE SECCION ----------
    Una landing sin imagenes no es minimalismo, es trabajo a medias.
@@ -682,7 +701,6 @@ main>section:nth-of-type(4){--skew:.11deg}
    Reveal progresivo al entrar en viewport y apilado de secciones al
    scrollear. Todo cae con prefers-reduced-motion. */
 
-
 /* apilado: cada seccion se fija mientras la siguiente sube encima */
 @media(min-width:900px) and (prefers-reduced-motion:no-preference){
   .stack{position:sticky;top:clamp(14px,2vw,26px)}
@@ -755,8 +773,7 @@ main>section:nth-of-type(4){--skew:.11deg}
     </a>
     <div class="nav-links">
       <a href="#servicios">Servicios</a>
-      <a href="#trabajo">Trabajo</a>
-      <a href="#metodo">Método</a>
+      <a href="#trabajo">Equipo</a>
       <a href="#notas">Notas</a>
     </div>
     <a href="#contacto" class="cta">Escríbenos</a>
@@ -764,9 +781,8 @@ main>section:nth-of-type(4){--skew:.11deg}
       <summary aria-label="Abrir menú">Menú</summary>
       <div class="menu-panel">
         <a href="#servicios">Servicios</a>
-        <a href="#trabajo">Trabajo</a>
-        <a href="#metodo">Método</a>
-        <a href="#notas">Notas</a>
+        <a href="#trabajo">Equipo</a>
+          <a href="#notas">Notas</a>
         <a href="#contacto">Escríbenos</a>
       </div>
     </details>
@@ -777,11 +793,11 @@ main>section:nth-of-type(4){--skew:.11deg}
   <!-- HERO -->
   <header class="block block-sky hero">
     <div class="pad">
-      <p class="kicker rise">Trabajamos en</p>
-      <h1 class="rise" aria-label="Trabajamos en innovación, tecnología, diseño, procesos e inteligencia artificial"><span class="type" data-words="Innovación,Tecnología,Diseño,Procesos,IA" data-words-wide="Innovación,Tecnología,Diseño,Procesos,Inteligencia artificial" aria-hidden="true"><span class="type-out">Innovación</span><span class="caret" aria-hidden="true"></span></span></h1>
-      <p class="lede rise">Automatizar un proceso roto <span class="hl">lo rompe más rápido</span>. Entendemos el proceso antes de meterle IA.</p>
+      <p class="kicker rise">Podemos ayudarte con productos, procesos e inteligencia artificial</p>
+      <h1 class="rise">Construye lo que va a <span class="hl">seguir sirviendo</span></h1>
+      <p class="lede rise">Entendemos qué necesitan sus productos y procesos, y lo convertimos en algo que <span class="hl">agrega valor</span>. No en algo que se construye porque sí.</p>
       <div class="hero-cta rise">
-        <a class="btn btn-light" href="#contacto">Conversemos</a>
+        <a class="btn btn-light" href="#contacto">¿Quiere explorar su idea?</a>
         <a class="btn" href="#servicios">Ver servicios</a>
       </div>
     </div>
@@ -799,7 +815,6 @@ main>section:nth-of-type(4){--skew:.11deg}
       <span aria-hidden="true">Prototipado</span><span aria-hidden="true">Inteligencia artificial</span>
     </div>
   </div>
-
 
   <svg class="rule" viewBox="0 0 1200 14" preserveAspectRatio="none" aria-hidden="true">
     <path d="M4 8 C 160 4, 300 11, 470 7 S 760 3, 930 9 S 1120 6, 1196 8"
@@ -822,7 +837,7 @@ main>section:nth-of-type(4){--skew:.11deg}
       <div class="svc-list" data-reveal-group>
         <div class="svc-intro">
         <h2>Qué hacemos</h2>
-        <p>Cuatro líneas de trabajo. Se contratan juntas o por separado.</p>
+        <p>Las cosas para las que somos buenos.</p>
       </div>
         <div class="card svc-item" data-n="1">
           <div class="card-bar" aria-hidden="true">
@@ -832,8 +847,8 @@ main>section:nth-of-type(4){--skew:.11deg}
             <div class="svc-head">
               <span class="svc-num" aria-hidden="true">01</span>
             </div>
-            <h3>Producto, de la idea a producción</h3>
-            <p>Descubrimiento, diseño y puesta en marcha. Cerramos alcance y precio antes de escribir código. Termina con el producto operando y medido.</p>
+            <h3>Productos</h3>
+            <p>Esa intuición de que algo puede funcionar, antes de poder explicarla. La exploramos, la construimos y la dejamos operando como un producto real.</p>
             <div class="tags"><span>Discovery</span><span>Diseño y UX</span><span>Ingeniería</span><span>Prototipado</span><span>Escalamiento</span></div>
           </div>
         </div>
@@ -845,8 +860,8 @@ main>section:nth-of-type(4){--skew:.11deg}
             <div class="svc-head">
               <span class="svc-num" aria-hidden="true">02</span>
             </div>
-            <h3>IA donde rinde, no donde suena</h3>
-            <p>Integramos IA en el proceso y en el producto: asistentes sobre sus datos internos, automatizaciones que corren solas, modelos en producción que opera su gente. Antes medimos dónde rinde: automatizar lo que nadie entiende multiplica el problema.</p>
+            <h3>Inteligencia artificial que genera valor</h3>
+            <p>Dónde conviene integrarla, cómo se comunican los sistemas y cómo hacerlo sin que le cueste una fortuna a la organización. Identificamos los casos de uso que escalan y se sostienen.</p>
             <div class="tags"><span>Integración en producto</span><span>Automatización</span><span>Asistentes sobre datos propios</span><span>Modelos en producción</span><span>Gobernanza</span></div>
           </div>
         </div>
@@ -858,8 +873,8 @@ main>section:nth-of-type(4){--skew:.11deg}
             <div class="svc-head">
               <span class="svc-num" aria-hidden="true">03</span>
             </div>
-            <h3>Innovación con quienes operan</h3>
-            <p>Talleres con quienes operan el proceso, además de quienes lo aprueban. Sale un roadmap con responsables y fechas.</p>
+            <h3>Innovación abierta</h3>
+            <p>Quiere construir algo con alguien más y no sabe cómo. Diseñamos el proceso para que eso ocurra: con quién, bajo qué reglas y hacia dónde.</p>
             <div class="tags"><span>Talleres</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
           </div>
         </div>
@@ -871,8 +886,8 @@ main>section:nth-of-type(4){--skew:.11deg}
             <div class="svc-head">
               <span class="svc-num" aria-hidden="true">04</span>
             </div>
-            <h3>Autonomía del equipo interno</h3>
-            <p>Formación y criterios de gobernanza para su equipo, hasta que dejen de llamarnos y decidan solos dónde usar IA.</p>
+            <h3>Capacidades del equipo</h3>
+            <p>Talleres, formación y procesos para que la innovación y la IA dejen de ser un proyecto aparte y pasen a darse de forma natural en el equipo.</p>
             <div class="tags"><span>Formación</span><span>Acompañamiento</span><span>Gobernanza</span><span>Transferencia</span></div>
           </div>
         </div>
@@ -886,80 +901,45 @@ main>section:nth-of-type(4){--skew:.11deg}
 <section id="trabajo" class="stack stack-2 block block-paper">
     <div class="pad">
     <div class="sh" data-reveal>
-      <h2>Trabajo reciente</h2>
-      <p>Cada proyecto terminó con algo operando.</p>
+      <h2>De dónde venimos</h2>
+      <p>Todavía no vendemos como ualabi. Lo que traemos es lo que cada uno construyó antes, y lo que aprendimos ahí.</p>
     </div>
-    <!-- TODO: los tres casos son placeholder. Reemplazar por proyectos reales
-         con empresas privadas antes de publicar. -->
-    <div class="bento" data-reveal-group>
-      <article class="lead">
-        <img class="shot" src="work-lead.jpg" alt="Módulos de autoatención instalados en una oficina de atención de público" width="1248" height="832" loading="lazy">
-        <div class="body">
-          <p class="tag">Producto digital, UX/UI</p>
-          <h3>Plataforma de gestión para clientes corporativos</h3>
-          <p>Rediseñamos el flujo de atención de una operación B2B. El piloto de autoatención bajó el tiempo de espera promedio de <span class="circled">42 a <span data-count="12" data-from="42">12</span> minutos</span>.</p>
-          <div class="kind"><a class="btn btn-sm" href="#contacto">Ver caso de estudio</a></div>
-        </div>
+    <!-- TODO: reemplazar nombre, rol y proyecto por los reales de cada
+         persona del equipo. La estructura es: qué construyó, dónde, y
+         qué aprendió que se aplica hoy. Sin cliente si no se puede
+         nombrar; el aprendizaje es lo que importa. -->
+    <div class="stories" data-reveal-group>
+      <article class="story">
+        <p class="tag">Nombre por definir, rol</p>
+        <h3>Qué construyó</h3>
+        <p>Una o dos frases sobre el proyecto: qué era, para quién, qué problema resolvía.</p>
+        <p class="story-learn"><b>Lo que quedó:</b> el aprendizaje concreto que hoy usamos en ualabi.</p>
       </article>
-      <article>
-        <div class="body">
-          <p class="tag">Artículo, metodología</p>
-          <h3>IA aplicada: cuando automatizar no es la respuesta obvia</h3>
-          <p>Automatizar un proceso que nadie entiende multiplica el problema. Cuándo conviene rediseñar primero y automatizar después.</p>
-          <div class="kind"><a class="btn btn-sm" href="#contacto">Leer artículo</a></div>
-        </div>
+      <article class="story">
+        <p class="tag">Nombre por definir, rol</p>
+        <h3>Qué construyó</h3>
+        <p>Una o dos frases sobre el proyecto: qué era, para quién, qué problema resolvía.</p>
+        <p class="story-learn"><b>Lo que quedó:</b> el aprendizaje concreto que hoy usamos en ualabi.</p>
       </article>
-      <article class="tint">
-        <div class="body">
-          <p class="tag">Procesos con IA, transformación</p>
-          <h3>Transformación de procesos internos con IA generativa</h3>
-          <p>Formamos al equipo interno para operar y evolucionar la plataforma sin depender de nosotros. Sigue en producción dos años después.</p>
-          <div class="kind"><a class="btn btn-sm" href="#contacto">Ver transferencia</a></div>
-        </div>
+      <article class="story">
+        <p class="tag">Nombre por definir, rol</p>
+        <h3>Qué construyó</h3>
+        <p>Una o dos frases sobre el proyecto: qué era, para quién, qué problema resolvía.</p>
+        <p class="story-learn"><b>Lo que quedó:</b> el aprendizaje concreto que hoy usamos en ualabi.</p>
       </article>
     </div>
     </div>
   </section>
 
   <!-- METODO -->
-  <section id="metodo" class="stack stack-3 block block-sand win" data-win="ualabi / metodo">
-    <div class="win-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="pad">
-    <div class="sh" data-reveal>
-      <h2>Cómo trabajamos</h2>
-      <p>Reducir el riesgo antes de comprometer presupuesto.</p>
-    </div>
-    <div class="method rail" data-reveal-group>
-      <div>
-        <span class="step">01</span>
-        <h3>Entendemos antes de proponer</h3>
-        <p>Entendemos el negocio y a quienes lo usan antes de diseñar.</p>
-      </div>
-      <div>
-        <span class="step">02</span>
-        <h3>Construimos para validar</h3>
-        <p>Probamos los prototipos con usuarios reales, con presupuesto de prototipo.</p>
-      </div>
-      <div>
-        <span class="step">03</span>
-        <h3>Transferimos capacidad</h3>
-        <p>El equipo interno queda capaz de sostener y hacer crecer lo que construimos juntos.</p>
-      </div>
-    </div>
-      <img class="shot-wide" loading="lazy" decoding="async" width="1600" height="686"
-        src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&amp;fit=crop&amp;w=1600&amp;q=78"
-        alt="Dos personas revisando una interfaz en pantalla durante una sesión de trabajo">
-    </div>
-  </section>
-
-  <!-- NOTAS -->
+    <!-- NOTAS -->
   
 
   <!-- CTA -->
   <section id="contacto" class="block block-ink cta-block on-dark">
     <div class="pad">
       <p class="kicker">Escríbanos</p>
-      <h2>Cuéntenos qué <span class="hl">no está funcionando</span></h2>
+      <h2>Cuéntenos qué <span class="hl">no está funcionando</span> y lo resolvemos juntos</h2>
       <form class="term" data-reveal id="prompt">
         <div class="term-bar" aria-hidden="true">
           <i></i><i></i><i></i><span>ualabi / nuevo proyecto</span>
@@ -968,7 +948,7 @@ main>section:nth-of-type(4){--skew:.11deg}
           <label class="term-line" for="q">
             <span class="sr-only">Cuéntenos qué necesita</span>
             <textarea class="term-input" id="q" name="q" rows="3"
-              placeholder="Tenemos un proceso de aprobaciones que toma tres semanas y nadie sabe por qué…"></textarea>
+              placeholder="Tenemos una idea que no sabemos si vale la pena construir…"></textarea>
           </label>
           <div class="term-foot">
             <button class="term-send" type="submit">Enviar &#8599;</button>
