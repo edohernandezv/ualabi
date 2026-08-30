@@ -186,22 +186,11 @@ h1,h2,h3,.display{
 /* El hero no es un color plano: lleva un degradado suave del celeste
    de marca y una malla tenue que le da sustrato al blob. */
 .block-sky{
-  /* Un solo color de marca sobre la crema. El degradado anterior
-     cruzaba turquesa con morado y en la zona de mezcla no ganaba
-     ninguno: salia un gris que no esta en la paleta. */
-  background:
-    radial-gradient(112% 88% at 76% 8%,
-      var(--tint-teal) 0%,
-      color-mix(in srgb, #3FAEC6 24%, #FFFFFF) 52%,
-      var(--cream) 88%),
-    var(--cream);
+  /* color plano, sin degradado: el turquesa se lee como turquesa */
+  background:var(--tint-teal);
   color:var(--ink);
 }
-.block-sky::after{
-  content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-  opacity:.025;mix-blend-mode:multiply;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+
 .block-teal{background:var(--tint-teal);
   --accent:var(--teal-deep)}
 .block-ink{background:var(--ink);color:var(--on-ink)}
@@ -694,7 +683,9 @@ main>section:nth-of-type(4){--skew:.11deg}
 }
 .type-out{display:inline-block}
 /* cada letra entra por separado: las envuelve animejs/text */
-.type-out .letter{display:inline-block;will-change:transform,opacity}
+.type-out{perspective:600px}
+.type-out .letter{display:inline-block;will-change:transform,opacity;
+  transform-origin:50% 100%;backface-visibility:hidden}
 .type-out{color:var(--accent)}
 
 /* ---------- MOVIMIENTO ----------
@@ -794,7 +785,7 @@ main>section:nth-of-type(4){--skew:.11deg}
   <header class="block block-sky hero">
     <div class="pad">
       <p class="kicker rise">Podemos ayudarte con productos, procesos e inteligencia artificial</p>
-      <h1 class="rise">Construye lo que va a <span class="hl">seguir sirviendo</span></h1>
+      <h1 class="rise" data-flap>Construye lo que va a <span class="hl">seguir sirviendo</span></h1>
       <p class="lede rise">Entendemos qué necesitan sus productos y procesos, y lo convertimos en algo que <span class="hl">agrega valor</span>. No en algo que se construye porque sí.</p>
       <div class="hero-cta rise">
         <a class="btn btn-light" href="#contacto">¿Quiere explorar su idea?</a>
@@ -1046,112 +1037,51 @@ if (!REDUCE) {
         { duration: .55, ease: EASE, delay: stagger(0.07) });
     }, { margin: '0px 0px -10% 0px', amount: 0.12 });
 
-    /* 2. El titular se escribe como en una terminal: letra a letra,
-       con cursor, y se borra antes de la siguiente palabra. El split
-       de animejs da el nodo de cada letra, asi que cada una entra con
-       su propio desenfoque en vez de aparecer plana. */
-    const type = document.querySelector('.type');
-    if (type) {
-      const out = type.querySelector('.type-out');
-      /* En movil la frase larga no cabe en una linea: 23 caracteres
-         pedirian bajar el titular a 1.5rem, mas chico que el parrafo.
-         Ahi va IA, que la pagina ya usa en el resto del texto. */
-      const ancha = window.matchMedia('(min-width:900px)');
-      const listas = {
-        corta: (type.dataset.words || '').split(',').filter(Boolean),
-        larga: (type.dataset.wordsWide || '').split(',').filter(Boolean)
+    /* 2. El titular cae como un tablero de estacion: las fichas giran
+       por el abecedario y se detienen de izquierda a derecha. Ocurre
+       una sola vez, al cargar. Un tablero real tampoco gira todo el
+       dia: cae cuando cambia la informacion. */
+    const flap = document.querySelector('[data-flap]');
+    if (flap) {
+      const RUEDA = ' ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ';
+      const posEn = (ch) => {
+        const i = RUEDA.indexOf(ch.toUpperCase());
+        return i < 0 ? 0 : i;
       };
-      let words = ancha.matches && listas.larga.length ? listas.larga : listas.corta;
-      ancha.addEventListener('change', (e) => {
-        words = e.matches && listas.larga.length ? listas.larga : listas.corta;
-      });
-      if (out && words.length > 1) {
-        let i = 0, prev = null;
+      /* el HTML original lleva el destacado; se guarda para restituirlo
+         al final y no perder el subrayado */
+      const htmlFinal = flap.innerHTML;
+      const textoFinal = flap.textContent;
+      const destino = textoFinal.split('');
+      /* las fichas de mas a la derecha dan mas vueltas: el tablero se
+         asienta en cascada */
+      const pasos = destino.map((ch, k) =>
+        ch === ' ' ? 0 : 3 + (k >> 2) + posEn(ch));
+      const estado = destino.map(() => (Math.random() * RUEDA.length) | 0);
+      const listas = destino.map((ch) => ch === ' ');
+      const maxPasos = Math.max(...pasos);
 
-        const render = (text) => {
-          /* split() deja un span oculto con el texto original para
-             lectores de pantalla: hay que revertir antes de redividir. */
-          if (prev) prev.revert();
-          out.textContent = text;
-          prev = text ? split(out, { chars: { class: 'letter' } }) : null;
-          return prev ? prev.chars : [];
-        };
+      const pintar = () => {
+        flap.textContent = destino
+          .map((ch, k) => (listas[k] ? ch : RUEDA[estado[k]]))
+          .join('');
+      };
 
-        /* scramble: cada letra pasa por caracteres al azar antes de
-           asentarse. Las que ya cayeron se quedan quietas, asi que la
-           palabra se resuelve de izquierda a derecha. */
-        /* Tablero de trenes: cada ficha gira por el abecedario hasta
-           caer en su letra. Las que ya cayeron quedan fijas, asi que
-           la palabra se resuelve de izquierda a derecha, como en un
-           panel de estacion. */
-        const RUEDA = ' ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ';
-        const posEn = (ch) => {
-          const i = RUEDA.indexOf(ch.toUpperCase());
-          return i < 0 ? 0 : i;
-        };
-        /* vueltas que da cada ficha antes de detenerse: las de mas a la
-           derecha giran mas, asi el tablero se asienta en cascada */
-        const giros = (k) => 6 + k * 3;
-
-        const write = async (word) => {
-          const destino = word.split('');
-          /* cada ficha arranca desde una posicion distinta: si todas
-             empiezan en la misma letra giran sincronizadas y se ve una
-             columna, no un tablero */
-          const estado = destino.map(() => (Math.random() * RUEDA.length) | 0);
-          const listas = destino.map(() => false);
-          const pasos = destino.map((ch, k) => giros(k) + posEn(ch));
-          const maxPasos = Math.max(...pasos);
-
-          for (let t = 0; t <= maxPasos; t++) {
-            destino.forEach((ch, k) => {
-              if (listas[k]) return;
-              if (t >= pasos[k]) { listas[k] = true; return; }
-              estado[k] = (estado[k] + 1) % RUEDA.length;
-            });
-            const texto = destino.map((ch, k) =>
-              listas[k] ? ch : RUEDA[estado[k]]).join('');
-            const fichas = render(texto);
-            /* la ficha que acaba de caer da un golpe corto */
-            fichas.forEach((f, k) => {
-              if (!listas[k]) { f.style.opacity = '.55'; return; }
-              if (estado[k] !== -1) {
-                estado[k] = -1;
-                animate(f, { y: [-6, 0] },
-                  { duration: .13, ease: [0.34, 1.3, 0.64, 1] });
-              }
-            });
-            await new Promise(r => setTimeout(r, 34));
-          }
-          render(word);
-        };
-
-        /* borrado: las fichas vuelven a girar y se vacian de derecha
-           a izquierda */
-        const erase = async (word) => {
-          for (let n = word.length; n >= 0; n--) {
-            const fichas = render(word.slice(0, n));
-            if (n > 0) {
-              const ultima = fichas[fichas.length - 1];
-              if (ultima) animate(ultima, { opacity: [1, 0], y: [0, 5] },
-                { duration: .1, ease: 'easeIn' });
-            }
-            await new Promise(r => setTimeout(r, 26));
-          }
-        };
-
-        const cycle = async () => {
-          const word = words[i];
-          const t0 = performance.now();
-          await write(word);
-          const gasto = (word.length * 46) + ((word.length + 1) * 26);
-          await new Promise(r => setTimeout(r, Math.max(400, CICLO - gasto)));
-          await erase(word);
-          i = (i + 1) % words.length;
-          cycle();
-        };
-        setTimeout(cycle, 900);
-      }
+      const caer = async () => {
+        for (let t = 0; t <= maxPasos; t++) {
+          destino.forEach((ch, k) => {
+            if (listas[k]) return;
+            if (t >= pasos[k]) { listas[k] = true; return; }
+            estado[k] = (estado[k] + 1) % RUEDA.length;
+          });
+          pintar();
+          await new Promise(r => setTimeout(r, 58));
+        }
+        /* vuelve el HTML con el destacado intacto */
+        flap.innerHTML = htmlFinal;
+      };
+      pintar();
+      setTimeout(caer, 320);
     }
 
     /* 3. El marquee responde al scroll: acelera con el movimiento y
