@@ -589,6 +589,27 @@ main>section:nth-of-type(4){--skew:.11deg}
 .term-hint{font-family:'Azeret Mono',ui-monospace,monospace;
   font-size:.75rem;opacity:.5;letter-spacing:.02em}
 
+/* ---------- ZONA DE JUEGO DEL HERO ----------
+   Un plano tecnico donde vive el personaje. La cuadricula no es
+   decoracion: le da al personaje un lugar donde apoyarse. */
+.play{position:relative;margin-top:var(--sp-l);
+  border:var(--bw) solid color-mix(in srgb,#232226 22%,transparent);
+  border-radius:var(--r-sm);overflow:hidden;
+  height:clamp(180px,26vw,300px);
+  background-image:
+    linear-gradient(color-mix(in srgb,#232226 9%,transparent) 1px,transparent 1px),
+    linear-gradient(90deg,color-mix(in srgb,#232226 9%,transparent) 1px,transparent 1px);
+  background-size:26px 26px;
+  cursor:none}
+.play::after{
+  content:"mueva el cursor";
+  position:absolute;right:14px;bottom:11px;
+  font-family:'Azeret Mono',ui-monospace,monospace;
+  font-size:.6875rem;opacity:.4;pointer-events:none}
+.play canvas{display:block;width:100%;height:100%}
+@media(max-width:760px){.play{display:none}}
+@media(prefers-reduced-motion:reduce){.play{display:none}}
+
 /* ---------- HISTORIAS DEL EQUIPO ----------
    No son casos de venta: son proyectos anteriores de cada persona.
    Van en columna simple, sin foto, porque lo que pesa es el texto. */
@@ -791,6 +812,7 @@ main>section:nth-of-type(4){--skew:.11deg}
         <a class="btn btn-light" href="#contacto">¿Quiere explorar su idea?</a>
         <a class="btn" href="#servicios">Ver servicios</a>
       </div>
+      <div class="play" id="play" aria-hidden="true"></div>
     </div>
     <!-- Blob de plastilina. Decorativo: si WebGL no carga, el hero
          funciona igual. Solo se monta en pantallas anchas. -->
@@ -1137,6 +1159,138 @@ if (!REDUCE) {
         },
         { target: document.querySelector('.hero'), offset: ['start start', 'end start'] }
       );
+    }
+
+    /* 7. Personaje del hero. Un cuadrado de marca con tres triangulos
+       que persigue el cursor por la malla. No es una mascota: es la
+       propia marca moviendose. Solo en pantallas anchas y sin
+       reduced-motion. */
+    const play = document.getElementById('play');
+    if (play) {
+      const cv = document.createElement('canvas');
+      const ctx = cv.getContext('2d');
+      play.appendChild(cv);
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      let W = 0, H = 0;
+      const medir = () => {
+        W = play.clientWidth; H = play.clientHeight;
+        cv.width = W * dpr; cv.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      };
+      medir();
+
+      /* el bicho vive en el centro hasta que alguien mueve el cursor */
+      const bicho = { x: W / 2, y: H / 2, vx: 0, vy: 0, giro: 0 };
+      let meta = { x: W / 2, y: H / 2, activo: false };
+
+      play.addEventListener('pointermove', (e) => {
+        const r = play.getBoundingClientRect();
+        meta = { x: e.clientX - r.left, y: e.clientY - r.top, activo: true };
+      });
+      play.addEventListener('pointerleave', () => { meta.activo = false; });
+
+      const TEAL = '#3FAEC6', PURPLE = '#83389B', INK = '#232226';
+
+      const dibujar = () => {
+        ctx.clearRect(0, 0, W, H);
+
+        /* estela: marca por donde paso, como una traza de plano */
+        ctx.strokeStyle = 'rgba(35,34,38,.10)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(bicho.x, bicho.y);
+        ctx.lineTo(meta.x, meta.y);
+        ctx.stroke();
+
+        /* punto donde esta el cursor */
+        if (meta.activo) {
+          ctx.strokeStyle = 'rgba(35,34,38,.28)';
+          ctx.beginPath();
+          ctx.arc(meta.x, meta.y, 5, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        /* el bicho: el logo, inclinado segun hacia donde va */
+        const L = 34;
+        ctx.save();
+        ctx.translate(bicho.x, bicho.y);
+        ctx.rotate(bicho.giro);
+
+        ctx.fillStyle = TEAL;
+        ctx.strokeStyle = INK;
+        ctx.lineWidth = 2.5;
+        const r = 9;
+        ctx.beginPath();
+        ctx.roundRect(-L / 2, -L / 2, L, L, r);
+        ctx.fill();
+        ctx.stroke();
+
+        /* los tres triangulos de la marca */
+        ctx.fillStyle = PURPLE;
+        ctx.lineWidth = 1.4;
+        const tri = (cx, cy, s, rot) => {
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(rot);
+          ctx.beginPath();
+          for (let i = 0; i < 3; i++) {
+            const a = -Math.PI / 2 + i * 2.0944;
+            const px = Math.cos(a) * s, py = Math.sin(a) * s;
+            i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+          }
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        };
+        tri(-7, -7, 5.5, -0.5);
+        tri(8, 1, 6, 2.3);
+        tri(-3, 9, 5, 3.9);
+        ctx.restore();
+      };
+
+      let raf = null;
+      const tick = () => {
+        raf = requestAnimationFrame(tick);
+        /* persigue con inercia: acelera hacia el cursor y frena solo */
+        const dx = meta.x - bicho.x, dy = meta.y - bicho.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 2) {
+          bicho.vx += (dx / dist) * 0.55;
+          bicho.vy += (dy / dist) * 0.55;
+        }
+        bicho.vx *= 0.90; bicho.vy *= 0.90;
+        bicho.x += bicho.vx; bicho.y += bicho.vy;
+
+        /* rebota en los bordes en vez de escaparse */
+        const m = 22;
+        if (bicho.x < m) { bicho.x = m; bicho.vx *= -0.5; }
+        if (bicho.x > W - m) { bicho.x = W - m; bicho.vx *= -0.5; }
+        if (bicho.y < m) { bicho.y = m; bicho.vy *= -0.5; }
+        if (bicho.y > H - m) { bicho.y = H - m; bicho.vy *= -0.5; }
+
+        /* se inclina hacia donde va, y vuelve a plomo al detenerse */
+        const vel = Math.hypot(bicho.vx, bicho.vy);
+        bicho.giro += ((vel > 0.4 ? bicho.vx * 0.03 : 0) - bicho.giro) * 0.12;
+
+        dibujar();
+      };
+      tick();
+
+      /* no gasta cuadros fuera de pantalla */
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((es) => es.forEach((e) => {
+          if (e.isIntersecting) { if (!raf) tick(); }
+          else { cancelAnimationFrame(raf); raf = null; }
+        })).observe(play);
+      }
+
+      let rt;
+      window.addEventListener('resize', () => {
+        clearTimeout(rt);
+        rt = setTimeout(medir, 160);
+      });
     }
 
   } catch (e) {
