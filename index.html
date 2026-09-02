@@ -615,7 +615,7 @@ main>section:nth-of-type(4){--skew:.11deg}
   background-size:26px 26px;
   cursor:none}
 .play::after{
-  content:"mueva el cursor";
+  content:"pase el cursor por las piezas";
   position:absolute;right:14px;bottom:11px;
   font-family:'Azeret Mono',ui-monospace,monospace;
   font-size:.6875rem;opacity:.4;pointer-events:none}
@@ -1159,135 +1159,175 @@ if (!REDUCE) {
       );
     }
 
-    /* 7. Personaje del hero. Un cuadrado de marca con tres triangulos
-       que persigue el cursor por la malla. No es una mascota: es la
-       propia marca moviendose. Solo en pantallas anchas y sin
-       reduced-motion. */
+    /* 7. Plano de trabajo del hero. Nodos conectados por lineas: al
+       pasar el cursor cerca de uno, se enciende y manda una senal que
+       recorre la cadena hasta el final. Es la idea de ualabi dibujada:
+       las cosas estan conectadas y una empuja a la siguiente. */
     const play = document.getElementById('play');
     if (play) {
       const cv = document.createElement('canvas');
       const ctx = cv.getContext('2d');
       play.appendChild(cv);
 
+      const TEAL = '#3FAEC6', PURPLE = '#83389B', INK = '#232226';
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      let W = 0, H = 0;
+      let W = 0, H = 0, nodos = [], enlaces = [];
+
+      /* posiciones relativas: el plano se rearma con cada medida */
+      const PLANTA = [
+        { x: .10, y: .68, t: 'in'  },
+        { x: .26, y: .34, t: 'eng' },
+        { x: .42, y: .70, t: 'pal' },
+        { x: .58, y: .30, t: 'eng' },
+        { x: .74, y: .62, t: 'pal' },
+        { x: .90, y: .38, t: 'out' }
+      ];
+
       const medir = () => {
         W = play.clientWidth; H = play.clientHeight;
         cv.width = W * dpr; cv.height = H * dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        nodos = PLANTA.map((n) => ({
+          x: n.x * W, y: n.y * H, t: n.t,
+          carga: 0,      /* 0 apagado, 1 encendido */
+          giro: 0
+        }));
+        enlaces = nodos.slice(0, -1).map((n, i) => ({ a: i, b: i + 1, luz: 0 }));
       };
       medir();
 
-      /* el bicho vive en el centro hasta que alguien mueve el cursor */
-      const bicho = { x: W / 2, y: H / 2, vx: 0, vy: 0, giro: 0 };
-      let meta = { x: W / 2, y: H / 2, activo: false };
-
+      let puntero = { x: -999, y: -999, dentro: false };
       play.addEventListener('pointermove', (e) => {
         const r = play.getBoundingClientRect();
-        meta = { x: e.clientX - r.left, y: e.clientY - r.top, activo: true };
+        puntero = { x: e.clientX - r.left, y: e.clientY - r.top, dentro: true };
       });
-      play.addEventListener('pointerleave', () => { meta.activo = false; });
+      play.addEventListener('pointerleave', () => { puntero.dentro = false; });
 
-      const TEAL = '#3FAEC6', PURPLE = '#83389B', INK = '#232226';
+      /* la senal viaja de un nodo al siguiente con un retardo, asi se
+         ve la cadena avanzar en vez de encenderse entera */
+      const disparar = (desde) => {
+        for (let i = desde; i < nodos.length; i++) {
+          setTimeout(() => {
+            nodos[i].carga = 1;
+            if (i > 0) enlaces[i - 1].luz = 1;
+          }, (i - desde) * 130);
+        }
+      };
 
-      const dibujar = () => {
+      let ultimo = -1;
+      const revisar = () => {
+        if (!puntero.dentro) { ultimo = -1; return; }
+        let cerca = -1, min = 46;
+        nodos.forEach((n, i) => {
+          const d = Math.hypot(n.x - puntero.x, n.y - puntero.y);
+          if (d < min) { min = d; cerca = i; }
+        });
+        if (cerca >= 0 && cerca !== ultimo) { ultimo = cerca; disparar(cerca); }
+        if (cerca < 0) ultimo = -1;
+      };
+
+      const dibujar = (t) => {
         ctx.clearRect(0, 0, W, H);
 
-        /* estela: marca por donde paso, como una traza de plano */
-        ctx.strokeStyle = 'rgba(35,34,38,.10)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(bicho.x, bicho.y);
-        ctx.lineTo(meta.x, meta.y);
-        ctx.stroke();
-
-        /* punto donde esta el cursor */
-        if (meta.activo) {
-          ctx.strokeStyle = 'rgba(35,34,38,.28)';
-          ctx.beginPath();
-          ctx.arc(meta.x, meta.y, 5, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-
-        /* el bicho: el logo, inclinado segun hacia donde va */
-        const L = 34;
-        ctx.save();
-        ctx.translate(bicho.x, bicho.y);
-        ctx.rotate(bicho.giro);
-
-        ctx.fillStyle = TEAL;
-        ctx.strokeStyle = INK;
-        ctx.lineWidth = 2.5;
-        const r = 9;
-        ctx.beginPath();
-        ctx.roundRect(-L / 2, -L / 2, L, L, r);
-        ctx.fill();
-        ctx.stroke();
-
-        /* los tres triangulos de la marca */
-        ctx.fillStyle = PURPLE;
-        ctx.lineWidth = 1.4;
-        const tri = (cx, cy, s, rot) => {
-          ctx.save();
-          ctx.translate(cx, cy);
-          ctx.rotate(rot);
-          ctx.beginPath();
-          for (let i = 0; i < 3; i++) {
-            const a = -Math.PI / 2 + i * 2.0944;
-            const px = Math.cos(a) * s, py = Math.sin(a) * s;
-            i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+        /* las lineas: apagadas son tenues, encendidas toman el color */
+        enlaces.forEach((e) => {
+          const a = nodos[e.a], b = nodos[e.b];
+          ctx.strokeStyle = 'rgba(35,34,38,.16)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          if (e.luz > .01) {
+            ctx.strokeStyle = PURPLE;
+            ctx.globalAlpha = e.luz;
+            ctx.lineWidth = 2.4;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            /* la chispa que corre por el cable */
+            const p = 1 - e.luz;
+            ctx.globalAlpha = e.luz;
+            ctx.fillStyle = PURPLE;
+            ctx.beginPath();
+            ctx.arc(a.x + (b.x - a.x) * p, a.y + (b.y - a.y) * p, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
           }
-          ctx.closePath();
-          ctx.fill();
-          ctx.stroke();
+        });
+
+        /* los nodos */
+        nodos.forEach((n) => {
+          ctx.save();
+          ctx.translate(n.x, n.y);
+          const on = n.carga;
+          ctx.strokeStyle = INK;
+          ctx.lineWidth = 2;
+
+          if (n.t === 'eng') {
+            /* engranaje: gira cuando esta cargado */
+            ctx.rotate(n.giro);
+            ctx.fillStyle = on > .05 ? TEAL : '#fff';
+            const R = 15, dientes = 8;
+            ctx.beginPath();
+            for (let i = 0; i < dientes * 2; i++) {
+              const a = (i / (dientes * 2)) * Math.PI * 2;
+              const r = i % 2 ? R : R + 5;
+              i ? ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r)
+                : ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+            }
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.arc(0, 0, 4.5, 0, Math.PI * 2); ctx.stroke();
+          } else if (n.t === 'pal') {
+            /* palanca: se inclina al activarse */
+            ctx.rotate(-0.5 + on * 0.9);
+            ctx.fillStyle = on > .05 ? TEAL : '#fff';
+            ctx.beginPath(); ctx.roundRect(-18, -5, 36, 10, 5);
+            ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, Math.PI * 2);
+            ctx.fillStyle = INK; ctx.fill();
+          } else {
+            /* entrada y salida: el cuadrado de la marca */
+            ctx.fillStyle = on > .05 ? TEAL : '#fff';
+            ctx.beginPath(); ctx.roundRect(-14, -14, 28, 28, 8);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = on > .05 ? PURPLE : 'rgba(35,34,38,.25)';
+            ctx.beginPath();
+            for (let i = 0; i < 3; i++) {
+              const a = -Math.PI / 2 + i * 2.0944;
+              const px = Math.cos(a) * 6, py = Math.sin(a) * 6;
+              i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+            }
+            ctx.closePath(); ctx.fill();
+          }
           ctx.restore();
-        };
-        tri(-7, -7, 5.5, -0.5);
-        tri(8, 1, 6, 2.3);
-        tri(-3, 9, 5, 3.9);
-        ctx.restore();
+        });
+
+        /* el cursor deja ver donde esta */
+        if (puntero.dentro) {
+          ctx.strokeStyle = 'rgba(35,34,38,.3)';
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(puntero.x, puntero.y, 6, 0, Math.PI * 2); ctx.stroke();
+        }
       };
 
       let raf = null;
       const tick = () => {
         raf = requestAnimationFrame(tick);
-        /* persigue con inercia: acelera hacia el cursor y frena solo */
-        const dx = meta.x - bicho.x, dy = meta.y - bicho.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist > 2) {
-          bicho.vx += (dx / dist) * 0.55;
-          bicho.vy += (dy / dist) * 0.55;
-        }
-        bicho.vx *= 0.90; bicho.vy *= 0.90;
-        bicho.x += bicho.vx; bicho.y += bicho.vy;
-
-        /* rebota en los bordes en vez de escaparse */
-        const m = 22;
-        if (bicho.x < m) { bicho.x = m; bicho.vx *= -0.5; }
-        if (bicho.x > W - m) { bicho.x = W - m; bicho.vx *= -0.5; }
-        if (bicho.y < m) { bicho.y = m; bicho.vy *= -0.5; }
-        if (bicho.y > H - m) { bicho.y = H - m; bicho.vy *= -0.5; }
-
-        /* se inclina hacia donde va, y vuelve a plomo al detenerse */
-        const vel = Math.hypot(bicho.vx, bicho.vy);
-        bicho.giro += ((vel > 0.4 ? bicho.vx * 0.03 : 0) - bicho.giro) * 0.12;
-
+        revisar();
+        nodos.forEach((n) => {
+          if (n.carga > 0) { n.carga *= 0.975; if (n.carga < .01) n.carga = 0; }
+          if (n.t === 'eng') n.giro += 0.008 + n.carga * 0.09;
+        });
+        enlaces.forEach((e) => { if (e.luz > 0) { e.luz *= 0.955; if (e.luz < .01) e.luz = 0; } });
         dibujar();
       };
       tick();
 
-      /* no gasta cuadros fuera de pantalla */
       if ('IntersectionObserver' in window) {
         new IntersectionObserver((es) => es.forEach((e) => {
           if (e.isIntersecting) { if (!raf) tick(); }
           else { cancelAnimationFrame(raf); raf = null; }
         })).observe(play);
       }
-
       let rt;
       window.addEventListener('resize', () => {
-        clearTimeout(rt);
-        rt = setTimeout(medir, 160);
+        clearTimeout(rt); rt = setTimeout(medir, 160);
       });
     }
 
