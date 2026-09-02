@@ -678,6 +678,27 @@ main>section:nth-of-type(4){--skew:.11deg}
   .svc-list::-webkit-scrollbar-track{background:transparent}
 }
 
+/* ---------- SCROLL HORIZONTAL OBLIGATORIO ----------
+   La seccion se fija y el scroll vertical mueve las tarjetas de lado
+   hasta que terminan. Solo en escritorio: en movil el carrusel ya se
+   arrastra con el dedo, y secuestrar el scroll ahi es hostil. */
+@media(min-width:900px) and (prefers-reduced-motion:no-preference){
+  .pan{position:relative}
+  .pan-sticky{position:sticky;top:0;min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    overflow:hidden}
+  .pan .svc-list{display:flex;flex-wrap:nowrap;
+    gap:var(--sp-m);will-change:transform}
+  .pan .svc-list>.card{flex:0 0 clamp(320px,30vw,420px)}
+  .pan .svc-intro{margin-bottom:var(--sp-l)}
+  /* la barra de progreso dice cuanto falta */
+  .pan-bar{position:absolute;left:var(--gutter);right:var(--gutter);
+    bottom:26px;height:2px;
+    background:color-mix(in srgb,#232226 14%,transparent)}
+  .pan-bar i{display:block;height:100%;width:0;
+    background:color-mix(in srgb,#232226 45%,transparent)}
+}
+
 /* ---------- METODO EN CARRUSEL ----------
    Scroll horizontal con snap. Sin JS: el navegador ya sabe hacerlo,
    y con teclado funciona porque las tarjetas son focusables. */
@@ -846,9 +867,9 @@ main>section:nth-of-type(4){--skew:.11deg}
   
 
   <!-- SERVICIOS -->
-  <section id="servicios" class="stack stack-1 block block-teal win" data-win="ualabi / servicios">
+  <section id="servicios" class="pan stack stack-1 block block-teal win" data-win="ualabi / servicios">
     <div class="win-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="pad svc">
+    <div class="pan-sticky"><div class="pad svc">
             <!-- Mismo modelo del hero, en chico. Decorativo. -->
       <!-- TODO: sus descripciones ganan fuerza con un compromiso numérico
            al frente ("2 semanas. 4.500 €", "en 72h"). Si ualabi tiene
@@ -894,7 +915,7 @@ main>section:nth-of-type(4){--skew:.11deg}
             <div class="svc-head">
               <span class="svc-num" aria-hidden="true">03</span>
             </div>
-            <h3>Creamos con otros</h3>
+            <h3>Colaboramos</h3>
             <p>Quiere construir algo con alguien más y no sabe cómo. Diseñamos el proceso para que eso ocurra: con quién, bajo qué reglas y hacia dónde.</p>
             <div class="tags"><span>Talleres</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
           </div>
@@ -916,6 +937,8 @@ main>section:nth-of-type(4){--skew:.11deg}
       <img class="shot-wide" loading="lazy" decoding="async" width="1600" height="686"
         src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&amp;fit=crop&amp;w=1600&amp;q=78"
         alt="Equipo trabajando en laptops alrededor de una mesa, con código en una de las pantallas">
+    </div>
+      <div class="pan-bar" aria-hidden="true"><i></i></div>
     </div>
   </section>
 
@@ -1260,6 +1283,47 @@ if (!REDUCE) {
           else { cancelAnimationFrame(raf); raf = null; }
         })).observe(play);
       }
+
+      let rt;
+      window.addEventListener('resize', () => {
+        clearTimeout(rt);
+        rt = setTimeout(medir, 160);
+      });
+    }
+
+    /* 8. Scroll horizontal obligatorio en servicios. La seccion se fija
+       y el scroll vertical corre las tarjetas de lado hasta que
+       terminan. Se mide en vivo porque el ancho depende del viewport. */
+    const pan = document.querySelector('.pan');
+    const panList = pan && pan.querySelector('.svc-list');
+    const panBar = pan && pan.querySelector('.pan-bar i');
+    const anchoOk = window.matchMedia('(min-width:900px)');
+
+    if (pan && panList && anchoOk.matches) {
+      let recorrido = 0;
+
+      const medir = () => {
+        /* cuanto sobra del carril por fuera de la pantalla */
+        recorrido = Math.max(0, panList.scrollWidth - panList.clientWidth);
+        /* la seccion necesita ese alto extra para tener scroll que
+           consumir; sin esto el sticky no tiene donde correr */
+        pan.style.height = recorrido > 0
+          ? `calc(100vh + ${recorrido}px)`
+          : '';
+        if (recorrido === 0) panList.style.transform = '';
+      };
+
+      medir();
+
+      scroll(
+        (p) => {
+          if (recorrido === 0) return;
+          const x = p * recorrido;
+          panList.style.transform = `translate3d(${-x}px,0,0)`;
+          if (panBar) panBar.style.width = (p * 100).toFixed(1) + '%';
+        },
+        { target: pan, offset: ['start start', 'end end'] }
+      );
 
       let rt;
       window.addEventListener('resize', () => {
