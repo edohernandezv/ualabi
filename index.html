@@ -610,28 +610,6 @@ main>section:nth-of-type(4){--skew:.11deg}
 @media(max-width:760px){.play{display:none}}
 @media(prefers-reduced-motion:reduce){.play{display:none}}
 
-/* ---------- HISTORIAS DEL EQUIPO ----------
-   No son casos de venta: son proyectos anteriores de cada persona.
-   Van en columna simple, sin foto, porque lo que pesa es el texto. */
-.stories{display:grid;gap:var(--sp-m)}
-.story{padding:var(--sp-l) 0;
-  border-top:var(--bw) solid color-mix(in srgb,#232226 16%,transparent)}
-.story:last-child{border-bottom:var(--bw) solid color-mix(in srgb,#232226 16%,transparent)}
-.story h3{font-size:var(--t-s);margin-bottom:10px;max-width:26ch}
-.story p{font-size:1rem;line-height:1.7;max-width:62ch}
-.story-learn{margin-top:14px;color:var(--accent)}
-.story-learn b{font-weight:500}
-@media(min-width:900px){
-  /* dos columnas: quien y que a la izquierda, el relato completo a la
-     derecha. Antes el titulo caia a una fila propia y el aprendizaje
-     se separaba del parrafo. */
-  .story{display:grid;grid-template-columns:.72fr 1.28fr;
-    gap:0 var(--sp-l);align-items:start}
-  .story .tag{grid-column:1;grid-row:1;margin:0}
-  .story h3{grid-column:1;grid-row:2;margin-top:8px}
-  .story>p:not(.tag):not(.story-learn){grid-column:2;grid-row:1/4;margin:0}
-  .story-learn{grid-column:2;grid-row:4;margin-top:14px}
-}
 
 /* ---------- IMAGEN DE SECCION ----------
    Una landing sin imagenes no es minimalismo, es trabajo a medias.
@@ -785,7 +763,6 @@ main>section:nth-of-type(4){--skew:.11deg}
     </a>
     <div class="nav-links">
       <a href="#servicios">Servicios</a>
-      <a href="#trabajo">Equipo</a>
       <a href="#notas">Notas</a>
     </div>
     <a href="#contacto" class="cta">Escríbenos</a>
@@ -793,8 +770,7 @@ main>section:nth-of-type(4){--skew:.11deg}
       <summary aria-label="Abrir menú">Menú</summary>
       <div class="menu-panel">
         <a href="#servicios">Servicios</a>
-        <a href="#trabajo">Equipo</a>
-          <a href="#notas">Notas</a>
+            <a href="#notas">Notas</a>
         <a href="#contacto">Escríbenos</a>
       </div>
     </details>
@@ -908,39 +884,6 @@ main>section:nth-of-type(4){--skew:.11deg}
       <img class="shot-wide" loading="lazy" decoding="async" width="1600" height="686"
         src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&amp;fit=crop&amp;w=1600&amp;q=78"
         alt="Equipo trabajando en laptops alrededor de una mesa, con código en una de las pantallas">
-    </div>
-  </section>
-
-<section id="trabajo" class="stack stack-2 block block-paper">
-    <div class="pad">
-    <div class="sh" data-reveal>
-      <h2>De dónde venimos</h2>
-      <p>Todavía no vendemos como ualabi. Lo que traemos es lo que cada uno construyó antes, y lo que aprendimos ahí.</p>
-    </div>
-    <!-- TODO: reemplazar nombre, rol y proyecto por los reales de cada
-         persona del equipo. La estructura es: qué construyó, dónde, y
-         qué aprendió que se aplica hoy. Sin cliente si no se puede
-         nombrar; el aprendizaje es lo que importa. -->
-    <div class="stories" data-reveal-group>
-      <article class="story">
-        <p class="tag">Nombre por definir, rol</p>
-        <h3>Qué construyó</h3>
-        <p>Una o dos frases sobre el proyecto: qué era, para quién, qué problema resolvía.</p>
-        <p class="story-learn"><b>Lo que quedó:</b> el aprendizaje concreto que hoy usamos en ualabi.</p>
-      </article>
-      <article class="story">
-        <p class="tag">Nombre por definir, rol</p>
-        <h3>Qué construyó</h3>
-        <p>Una o dos frases sobre el proyecto: qué era, para quién, qué problema resolvía.</p>
-        <p class="story-learn"><b>Lo que quedó:</b> el aprendizaje concreto que hoy usamos en ualabi.</p>
-      </article>
-      <article class="story">
-        <p class="tag">Nombre por definir, rol</p>
-        <h3>Qué construyó</h3>
-        <p>Una o dos frases sobre el proyecto: qué era, para quién, qué problema resolvía.</p>
-        <p class="story-learn"><b>Lo que quedó:</b> el aprendizaje concreto que hoy usamos en ualabi.</p>
-      </article>
-    </div>
     </div>
   </section>
 
