@@ -10,57 +10,46 @@
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://images.unsplash.com">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Azeret+Mono:wght@400;500;600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Azeret+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    ualabi
-   Superficies claras separadas por hairlines. El color de marca
-   entra como velo de fondo por seccion y como acento en detalle,
-   nunca como superficie plena.
+   Papel tecnico de fondo en toda la pagina: una malla tenue sobre
+   crema. Encima, bloques de color plano y objetos con borde.
    Paleta: solo los cuatro colores del logo. Tinta 232226, morado
-   83389B, turquesa 3FAEC6 y la crema F6F0EA de fondo. Todo lo demas
-   son velos de esos mismos, mezclados contra blanco.
-   Tipografia: dos familias. Archivo variable para display y
-   Azeret Mono para todo lo demas, cuerpo incluido: la pagina vende
-   ingenieria, y los parrafos son cortos, asi que la mono aguanta.
+   83389B, turquesa 3FAEC6 y la crema F6F0EA. Sin degradados: los
+   velos son mezclas opacas contra blanco.
+   Tipografia: Archivo variable para display y Azeret Mono para
+   todo lo demas, cuerpo incluido.
    ============================================================ */
 :root{
-  /* marca, en OKLCH: chroma controlada, mismo matiz que el hex */
   --ink:oklch(20.5% .012 305);          /* #232226 */
   --purple:oklch(43.5% .175 313);       /* #83389B */
   --teal:oklch(72% .098 218);           /* #3FAEC6 */
   --teal-deep:oklch(46% .078 218);      /* acento sobre superficie tenida: 4.5:1 */
-  /* Velos de marca. Se mezclan en sRGB contra blanco: en OKLCH el
-     matiz calido de la crema arrastraba el turquesa hacia el verde. */
-  --tint-teal:color-mix(in srgb, #3FAEC6 42%, #FFFFFF);
-  --tint-purple:color-mix(in srgb, #83389B 38%, #FFFFFF);
-  --tint-purple-soft:color-mix(in srgb, #83389B 22%, #FFFFFF);
   --purple-deep:oklch(40% .16 313);     /* morado legible como texto */
-  --accent:var(--teal-deep);            /* cada bloque redefine el suyo */
-  --wash:color-mix(in srgb, #3FAEC6 26%, #FFFFFF);  /* superficie de hover */
+  /* velos de marca, mezclados en sRGB contra blanco */
+  --tint-teal:color-mix(in srgb, #3FAEC6 42%, #FFFFFF);
+  --wash:color-mix(in srgb, #3FAEC6 26%, #FFFFFF);
   --cream:oklch(95.8% .012 85);         /* #F6F0EA */
 
   --surface:var(--cream);
   --on-surface:var(--ink);
-  --paper:oklch(99% .006 85);           /* tarjeta sobre bloque de color */
-
-  /* texto sobre cada bloque */
-  --on-purple:var(--cream);
-  --on-teal:var(--ink);
+  --paper:oklch(99% .006 85);           /* objeto sobre el papel */
   --on-ink:var(--cream);
-  --on-sand:var(--ink);
+  --accent:var(--teal-deep);
 
   --line:var(--ink);
-  --bw:1.5px;                            /* hairline, no marco grueso */
-  --bw-lg:2px;
+  --bw:1.5px;
+  /* la malla: linea opaca, sin transparencia */
+  --grid:color-mix(in srgb, var(--on-surface) 9%, var(--surface));
+  --grid-step:28px;
 
-  --r:18px;                              /* radio contenido */
+  --r:18px;
   --r-sm:12px;
   --r-pill:999px;
 
-  /* escala de espaciado: cuatro pasos, nada fuera de aqui */
   --sp-s:clamp(10px,1.4vw,16px);
   --sp-m:clamp(16px,2vw,22px);
   --sp-l:clamp(30px,4vw,56px);
@@ -71,9 +60,7 @@
   --t-s:calc(1.1rem  + var(--s-fluid)*.42);
   --t-m:calc(1.45rem + var(--s-fluid)*.95);
   --t-l:calc(1.7rem  + var(--s-fluid)*1.3);
-  --t-xl:calc(2.4rem + var(--s-fluid)*2.6);
-  --t-mono:calc(2.5rem + var(--s-fluid)*3.1);  /* display en mono */
-  --v:clamp(40px,7vw,104px);
+  --t-xl:calc(2.3rem + var(--s-fluid)*2.2);
   --nav-h:4.5rem;
   --ease:cubic-bezier(.22,1,.36,1);
 }
@@ -85,12 +72,9 @@
     --wash:color-mix(in srgb, #3FAEC6 22%, #232226);
     --line:oklch(99% .006 85);
     --ink:oklch(13% .01 305);
-    --on-sand:var(--cream);
     --teal-deep:var(--teal);
     --purple-deep:oklch(72% .14 313);
     --tint-teal:color-mix(in srgb, #3FAEC6 22%, #232226);
-    --tint-purple:color-mix(in srgb, #83389B 26%, #232226);
-    --tint-purple-soft:color-mix(in srgb, #83389B 15%, #232226);
   }
 }
 
@@ -101,10 +85,14 @@ section[id],header[id],main[id]{scroll-margin-top:calc(var(--nav-h) + 16px)}
 a,button,summary,input,label{touch-action:manipulation}
 html,body{overflow-x:clip}
 body{
-  background:var(--surface);color:var(--on-surface);
+  color:var(--on-surface);
+  /* el papel tecnico: dos familias de lineas sobre la crema */
+  background-color:var(--surface);
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:var(--grid-step) var(--grid-step);
   font-family:'Azeret Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-  /* la mono es mas ancha por caracter: baja el cuerpo y sube el
-     interlineado para que el parrafo no se sienta apretado */
   font-size:clamp(.9375rem,.91rem + .13vw,1rem);line-height:1.7;
   letter-spacing:-.005em;
   overflow-x:hidden;-webkit-font-smoothing:antialiased;
@@ -113,45 +101,40 @@ a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%;height:auto}
 :focus-visible{outline:3px solid var(--purple-deep);outline-offset:3px}
 .skip{position:absolute;left:-9999px}
-/* visible solo para lectores de pantalla */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .skip:focus{left:12px;top:12px;z-index:10000;background:var(--ink);color:var(--cream);padding:14px 22px;border-radius:var(--r-pill)}
 
-/* display: Archivo condensado por eje de ancho */
-h1,h2,h3,.display{
+h1,h2,h3{
   font-family:'Archivo',system-ui,sans-serif;
   font-variation-settings:'wdth' 92;
   font-weight:700;letter-spacing:-.02em;line-height:1.04;text-wrap:balance;
 }
-.label,.kicker,.tag,.step,.svc-num,.date,.foot-grid h4,.legal,.strip-track span,.brand .cl{
-  font-family:'Azeret Mono',ui-monospace,SFMono-Regular,monospace;
-  font-variation-settings:normal;
-}
-.label{text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;font-weight:500}
 
-/* highlight invertido, el gesto de la referencia */
-.hl{background:linear-gradient(transparent 62%, color-mix(in oklch,var(--teal) 42%,transparent) 0);
-  padding:0 .04em}
-.on-dark .hl{background:linear-gradient(transparent 62%, color-mix(in oklch,var(--teal) 55%,transparent) 0)}
+/* destacado: un subrayado plano en morado, sin velo */
+.hl{text-decoration:underline;text-decoration-thickness:.11em;
+  text-underline-offset:.1em;text-decoration-color:var(--purple);
+  text-decoration-skip-ink:none}
+.on-dark .hl{text-decoration-color:var(--teal)}
 
 .frame{max-width:1560px;margin:0 auto;padding:0 clamp(10px,1.6vw,22px) clamp(10px,1.6vw,22px)}
 
-/* ---------- NAV: pildora flotante ---------- */
+/* ---------- NAV ---------- */
 .nav{
   position:sticky;top:clamp(10px,1.6vw,18px);z-index:100;
   display:flex;align-items:center;gap:8px;
   background:var(--paper);border:var(--bw) solid var(--line);border-radius:var(--r-pill);
-  padding:8px 8px 8px 22px;margin-bottom:var(--sp-m);min-height:var(--nav-h);
+  padding:8px 8px 8px 14px;margin-bottom:var(--sp-m);min-height:var(--nav-h);
 }
 .brand{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 86;font-weight:900;
-  font-size:1.35rem;letter-spacing:-.03em;margin-right:auto;display:flex;align-items:center;gap:11px}
+  font-size:1.35rem;letter-spacing:-.03em;margin-right:auto;display:flex;align-items:center;gap:12px}
 .brand .mark{flex-shrink:0;display:block}
-.brand span{display:flex}
-.brand b{color:var(--purple-deep)}
+.brand .cl{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 100;
+  font-style:normal;font-weight:700;font-size:.625rem;letter-spacing:.08em;
+  border:2px solid currentColor;border-radius:6px;padding:2px 5px;align-self:center;opacity:.65}
 .nav-links{display:flex;align-items:center;gap:2px}
 .nav-links a{padding:11px 16px;border-radius:var(--r-pill);font-size:.875rem;font-weight:600;
-  transition:background .18s var(--ease),color .18s var(--ease)}
+  transition:background .18s var(--ease)}
 .nav-links a:hover{background:var(--wash)}
 .nav .cta{padding:13px 24px;border-radius:var(--r-pill);background:var(--ink);color:var(--cream);
   font-weight:500;font-size:.875rem;white-space:nowrap;border:var(--bw) solid var(--line);
@@ -172,68 +155,35 @@ h1,h2,h3,.display{
 .menu-panel a{padding:13px 16px;border-radius:12px;font-weight:600;font-size:.9375rem}
 .menu-panel a:hover{background:var(--wash)}
 @media(max-width:1000px){
-  .nav{padding-left:16px}
-  .nav-links{display:none}
+  .nav-links,.nav .cta{display:none}
   .menu{display:block}
-  .nav .cta{display:none}
 }
 
-/* ---------- BLOQUE: la unidad estructural ---------- */
+/* ---------- BLOQUE ---------- */
 .block{position:relative;border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
-  margin-bottom:var(--sp-m)}
-.block-purple{background:var(--tint-purple);
-  --accent:var(--purple-deep)}
-/* El hero no es un color plano: lleva un degradado suave del celeste
-   de marca y una malla tenue que le da sustrato al blob. */
-.block-sky{
-  /* color plano, sin degradado: el turquesa se lee como turquesa */
-  background:var(--tint-teal);
-  color:var(--ink);
-}
-
-.block-teal{background:var(--tint-teal);
-  --accent:var(--teal-deep)}
-.block-ink{background:var(--ink);color:var(--on-ink)}
-.block-sand{background:var(--tint-purple-soft);
-  --accent:var(--purple-deep)}
-.block-paper{background:var(--paper)}
+  margin-bottom:var(--sp-m);
+  /* la malla sigue por debajo de los bloques de color */
+  background-image:
+    linear-gradient(color-mix(in srgb,currentColor 6%,transparent) 1px,transparent 1px),
+    linear-gradient(90deg,color-mix(in srgb,currentColor 6%,transparent) 1px,transparent 1px);
+  background-size:var(--grid-step) var(--grid-step)}
+.block-teal{background-color:var(--tint-teal);--accent:var(--teal-deep)}
+.block-ink{background-color:var(--ink);color:var(--on-ink)}
+.block-paper{background-color:var(--paper);background-image:none}
 .pad{padding:clamp(26px,4.5vw,64px)}
-/* el titular de seccion alinea con el contenido de los bloques */
-.sh-in{padding:0}
 
-/* tarjeta blanca sobre bloque de color, anidada a proposito */
-/* Tarjetas con tratamiento de terminal: barra de titulo con puntos y
-   prompt monoespaciado. La marca dice que la innovacion no es una
-   jornada de post-its, asi que las tarjetas no deberian parecer una. */
-.card{background:var(--cream);color:var(--on-surface);
-  border:var(--bw) solid color-mix(in srgb, #232226 22%, transparent);
-  border-radius:10px;padding:0;overflow:hidden}
-.card-bar{display:flex;align-items:center;gap:7px;padding:9px 13px;width:100%;box-sizing:border-box;
-  border-bottom:var(--bw) solid color-mix(in srgb, #232226 14%, transparent);
-  background:color-mix(in srgb, #232226 3%, transparent)}
-.card-bar i{width:9px;height:9px;border-radius:50%;flex-shrink:0;
-  border:1px solid color-mix(in srgb, #232226 30%, transparent)}
-.card-bar span{font-family:'Azeret Mono',ui-monospace,monospace;
-  font-size:.6875rem;opacity:.45;margin-left:5px;letter-spacing:.02em}
-.card-body{padding:clamp(20px,2.4vw,30px);width:100%}
-.svc-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
-.sub{background:var(--surface);border-radius:12px;padding:16px 18px}
-.sub + .sub{margin-top:10px}
-.sub h4{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 92;
-  text-transform:uppercase;letter-spacing:.04em;font-size:.8125rem;font-weight:800;margin-bottom:5px}
-.sub p{font-size:.9375rem;line-height:1.5}
-
-/* ---------- HERO ---------- */
-.hero{position:relative}
-.hero .pad{padding-block:clamp(52px,7.5vw,104px)}
-h1{font-size:var(--t-mono);font-weight:500;
-  letter-spacing:-.03em;line-height:1.1;max-width:none;
-  /* una linea reservada: la lista corta entra en movil y la larga en
-     desktop, asi que ninguna palabra envuelve */
-  min-height:calc(var(--t-mono) * 1.1)}
-.lede{font-size:clamp(1.05rem,.98rem + .62vw,1.4rem);line-height:1.45;max-width:58ch;
-  margin-top:clamp(20px,2.6vw,30px);opacity:.92}
-.hero-cta{margin-top:clamp(26px,3.6vw,40px);display:flex;flex-wrap:wrap;gap:12px}
+/* ---------- HERO: texto y linea de produccion sobre el papel ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+  gap:clamp(28px,4vw,64px);align-items:center;
+  padding:clamp(40px,6vw,88px) clamp(6px,2vw,28px) clamp(40px,5vw,72px)}
+.kicker{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
+  text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;font-weight:700;
+  margin-bottom:var(--sp-m);opacity:.88}
+.kicker::before{content:"// ";opacity:.6}
+h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;max-width:12ch}
+.lede{font-size:clamp(1rem,.95rem + .4vw,1.2rem);line-height:1.5;max-width:44ch;
+  margin-top:clamp(18px,2.4vw,28px);opacity:.92}
+.hero-cta{margin-top:clamp(24px,3.2vw,36px);display:flex;flex-wrap:wrap;gap:12px}
 .btn{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:var(--cream);
   padding:15px 28px;border:var(--bw) solid var(--line);border-radius:var(--r-pill);
   font-weight:500;font-size:.9375rem;white-space:nowrap;
@@ -244,412 +194,59 @@ h1{font-size:var(--t-mono);font-weight:500;
 .btn-light:hover{background:var(--wash)}
 .btn::after{content:"\2197";font-size:1em;line-height:1}
 
-/* fila de sellos del hero */
-.seals{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(26px,3.4vw,40px)}
-.seal{display:flex;align-items:center;gap:9px;background:var(--paper);color:var(--on-surface);
-  border:var(--bw) solid var(--line);border-radius:var(--r-pill);padding:10px 18px;
-  font-size:.875rem;font-weight:600}
-.seal b{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 88;font-weight:900}
+/* la fabrica: cajitas del logo pasan por tres estaciones */
+.fab{position:relative;width:100%;min-width:0;aspect-ratio:5/4;max-height:560px}
+.fab canvas{display:block;width:100%;height:100%}
+@media(max-width:899px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:var(--sp-l)}
+  .fab{aspect-ratio:16/10;max-height:none}
+}
 
-/* ---------- MARQUEE ---------- */
-.strip{background:transparent;color:var(--on-surface);overflow:hidden;
-  border-block:var(--bw) solid color-mix(in oklch,var(--on-surface) 14%,transparent);border-radius:0;
-  margin-bottom:var(--sp-m)}
-.strip-track{display:flex;gap:2.5rem;padding:14px 0 14px 2.5rem;white-space:nowrap;
-  animation:slide 42s linear infinite;width:max-content}
-.strip-track span{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
-  text-transform:none;letter-spacing:.02em;font-size:.75rem;font-weight:400;opacity:.62}
-@keyframes slide{to{transform:translateX(-50%)}}
-.strip:hover .strip-track,.strip:focus-within .strip-track{animation-play-state:paused}
-@media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
+/* ---------- TARJETAS TERMINAL ---------- */
+.card{background:var(--paper);color:var(--on-surface);
+  border:var(--bw) solid var(--line);border-radius:10px;overflow:hidden}
+.card-bar{display:flex;align-items:center;gap:7px;padding:9px 13px;
+  border-bottom:var(--bw) solid var(--line);background:var(--surface)}
+.card-bar i{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1px solid currentColor;opacity:.4}
+.card-bar span{font-size:.6875rem;opacity:.5;margin-left:5px;letter-spacing:.02em}
+.card-body{padding:clamp(20px,2.4vw,30px)}
+.cursor{display:inline-block;width:.5em;height:1em;vertical-align:-.14em;
+  background:currentColor;margin-left:.18em;opacity:.5}
+@media(prefers-reduced-motion:no-preference){
+  .cursor{animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{0%,100%{opacity:.5}50%{opacity:0}}
+}
 
-/* ---------- CABECERA DE SECCION ---------- */
-.sh{margin-bottom:var(--sp-m);padding:0 clamp(6px,1vw,14px)}
-.sh h2{font-size:var(--t-l);max-width:22ch}
-.sh p{margin-top:14px;font-size:1.0625rem;line-height:1.55;max-width:60ch;opacity:.85}
-
-/* ---------- TRABAJO ---------- */
-.bento{display:grid;grid-template-columns:1.45fr 1fr;gap:var(--sp-m);align-items:stretch}
-.bento article{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
-  display:flex;flex-direction:column;background:var(--paper);min-height:0;
-  transition:transform .22s var(--ease)}
-.bento article:hover{transform:translateY(-4px)}
-.bento .lead{grid-row:span 2}
-.bento .tint{background:var(--surface)}
-.bento .shot{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--wash);
-  border-bottom:var(--bw) solid var(--line)}
-.bento .lead .shot{aspect-ratio:16/11}
-.bento .body{padding:var(--sp-l);display:flex;flex-direction:column;flex:1;
-  justify-content:center;gap:0}
-.bento h3{font-size:var(--t-s);max-width:22ch}
-.bento .lead h3{font-size:var(--t-m)}
-.bento p{margin-top:12px;font-size:.9375rem;line-height:1.55;max-width:48ch;opacity:.88}
-.bento .kind{margin-top:clamp(20px,2.4vw,28px);display:inline-flex;align-self:flex-start}
-.bento .lead .kind{margin-top:auto;padding-top:24px}
-
-.bento .tint .kind span{background:var(--paper);color:var(--ink)}
-@media(max-width:920px){.bento{grid-template-columns:1fr}.bento .lead{grid-row:auto}}
-
-/* ---------- SERVICIOS: bloque morado con tarjetas ---------- */
-.svc{display:grid;grid-template-columns:.72fr 1.28fr;gap:clamp(30px,3.8vw,64px);align-items:start;position:relative}
-.svc-intro{position:sticky;top:calc(var(--nav-h) + 34px)}
+/* ---------- SERVICIOS ---------- */
 .svc-intro h2{font-size:var(--t-l)}
 .svc-intro p{margin-top:16px;font-size:1.0625rem;line-height:1.55;max-width:38ch;opacity:.9}
 .svc-list{display:grid;gap:var(--sp-s)}
-.svc-item{display:flex;flex-direction:column}
 .svc-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
-.svc-num{font-family:'Azeret Mono',ui-monospace,monospace;font-size:.8125rem;
-  font-weight:500;color:var(--accent);letter-spacing:.02em;flex-shrink:0}
+.svc-num{font-size:.8125rem;font-weight:500;color:var(--accent);letter-spacing:.02em}
 .svc-num::before{content:"$ ";opacity:.45}
 .svc-item h3{font-size:var(--t-s)}
 .svc-item p{margin-top:9px;font-size:.9375rem;line-height:1.55;max-width:52ch;opacity:.9}
 .tags{margin-top:13px;display:flex;flex-wrap:wrap;gap:7px}
-.tags span{font-family:'Azeret Mono',ui-monospace,monospace;
-  background:transparent;border:var(--bw) solid color-mix(in oklch,var(--on-surface) 20%,transparent);
-  border-radius:var(--r-pill);padding:5px 12px;font-size:.6875rem;font-weight:400;opacity:.8}
-@media(max-width:920px){.svc{grid-template-columns:1fr}.svc-intro{position:static}.svc-intro p{max-width:60ch}}
+.tags span{border:1px solid currentColor;border-radius:var(--r-pill);
+  padding:5px 12px;font-size:.6875rem;opacity:.75}
 
-/* ---------- METODO: 4 pasos, color rotativo ---------- */
-
-.method>div{border:var(--bw) solid var(--line);border-radius:var(--r);
-  padding:clamp(26px,3vw,38px);display:flex;flex-direction:column;
-  min-height:clamp(250px,26vw,320px);background:var(--paper)}
-.method>div:nth-child(1){background:var(--surface)}
-.method>div:nth-child(2){background:var(--surface)}
-.method>div:nth-child(3){background:var(--surface)}
-.method .step{display:inline-flex;align-self:flex-start;color:var(--accent);
-  padding:0;
-  font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
-  text-transform:uppercase;letter-spacing:.08em;font-size:.6875rem;font-weight:700}
-
-.method h3{font-size:var(--t-m);margin-top:clamp(24px,3vw,40px);margin-bottom:14px;max-width:16ch}
-.method p{font-size:.9375rem;line-height:1.55;opacity:.9;margin-top:auto;padding-top:18px}
-
-/* ---------- PRINCIPIOS ---------- */
-.prin{display:grid;gap:var(--sp-s)}
-.prin>div{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(18px,2.6vw,36px);
-  align-items:start;background:var(--paper);border-radius:var(--r-sm);
-  padding:var(--sp-l)}
-.prin h3{font-size:var(--t-m)}
-.prin p{font-size:1rem;line-height:1.55;max-width:56ch;opacity:.88}
-@media(max-width:860px){.prin>div{grid-template-columns:1fr;gap:10px}}
-
-/* ---------- EQUIPO ---------- */
-.people{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-m)}
-.people figure{border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;
-  background:var(--paper);display:flex;flex-direction:column}
-.people img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--wash);
+/* barra de ventana del bloque */
+.win{padding-top:38px}
+.win::before{content:"";position:absolute;left:0;right:0;top:0;height:38px;
   border-bottom:var(--bw) solid var(--line)}
-.people .q{padding:var(--sp-l);display:flex;flex-direction:column;flex:1}
-.people blockquote{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 84;
-  font-weight:700;font-size:clamp(1.1rem,1rem + .85vw,1.5rem);letter-spacing:-.02em;
-  line-height:1.16;max-width:32ch}
-.people figcaption{margin-top:auto;padding-top:24px;display:flex;flex-direction:column;gap:3px}
-.people .who{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 92;
-  font-weight:800;font-size:1rem}
-.people .role{font-size:.875rem;opacity:.7}
-@media(max-width:860px){.people{grid-template-columns:1fr}}
+.win::after{content:attr(data-win);position:absolute;left:16px;top:0;height:38px;
+  display:flex;align-items:center;font-size:.6875rem;letter-spacing:.02em;opacity:.55}
+.win-dots{position:absolute;right:16px;top:0;height:38px;display:flex;align-items:center;gap:6px}
+.win-dots i{width:8px;height:8px;border-radius:50%;border:1px solid currentColor;opacity:.45}
 
-/* ---------- FAQ ---------- */
-.faq{display:grid;gap:var(--sp-s)}
-.faq details{background:var(--paper);border-radius:var(--r-sm);overflow:hidden}
-.faq summary{padding:20px clamp(20px,2.4vw,28px);cursor:pointer;list-style:none;
-  display:flex;justify-content:space-between;align-items:center;gap:1rem;
-  font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 90;
-  font-weight:700;font-size:clamp(1rem,.96rem + .3vw,1.15rem);letter-spacing:-.015em}
-.faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"+";font-family:'Archivo',sans-serif;font-weight:900;
-  font-size:1.5rem;line-height:1;flex-shrink:0;transition:transform .25s var(--ease)}
-.faq details[open] summary::after{transform:rotate(45deg)}
-.faq .ans-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease)}
-.faq details[open] .ans-wrap{grid-template-rows:1fr}
-.faq .ans{overflow:hidden;min-height:0}
-.faq .ans>p{padding:0 clamp(20px,2.4vw,28px) 24px;font-size:1rem;line-height:1.6;
-  max-width:68ch;opacity:.88}
-@media(prefers-reduced-motion:reduce){.faq .ans-wrap,.faq summary::after{transition:none}}
-
-/* ---------- NOTAS: lista simple, sin tarjetas ---------- */
-.notes{display:grid}
-.notes a{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(16px,2.4vw,36px);
-  align-items:baseline;padding:clamp(18px,2.2vw,26px) 0;
-  border-top:2px solid color-mix(in oklch,var(--on-surface) 14%,transparent);
-  transition:padding-left .25s var(--ease)}
-.notes a:last-child{border-bottom:2px solid color-mix(in oklch,var(--on-surface) 14%,transparent)}
-.notes a:hover{padding-left:10px}
-.notes .date{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
-  text-transform:uppercase;letter-spacing:.08em;font-size:.6875rem;font-weight:700;
-  opacity:.6;white-space:nowrap}
-.notes h3{font-size:var(--t-s);max-width:34ch}
-.notes .go{font-size:1.1rem;opacity:.45;transition:opacity .2s var(--ease)}
-.notes a:hover .go{opacity:1}
-.notes-empty{padding:clamp(22px,3vw,34px) 0;font-size:1rem;opacity:.75;max-width:52ch}
-@media(max-width:720px){
-  .notes a{grid-template-columns:1fr auto;gap:6px}
-  .notes .date{grid-column:1/-1;order:-1}
-}
-
-/* ---------- CTA ---------- */
-.cta-block h2{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
-  letter-spacing:-.035em;line-height:.9;max-width:15ch}
-.cta-row{display:flex;flex-wrap:wrap;gap:clamp(18px,2.4vw,32px);align-items:center;
-  margin-top:clamp(28px,3.6vw,44px)}
-.cta-note{font-size:.9375rem;line-height:1.55;max-width:36ch;opacity:.85}
-
-/* ---------- NEWSLETTER ---------- */
-.news{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(22px,3vw,44px);align-items:center}
-.news h2{font-size:var(--t-m)}
-.news p{margin-top:12px;font-size:1rem;line-height:1.55;max-width:42ch;opacity:.88}
-.news .hint{margin-top:14px;font-size:.8125rem;opacity:.72;max-width:44ch}
-.news .hint a{border-bottom:1px solid currentColor}
-@media(max-width:860px){.news{grid-template-columns:1fr}}
-
-/* ---------- FOOTER ---------- */
-.foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(22px,3vw,40px)}
-.foot-grid h4{text-transform:none;letter-spacing:.02em;font-size:.75rem;font-weight:400;
-  margin-bottom:18px;opacity:.55}
-.foot-grid ul{list-style:none;display:grid;gap:3px}
-.foot-grid li a{display:flex;align-items:center;min-height:40px;font-size:.9375rem;font-weight:500}
-.foot-grid li a:hover{text-decoration:underline;text-underline-offset:4px}
-.foot-grid li .pending{display:flex;align-items:center;min-height:40px;font-size:.9375rem;opacity:.5}
-@media(max-width:880px){.foot-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
-.legal{font-size:.75rem;margin-top:var(--sp-l);padding-top:24px;
-  border-top:2px solid color-mix(in oklch,currentColor 22%,transparent);
-  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
-  font-size:.8125rem;opacity:.7}
-
-/* kicker: el marcador tipografico del diseno */
-.kicker{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 95;
-  text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;font-weight:700;
-  margin-bottom:var(--sp-m);opacity:.88}
-.kicker::before{content:"// ";opacity:.6}
-.cta-block .kicker{margin-bottom:14px}
-
-/* etiqueta de categoria en tarjetas de trabajo */
-.tag{text-transform:none;letter-spacing:.02em;font-size:.75rem;font-weight:400;
-  margin-bottom:12px;color:var(--accent)}
-
-/* boton compacto dentro de tarjetas */
-.btn-sm{padding:11px 20px;font-size:.8125rem;background:var(--paper);color:var(--on-surface)}
-.btn-sm:hover{background:var(--wash)}
-
-/* sufijo CL del wordmark */
-.brand .cl{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 100;
-  font-style:normal;font-weight:700;font-size:.625rem;letter-spacing:.08em;
-  border:2px solid currentColor;border-radius:6px;padding:2px 5px;
-  align-self:center;opacity:.65}
-
-/* footer: columna de marca */
-.foot-brand .foot-mark{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 86;
-  font-weight:900;font-size:1.35rem;letter-spacing:-.03em;margin-bottom:12px}
-.foot-brand p{font-size:.9375rem;line-height:1.55;max-width:34ch;opacity:.72}
-.foot-grid{grid-template-columns:1.4fr 1fr 1fr}
-@media(max-width:880px){.foot-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
-
-/* hero: el h1 ya no es el primer elemento */
-.hero h1{margin-bottom:0}
-
-/* logos de plastilina que acompanan la seccion de servicios */
-.svc-deco{position:absolute;pointer-events:none;z-index:0;opacity:0;transition:opacity .7s var(--ease)}
-.svc-deco.ready{opacity:1}
-.svc-deco canvas{display:block;width:100%;height:100%}
-.svc-d1{width:132px;height:132px;left:-2%;bottom:8%}
-.svc-d2{width:104px;height:104px;left:20%;bottom:30%}
-.svc-intro{z-index:1}
-@media(max-width:1100px){.svc-deco{display:none}}
-@media(prefers-reduced-motion:reduce){.svc-deco{display:none}}
-
-.hero{position:relative;overflow:hidden}
-.hero .pad{position:relative;z-index:2}
-
-/* ---------- TEXTURA Y DESVIACION ----------
-   La perfeccion geometrica es lo que delata una plantilla. Estas
-   reglas meten grano, rotaciones de fracciones de grado y trazos
-   con temblor: nada que se note al mirar, todo que se nota al leer. */
-
-/* grano de papel sobre toda la pagina */
-body::after{
-  content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;
-  opacity:.05;mix-blend-mode:multiply;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
-}
-@media(prefers-color-scheme:dark){body::after{mix-blend-mode:screen;opacity:.035}}
-
-/* los bloques no estan perfectamente a escuadra */
-.block{transform:rotate(var(--skew,0deg))}
-main>section:nth-of-type(1){--skew:-.12deg}
-main>section:nth-of-type(2){--skew:.09deg}
-main>section:nth-of-type(3){--skew:-.07deg}
-main>section:nth-of-type(4){--skew:.11deg}
-.hero{--skew:.05deg}
-
-/* las tarjetas de trabajo tampoco */
-.bento article:nth-child(1){transform:rotate(-.15deg)}
-.bento article:nth-child(2){transform:rotate(.2deg)}
-.bento article:nth-child(3){transform:rotate(-.1deg)}
-.bento article:hover{transform:translateY(-3px) rotate(0deg)}
-
-/* las tarjetas terminal, con su propia inclinacion */
-.svc-list .card:nth-child(odd){transform:rotate(-.1deg)}
-.svc-list .card:nth-child(even){transform:rotate(.13deg)}
-
-/* subrayado del titular: trazo con temblor, no un rectangulo */
-.hl{background:none;padding:0 .06em;position:relative;
-  -webkit-box-decoration-break:clone;box-decoration-break:clone}
-.hl::after{
-  content:"";position:absolute;left:-.02em;right:-.02em;bottom:.04em;height:.34em;
-  background:color-mix(in srgb, #3FAEC6 42%, transparent);
-  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 22' preserveAspectRatio='none'%3E%3Cpath d='M2 15 C 44 9, 88 17, 132 12 S 214 8, 258 14 S 288 12, 298 9 L 298 20 C 250 17, 200 21, 150 18 S 60 21, 2 19 Z' fill='%23000'/%3E%3C/svg%3E");
-  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 22' preserveAspectRatio='none'%3E%3Cpath d='M2 15 C 44 9, 88 17, 132 12 S 214 8, 258 14 S 288 12, 298 9 L 298 20 C 250 17, 200 21, 150 18 S 60 21, 2 19 Z' fill='%23000'/%3E%3C/svg%3E");
-  -webkit-mask-size:100% 100%;mask-size:100% 100%;
-  mix-blend-mode:multiply;pointer-events:none;
-}
-@media(prefers-color-scheme:dark){.hl::after{mix-blend-mode:screen}}
-.on-dark .hl::after{background:color-mix(in srgb, #3FAEC6 62%, transparent)}
-
-/* separador entre secciones: linea dibujada, no un border */
-.rule{display:block;width:100%;height:14px;margin:var(--sp-m) 0;
-  opacity:.28;color:var(--on-surface)}
-
-@media(prefers-reduced-motion:reduce){
-  .block,.bento article,.svc-list .card{transform:none}
-}
-
-/* dato circulado a mano, como quien marca lo que importa */
-.circled{position:relative;white-space:nowrap}
-.circled::after{
-  content:"";position:absolute;left:-.35em;right:-.35em;top:-.28em;bottom:-.3em;
-  border:1.8px solid color-mix(in srgb, #83389B 62%, transparent);
-  border-radius:52% 48% 49% 51% / 58% 42% 56% 44%;
-  transform:rotate(-1.4deg);pointer-events:none;
-}
-
-/* ---------- TERMINAL AMPLIADO ----------
-   El tratamiento pasa de las tarjetas al marco: el nav lleva prompt,
-   las cabeceras de seccion llevan ruta, y los bloques abren con una
-   barra como la de una ventana. */
-
-/* barra de ventana en los bloques con superficie propia */
-.win{position:relative;padding-top:38px}
-.win::before{
-  content:"";position:absolute;left:0;right:0;top:0;height:38px;
-  border-bottom:var(--bw) solid color-mix(in srgb,#232226 12%,transparent);
-}
-.win::after{
-  content:attr(data-win);
-  position:absolute;left:16px;top:0;height:38px;display:flex;align-items:center;
-  font-family:'Azeret Mono',ui-monospace,monospace;font-size:.6875rem;
-  letter-spacing:.02em;opacity:.42;
-}
-.win-dots{position:absolute;right:16px;top:0;height:38px;
-  display:flex;align-items:center;gap:6px;pointer-events:none}
-.win-dots i{width:8px;height:8px;border-radius:50%;
-  border:1px solid color-mix(in srgb,#232226 28%,transparent)}
-@media(prefers-color-scheme:dark){
-  .win::before{border-color:color-mix(in srgb,#F6F0EA 16%,transparent)}
-  .win-dots i{border-color:color-mix(in srgb,#F6F0EA 30%,transparent)}
-}
-
-/* prompt en el nav */
-.brand::after{
-  content:"~/";font-family:'Azeret Mono',ui-monospace,monospace;
-  font-size:.75rem;font-weight:400;opacity:.32;margin-left:2px;
-}
-
-/* ---------- CTA COMO TERMINAL ----------
-   La pregunta pasa a ser un prompt. Sin backend, lo que escriben
-   viaja precargado en el mailto: no se simula un envio que no existe. */
-.term{border:var(--bw) solid color-mix(in srgb,#F6F0EA 22%,transparent);
-  border-radius:12px;overflow:hidden;max-width:62ch;margin-top:var(--sp-l)}
-.term-bar{display:flex;align-items:center;gap:7px;padding:9px 13px;
-  border-bottom:var(--bw) solid color-mix(in srgb,#F6F0EA 16%,transparent);
-  background:color-mix(in srgb,#F6F0EA 5%,transparent)}
-.term-bar i{width:8px;height:8px;border-radius:50%;flex-shrink:0;
-  border:1px solid color-mix(in srgb,#F6F0EA 32%,transparent)}
-.term-bar span{font-family:'Azeret Mono',ui-monospace,monospace;
-  font-size:.6875rem;opacity:.45;margin-left:5px;letter-spacing:.02em}
-.term-body{padding:clamp(18px,2.2vw,26px)}
-.term-line{display:flex;align-items:flex-start;gap:10px;
-  font-family:'Azeret Mono',ui-monospace,monospace;font-size:.9375rem;line-height:1.6}
-.term-line::before{content:"$";opacity:.5;flex-shrink:0;padding-top:2px}
-.term-input{flex:1;background:none;border:0;padding:0;resize:none;
-  font:inherit;color:inherit;min-height:4.8em;outline:none}
-.term-input::placeholder{color:currentColor;opacity:.55}
-.term-foot{display:flex;flex-wrap:wrap;gap:14px;align-items:center;
-  margin-top:16px;padding-top:14px;
-  border-top:var(--bw) solid color-mix(in srgb,#F6F0EA 14%,transparent)}
-.term-send{display:inline-flex;align-items:center;gap:9px;cursor:pointer;
-  background:var(--cream);color:var(--ink);border:0;
-  padding:13px 24px;border-radius:var(--r-pill);
-  font-family:inherit;font-size:.9375rem;font-weight:500;
-  transition:transform .12s var(--ease)}
-.term-send:hover{transform:translateY(-2px)}
-.term-send:active{transform:translateY(1px)}
-.term-hint{font-family:'Azeret Mono',ui-monospace,monospace;
-  font-size:.75rem;opacity:.5;letter-spacing:.02em}
-
-/* la malla vuelve en el contacto: es donde el visitante actua */
-.cta-block{position:relative}
-.cta-block::before{
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background-image:
-    linear-gradient(color-mix(in srgb,#F6F0EA 8%,transparent) 1px,transparent 1px),
-    linear-gradient(90deg,color-mix(in srgb,#F6F0EA 8%,transparent) 1px,transparent 1px);
-  background-size:26px 26px;
-  -webkit-mask-image:radial-gradient(90% 70% at 50% 40%,#000 30%,transparent 78%);
-  mask-image:radial-gradient(90% 70% at 50% 40%,#000 30%,transparent 78%);
-}
-.cta-block>.pad{position:relative;z-index:1}
-
-/* ---------- ZONA DE JUEGO DEL HERO ----------
-   Un plano tecnico donde vive el personaje. La cuadricula no es
-   decoracion: le da al personaje un lugar donde apoyarse. */
-.play{position:relative;margin-top:var(--sp-l);
-  border:var(--bw) solid color-mix(in srgb,#232226 22%,transparent);
-  border-radius:var(--r-sm);overflow:hidden;
-  height:clamp(180px,26vw,300px);
-  background-image:
-    linear-gradient(color-mix(in srgb,#232226 9%,transparent) 1px,transparent 1px),
-    linear-gradient(90deg,color-mix(in srgb,#232226 9%,transparent) 1px,transparent 1px);
-  background-size:26px 26px;
-  cursor:none}
-.play::after{
-  content:"pase el cursor por las piezas";
-  position:absolute;right:14px;bottom:11px;
-  font-family:'Azeret Mono',ui-monospace,monospace;
-  font-size:.6875rem;opacity:.4;pointer-events:none}
-.play canvas{display:block;width:100%;height:100%}
-@media(max-width:760px){.play{display:none}}
-@media(prefers-reduced-motion:reduce){.play{display:none}}
-
-
-/* ---------- IMAGEN DE SECCION ----------
-   Una landing sin imagenes no es minimalismo, es trabajo a medias.
-   En escala de grises para que no compitan con el acento. */
-.shot-wide{width:100%;aspect-ratio:21/9;object-fit:cover;
-  border-radius:var(--r-sm);
-  border:var(--bw) solid color-mix(in srgb,#232226 16%,transparent);
-  filter:grayscale(1) contrast(1.04);margin-top:var(--sp-l)}
-@media(prefers-color-scheme:dark){
-  .shot-wide{filter:grayscale(1) contrast(1.04) brightness(.88)}}
-
-/* ---------- SERVICIOS EN BENTO ----------
-   El intro ocupa una celda, no una columna entera: antes dejaba
-   unos 700px vacios mientras las tarjetas bajaban por la derecha.
-   La primera linea pesa mas porque es la puerta de entrada. */
+/* escritorio: bento */
 @media(min-width:900px){
-  .svc{display:block}
-  .svc-list{display:grid;gap:var(--sp-m);
-    grid-template-columns:repeat(6,1fr);
-    grid-auto-rows:minmax(0,auto)}
-  .svc-intro{grid-column:1/3;grid-row:1;align-self:start;position:static}
+  .svc-list{display:grid;gap:var(--sp-m);grid-template-columns:repeat(6,1fr)}
+  .svc-intro{grid-column:1/3;grid-row:1;align-self:start}
   .svc-list>.card[data-n="1"]{grid-column:3/7;grid-row:1}
   .svc-list>.card[data-n="2"]{grid-column:1/4}
   .svc-list>.card[data-n="3"]{grid-column:4/7}
   .svc-list>.card[data-n="4"]{grid-column:1/7}
-  /* la cuarta cruza el ancho: numero y titulo a la izquierda, texto
-     y etiquetas a la derecha, ambos arrancando arriba */
   .svc-list>.card[data-n="4"] .card-body{
     display:grid;grid-template-columns:.85fr 1.15fr;
     column-gap:var(--sp-l);row-gap:12px;align-items:start}
@@ -658,139 +255,90 @@ main>section:nth-of-type(4){--skew:.11deg}
   .svc-list>.card[data-n="4"]>.card-body>p{grid-column:2;grid-row:1/3;margin:0}
   .svc-list>.card[data-n="4"] .tags{grid-column:2;grid-row:3;margin-top:4px}
 }
-
+/* movil: carrusel */
 @media(max-width:899px){
-  /* en movil las cuatro tarjetas van de lado: apiladas obligan a
-     scrollear cuatro pantallas para ver la oferta completa */
-  .svc-list{display:grid;grid-auto-flow:column;
-    grid-auto-columns:minmax(272px,84vw);
-    gap:var(--sp-m);overflow-x:auto;overscroll-behavior-x:contain;
-    scroll-snap-type:x mandatory;
-    padding-bottom:14px;margin-inline:calc(var(--gutter) * -1);
-    padding-inline:var(--gutter);
-    scrollbar-width:thin;
-    scrollbar-color:color-mix(in srgb,#232226 24%,transparent) transparent}
-  .svc-list>.card{scroll-snap-align:start}
   .svc-intro{margin-bottom:var(--sp-m)}
-  .svc-list::-webkit-scrollbar{height:6px}
-  .svc-list::-webkit-scrollbar-thumb{
-    background:color-mix(in srgb,#232226 24%,transparent);border-radius:99px}
-  .svc-list::-webkit-scrollbar-track{background:transparent}
+  .svc-list{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(272px,84vw);
+    gap:var(--sp-m);overflow-x:auto;overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;padding-bottom:14px;
+    margin-inline:calc(var(--gutter) * -1);padding-inline:var(--gutter);
+    scrollbar-width:thin}
+  .svc-list>.card{scroll-snap-align:start}
 }
-
-/* ---------- SCROLL HORIZONTAL OBLIGATORIO ----------
-   La seccion se fija y el scroll vertical mueve las tarjetas de lado
-   hasta que terminan. Solo en escritorio: en movil el carrusel ya se
-   arrastra con el dedo, y secuestrar el scroll ahi es hostil. */
+/* escritorio: el scroll vertical corre las tarjetas de lado */
 @media(min-width:900px) and (prefers-reduced-motion:no-preference){
-  .pan{position:relative}
   .pan-sticky{position:sticky;top:0;min-height:100vh;
-    display:flex;flex-direction:column;justify-content:center;
-    overflow:hidden}
-  .pan .svc-list{display:flex;flex-wrap:nowrap;
-    gap:var(--sp-m);will-change:transform}
+    display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+  .pan .svc-list{display:flex;flex-wrap:nowrap;gap:var(--sp-m);will-change:transform}
   .pan .svc-list>.card{flex:0 0 clamp(320px,30vw,420px)}
-  .pan .svc-intro{margin-bottom:var(--sp-l)}
-  /* la barra de progreso dice cuanto falta */
-  .pan-bar{position:absolute;left:var(--gutter);right:var(--gutter);
-    bottom:26px;height:2px;
-    background:color-mix(in srgb,#232226 14%,transparent)}
-  .pan-bar i{display:block;height:100%;width:0;
-    background:color-mix(in srgb,#232226 45%,transparent)}
+  .pan .svc-intro{flex:0 0 clamp(240px,22vw,320px);align-self:center}
+  .pan-bar{position:absolute;left:var(--gutter);right:var(--gutter);bottom:26px;height:2px;
+    background:var(--grid)}
+  .pan-bar i{display:block;height:100%;width:0;background:var(--line)}
 }
 
-/* ---------- METODO EN CARRUSEL ----------
-   Scroll horizontal con snap. Sin JS: el navegador ya sabe hacerlo,
-   y con teclado funciona porque las tarjetas son focusables. */
-.rail{display:grid;grid-auto-flow:column;
-  grid-auto-columns:minmax(280px,clamp(300px,32vw,420px));
-  gap:var(--sp-m);overflow-x:auto;overscroll-behavior-x:contain;
-  scroll-snap-type:x mandatory;scroll-padding-left:var(--sp-l);
-  padding-bottom:14px;
-  scrollbar-width:thin;
-  scrollbar-color:color-mix(in srgb,#232226 24%,transparent) transparent}
-.rail>*{scroll-snap-align:start}
-.rail::-webkit-scrollbar{height:6px}
-.rail::-webkit-scrollbar-thumb{
-  background:color-mix(in srgb,#232226 24%,transparent);border-radius:99px}
-.rail::-webkit-scrollbar-track{background:transparent}
-.rail-hint{display:flex;align-items:center;gap:8px;margin-top:14px;
-  font-family:'Azeret Mono',ui-monospace,monospace;font-size:.6875rem;
-  opacity:.45;letter-spacing:.02em}
+/* ---------- CTA COMO TERMINAL ---------- */
+.cta-block h2{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
+  letter-spacing:-.035em;line-height:.9;max-width:15ch}
+.cta-block .kicker{margin-bottom:14px}
+.term{border:var(--bw) solid var(--on-ink);border-radius:12px;overflow:hidden;
+  max-width:62ch;margin-top:var(--sp-l);background:var(--ink)}
+.term-bar{display:flex;align-items:center;gap:7px;padding:9px 13px;
+  border-bottom:var(--bw) solid var(--on-ink)}
+.term-bar i{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1px solid currentColor;opacity:.5}
+.term-bar span{font-size:.6875rem;opacity:.55;margin-left:5px;letter-spacing:.02em}
+.term-body{padding:clamp(18px,2.2vw,26px)}
+.term-line{display:flex;align-items:flex-start;gap:10px;font-size:.9375rem;line-height:1.6}
+.term-line::before{content:"$";opacity:.5;flex-shrink:0;padding-top:2px}
+.term-input{flex:1;background:none;border:0;padding:0;resize:none;
+  font:inherit;color:inherit;min-height:4.8em;outline:none}
+.term-input::placeholder{color:currentColor;opacity:.55}
+.term-foot{display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+  margin-top:16px;padding-top:14px;border-top:1px solid currentColor}
+.term-send{display:inline-flex;align-items:center;gap:9px;cursor:pointer;
+  background:var(--cream);color:var(--ink);border:0;padding:13px 24px;border-radius:var(--r-pill);
+  font-family:inherit;font-size:.9375rem;font-weight:500;transition:transform .12s var(--ease)}
+.term-send:hover{transform:translateY(-2px)}
+.term-send:active{transform:translateY(1px)}
+.term-hint{font-size:.75rem;opacity:.6;letter-spacing:.02em}
 
-/* ---------- HERO: ESCRITURA EN TERMINAL ----------
-   La palabra se escribe y se borra en bucle. El texto inicial esta en
-   el HTML: si el script no corre, el titular sigue completo. */
-/* el titular que se escribe va en la mono: el gesto es de terminal,
-   la letra tambien. Archivo se queda para los titulos de seccion. */
-.type{display:inline-flex;align-items:baseline;white-space:nowrap;
-  font-family:'Azeret Mono',ui-monospace,SFMono-Regular,monospace;
-  font-variation-settings:normal;font-weight:500;
-  letter-spacing:-.03em}
-.caret{display:inline-block;width:.055em;min-width:3px;height:.78em;
-  background:currentColor;margin-left:.09em;opacity:.6;align-self:center;flex-shrink:0}
-@media(prefers-reduced-motion:no-preference){
-  .caret{animation:caret 1s steps(1) infinite}
-  @keyframes caret{0%,100%{opacity:.6}50%{opacity:0}}
-}
-.type-out{display:inline-block}
-/* cada letra entra por separado: las envuelve animejs/text */
-.type-out{perspective:600px}
-.type-out .letter{display:inline-block;will-change:transform,opacity;
-  transform-origin:50% 100%;backface-visibility:hidden}
-.type-out{color:var(--accent)}
+/* ---------- NOTAS ---------- */
+.sh h2{font-size:var(--t-l);max-width:22ch}
+.sh p{margin-top:14px;font-size:1.0625rem;line-height:1.55;max-width:60ch;opacity:.85}
+.notes-empty{padding:clamp(22px,3vw,34px) 0 0;font-size:1rem;opacity:.75;max-width:52ch}
 
-/* ---------- MOVIMIENTO ----------
-   Reveal progresivo al entrar en viewport y apilado de secciones al
-   scrollear. Todo cae con prefers-reduced-motion. */
-
-/* apilado: cada seccion se fija mientras la siguiente sube encima */
-@media(min-width:900px) and (prefers-reduced-motion:no-preference){
-  .stack{position:sticky;top:clamp(14px,2vw,26px)}
-  .stack-1{z-index:1}
-  .stack-2{z-index:2}
-  .stack-3{z-index:3}
-  .stack-4{z-index:4}
-  .stack-5{z-index:5}
-}
-
-/* cursor de terminal en la barra de las tarjetas */
-.cursor{display:inline-block;width:.5em;height:1em;vertical-align:-.14em;
-  background:currentColor;margin-left:.18em;opacity:.5}
-@media(prefers-reduced-motion:no-preference){
-  .cursor{animation:blink 1.1s steps(1) infinite}
-  @keyframes blink{0%,100%{opacity:.5}50%{opacity:0}}
-}
-
-/* marquee: la segunda pista va al reves */
-.strip + .strip .strip-track{animation-direction:reverse}
+/* ---------- FOOTER ---------- */
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:clamp(22px,3vw,40px)}
+.foot-grid h4{font-size:.75rem;font-weight:400;letter-spacing:.02em;margin-bottom:18px;opacity:.55}
+.foot-grid ul{list-style:none;display:grid;gap:3px}
+.foot-grid li a{display:flex;align-items:center;min-height:40px;font-size:.9375rem;font-weight:500}
+.foot-grid li a:hover{text-decoration:underline;text-underline-offset:4px}
+.foot-grid li .pending{display:flex;align-items:center;min-height:40px;font-size:.9375rem;opacity:.5}
+.foot-brand{display:flex;flex-direction:column;gap:12px}
+.foot-brand p{font-size:.9375rem;line-height:1.55;max-width:34ch;opacity:.72}
+@media(max-width:880px){.foot-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
+.legal{margin-top:var(--sp-l);padding-top:24px;border-top:1px solid currentColor;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:.8125rem;opacity:.7}
 
 /* ---------- ENTRADA ---------- */
-/* El contenido es visible por defecto. La animacion solo desplaza:
-   si no corre (impresion, PDF, captura headless), el texto sigue ahi.
-   Animar desde opacity:0 dejaba el hero en blanco al imprimir. */
+/* Visible por defecto; la animacion solo desplaza. */
 @media(prefers-reduced-motion:no-preference){
   .rise{animation:rise .6s var(--ease) backwards}
   .rise:nth-child(2){animation-delay:.06s}
   .rise:nth-child(3){animation-delay:.12s}
+  .rise:nth-child(4){animation-delay:.18s}
   @keyframes rise{from{opacity:0;transform:translateY(16px)}}
 }
-@media print{.rise{animation:none}}
-
-/* ---------- IMPRESION ---------- */
 @media print{
-  .strip,.nav .cta{display:none}
+  .rise{animation:none}
+  .nav .cta,.fab{display:none}
   .nav{position:static}
   body{background:#fff;color:#000;font-size:11pt}
   .frame{padding:0}
-  .block,.card,.method>div,.bento article,.people figure{
-    background:#fff!important;color:#000!important;border:2px solid #000}
-  .hl,.btn,.seal,.svc-num,.method .step,.bento .kind span{
-    background:#fff!important;color:#000!important;border:1px solid #000}
-  .faq .ans-wrap{grid-template-rows:1fr}
-  .faq summary::after{content:""}
+  .block,.card{background:#fff!important;color:#000!important;border:2px solid #000;background-image:none}
   a[href^="mailto"]::after{content:" (" attr(href) ")";font-size:.85em}
-  section,figure,.method>div,.prin>div{break-inside:avoid}
+  section{break-inside:avoid}
   h1,h2,h3{break-after:avoid}
 }
 </style>
@@ -801,7 +349,7 @@ main>section:nth-of-type(4){--skew:.11deg}
 
   <nav class="nav">
     <a href="#main" class="brand">
-      <svg class="mark" viewBox="0 0 70 70" width="36" height="36" aria-hidden="true" focusable="false">
+      <svg class="mark" viewBox="0 0 70 70" width="46" height="46" aria-hidden="true" focusable="false">
         <defs><clipPath id="ua-clip"><rect width="70" height="70" rx="20"/></clipPath></defs>
         <g clip-path="url(#ua-clip)">
           <rect width="70" height="70" rx="20" fill="#3FAEC6"/>
@@ -818,13 +366,13 @@ main>section:nth-of-type(4){--skew:.11deg}
       <a href="#servicios">Servicios</a>
       <a href="#notas">Notas</a>
     </div>
-    <a href="#contacto" class="cta">Escríbenos</a>
+    <a href="#contacto" class="cta">Escríbanos</a>
     <details class="menu">
       <summary aria-label="Abrir menú">Menú</summary>
       <div class="menu-panel">
         <a href="#servicios">Servicios</a>
-            <a href="#notas">Notas</a>
-        <a href="#contacto">Escríbenos</a>
+        <a href="#notas">Notas</a>
+        <a href="#contacto">Escríbanos</a>
       </div>
     </details>
   </nav>
@@ -832,65 +380,41 @@ main>section:nth-of-type(4){--skew:.11deg}
   <main id="main">
 
   <!-- HERO -->
-  <header class="block block-sky hero">
-    <div class="pad">
+  <header class="hero">
+    <div>
       <p class="kicker rise">Podemos ayudarte con productos, procesos e inteligencia artificial</p>
       <h1 class="rise" data-flap>Armamos cosas que <span class="hl">sirven</span></h1>
-      <p class="lede rise">Entendemos qué necesitan sus productos y procesos, y lo convertimos en algo que <span class="hl">agrega valor</span>. No en algo que se construye porque sí.</p>
+      <p class="lede rise">Entendemos qué necesitan sus productos y sus procesos, y construimos solo lo que <span class="hl">agrega valor</span>. Nada que exista porque sí.</p>
       <div class="hero-cta rise">
-        <a class="btn btn-light" href="#contacto">¿Quiere explorar su idea?</a>
-        <a class="btn" href="#servicios">Ver servicios</a>
+        <a class="btn" href="#contacto">¿Quiere explorar su idea?</a>
+        <a class="btn btn-light" href="#servicios">Ver servicios</a>
       </div>
-      <div class="play" id="play" aria-hidden="true"></div>
     </div>
-    <!-- Blob de plastilina. Decorativo: si WebGL no carga, el hero
-         funciona igual. Solo se monta en pantallas anchas. -->
+    <!-- La linea de produccion. Decorativa: si el canvas no corre, el
+         hero es solo texto y funciona igual. -->
+    <div class="fab" id="fab" aria-hidden="true"></div>
   </header>
 
-  <div class="strip">
-    <div class="strip-track">
-      <span>Productos digitales</span><span>Procesos con IA</span><span>Innovación</span>
-      <span>Ingeniería</span><span>UX/UI</span><span>Estrategia</span>
-      <span>Prototipado</span><span>Inteligencia artificial</span>
-      <span aria-hidden="true">Productos digitales</span><span aria-hidden="true">Procesos con IA</span><span aria-hidden="true">Innovación</span>
-      <span aria-hidden="true">Ingeniería</span><span aria-hidden="true">UX/UI</span><span aria-hidden="true">Estrategia</span>
-      <span aria-hidden="true">Prototipado</span><span aria-hidden="true">Inteligencia artificial</span>
-    </div>
-  </div>
-
-  <svg class="rule" viewBox="0 0 1200 14" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M4 8 C 160 4, 300 11, 470 7 S 760 3, 930 9 S 1120 6, 1196 8"
-          fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-  </svg>
-
-  <!-- TRABAJO -->
-  
-
   <!-- SERVICIOS -->
-  <section id="servicios" class="pan stack stack-1 block block-teal win" data-win="ualabi / servicios">
+  <section id="servicios" class="pan block block-teal win" data-win="ualabi / servicios">
     <div class="win-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="pan-sticky"><div class="pad svc">
-            <!-- Mismo modelo del hero, en chico. Decorativo. -->
-      <!-- TODO: sus descripciones ganan fuerza con un compromiso numérico
-           al frente ("2 semanas. 4.500 €", "en 72h"). Si ualabi tiene
-           plazos o precios que pueda honrar, van como primera frase de
-           cada servicio: es lo que más sube la credibilidad. No se
-           inventan: un plazo que no se cumple es peor que no tenerlo. -->
+    <div class="pan-sticky"><div class="pad">
+      <!-- TODO: las descripciones ganan fuerza con un compromiso concreto
+           al frente (plazo o precio). Si ualabi puede honrarlo, va como
+           primera frase de cada servicio. No se inventa. -->
       <div class="svc-list" data-reveal-group>
         <div class="svc-intro">
-        <h2>Qué hacemos</h2>
-        <p>Las cosas para las que somos buenos.</p>
-      </div>
+          <h2>Qué hacemos</h2>
+          <p>Las cosas para las que somos buenos.</p>
+        </div>
         <div class="card svc-item" data-n="1">
           <div class="card-bar" aria-hidden="true">
             <i></i><i></i><i></i><span>productos-digitales<i class="cursor"></i></span>
           </div>
           <div class="card-body">
-            <div class="svc-head">
-              <span class="svc-num" aria-hidden="true">01</span>
-            </div>
+            <div class="svc-head"><span class="svc-num" aria-hidden="true">01</span></div>
             <h3>Construimos productos</h3>
-            <p>Esa intuición de que algo puede funcionar, antes de poder explicarla. La exploramos, la construimos y la dejamos operando como un producto real.</p>
+            <p>Esa intuición de que algo puede funcionar, antes de que pueda explicarla. La exploramos con usted, la construimos y la dejamos operando como un producto real.</p>
             <div class="tags"><span>Discovery</span><span>Diseño y UX</span><span>Ingeniería</span><span>Prototipado</span><span>Escalamiento</span></div>
           </div>
         </div>
@@ -899,11 +423,9 @@ main>section:nth-of-type(4){--skew:.11deg}
             <i></i><i></i><i></i><span>procesos-ia<i class="cursor"></i></span>
           </div>
           <div class="card-body">
-            <div class="svc-head">
-              <span class="svc-num" aria-hidden="true">02</span>
-            </div>
+            <div class="svc-head"><span class="svc-num" aria-hidden="true">02</span></div>
             <h3>Integramos IA</h3>
-            <p>Dónde conviene integrarla, cómo se comunican los sistemas y cómo hacerlo sin que le cueste una fortuna a la organización. Identificamos los casos de uso que escalan y se sostienen.</p>
+            <p>Dónde conviene usarla, cómo conversa con los sistemas que ya tiene y cómo hacerlo sin que cueste una fortuna. Nos quedamos con los casos que escalan y se sostienen en el tiempo.</p>
             <div class="tags"><span>Integración en producto</span><span>Automatización</span><span>Asistentes sobre datos propios</span><span>Modelos en producción</span><span>Gobernanza</span></div>
           </div>
         </div>
@@ -912,9 +434,7 @@ main>section:nth-of-type(4){--skew:.11deg}
             <i></i><i></i><i></i><span>innovacion<i class="cursor"></i></span>
           </div>
           <div class="card-body">
-            <div class="svc-head">
-              <span class="svc-num" aria-hidden="true">03</span>
-            </div>
+            <div class="svc-head"><span class="svc-num" aria-hidden="true">03</span></div>
             <h3>Colaboramos</h3>
             <p>Quiere construir algo con alguien más y no sabe cómo. Diseñamos el proceso para que eso ocurra: con quién, bajo qué reglas y hacia dónde.</p>
             <div class="tags"><span>Talleres</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
@@ -925,30 +445,21 @@ main>section:nth-of-type(4){--skew:.11deg}
             <i></i><i></i><i></i><span>capacidades<i class="cursor"></i></span>
           </div>
           <div class="card-body">
-            <div class="svc-head">
-              <span class="svc-num" aria-hidden="true">04</span>
-            </div>
+            <div class="svc-head"><span class="svc-num" aria-hidden="true">04</span></div>
             <h3>Formamos a su equipo</h3>
-            <p>Talleres, formación y procesos para que la innovación y la IA dejen de ser un proyecto aparte y pasen a darse de forma natural en el equipo.</p>
+            <p>Talleres y acompañamiento para que la innovación y la IA dejen de ser un proyecto aparte y pasen a ser parte del trabajo diario del equipo.</p>
             <div class="tags"><span>Formación</span><span>Acompañamiento</span><span>Gobernanza</span><span>Transferencia</span></div>
           </div>
         </div>
       </div>
-      <img class="shot-wide" loading="lazy" decoding="async" width="1600" height="686"
-        src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&amp;fit=crop&amp;w=1600&amp;q=78"
-        alt="Equipo trabajando en laptops alrededor de una mesa, con código en una de las pantallas">
     </div>
       <div class="pan-bar" aria-hidden="true"><i></i></div>
     </div>
   </section>
 
-  <!-- METODO -->
-    <!-- NOTAS -->
-  
-
   <!-- CTA -->
-  <section id="contacto" class="block block-ink cta-block on-dark">
-    <div class="pad">
+  <section id="contacto" class="block block-ink on-dark">
+    <div class="pad cta-block">
       <p class="kicker">Escríbanos</p>
       <h2>Cuéntenos qué <span class="hl">no está funcionando</span> y lo resolvemos juntos</h2>
       <form class="term" data-reveal id="prompt">
@@ -959,7 +470,7 @@ main>section:nth-of-type(4){--skew:.11deg}
           <label class="term-line" for="q">
             <span class="sr-only">Cuéntenos qué necesita</span>
             <textarea class="term-input" id="q" name="q" rows="3"
-              placeholder="Tenemos una idea que no sabemos si vale la pena construir…"></textarea>
+              placeholder="Tenemos una idea y no sabemos si vale la pena construirla."></textarea>
           </label>
           <div class="term-foot">
             <button class="term-send" type="submit">Enviar &#8599;</button>
@@ -970,25 +481,15 @@ main>section:nth-of-type(4){--skew:.11deg}
     </div>
   </section>
 
-<section id="notas" class="stack stack-5 block block-paper">
+  <section id="notas" class="block block-paper">
     <div class="pad">
       <div class="sh" data-reveal>
         <h2>Notas</h2>
         <p>Lo que aprendemos en cada proyecto. Escribimos cuando hay algo que decir.</p>
       </div>
-      <!-- TODO: sin artículos publicados todavía. Al escribir el primero,
-           reemplazar este bloque por la lista .notes que está debajo,
-           comentada, y borrar el aviso. -->
-      <p class="notes-empty">Todavía no publicamos ninguna. La primera sale cuando termine el proyecto que estamos escribiendo.</p>
-      <!--
-      <div class="notes">
-        <a href="#">
-          <span class="date">MAR 2026</span>
-          <h3>Título de la nota</h3>
-          <span class="go" aria-hidden="true">&#8599;</span>
-        </a>
-      </div>
-      -->
+      <!-- TODO: sin notas publicadas todavía. Al escribir la primera,
+           reemplazar este párrafo por la lista. -->
+      <p class="notes-empty">Todavía no hay ninguna publicada. La primera sale cuando haya algo que contar.</p>
     </div>
   </section>
 
@@ -998,16 +499,24 @@ main>section:nth-of-type(4){--skew:.11deg}
     <div class="pad">
       <div class="foot-grid">
         <div class="foot-brand">
-          <p class="foot-mark">ualabi</p>
-          <p>Agencia chilena de innovación, ingeniería y tecnología.</p>
+          <svg viewBox="0 0 70 70" width="56" height="56" aria-hidden="true" focusable="false">
+            <g clip-path="url(#ua-clip)">
+              <rect width="70" height="70" rx="20" fill="#3FAEC6"/>
+              <path d="M30.7322 16.8095L14.6753 8.27192L30.0979 -1.36571L30.7322 16.8095Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+              <path d="M77.2627 30.7328L43.8024 39.6984L52.768 6.23783L77.2627 30.7328Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+              <path d="M13.893 78.8922L9.89265 33.1684L51.4915 52.5659L13.893 78.8922Z" fill="#83389B" stroke="#232226" stroke-width="2"/>
+            </g>
+            <rect x="1.5" y="1.5" width="67" height="67" rx="18.5" fill="none" stroke="#232226" stroke-width="3"/>
+          </svg>
+          <p>ualabi. Agencia chilena de innovación, ingeniería y tecnología.</p>
         </div>
         <div>
           <h4>Servicios</h4>
           <ul>
-            <li><a href="#servicios">Producto, de la idea a producción</a></li>
-            <li><a href="#servicios">IA donde rinde</a></li>
-            <li><a href="#servicios">Innovación con quienes operan</a></li>
-            <li><a href="#servicios">Autonomía del equipo interno</a></li>
+            <li><a href="#servicios">Construimos productos</a></li>
+            <li><a href="#servicios">Integramos IA</a></li>
+            <li><a href="#servicios">Colaboramos</a></li>
+            <li><a href="#servicios">Formamos a su equipo</a></li>
           </ul>
         </div>
         <div>
@@ -1026,30 +535,240 @@ main>section:nth-of-type(4){--skew:.11deg}
   </footer>
 
 </div>
+
+<script>
+/* La fabrica del hero. No depende de ninguna libreria: si falla,
+   el hero queda como texto. Tres estaciones sobre una cinta:
+   medir (una regla baja y la caja toma su tamano), ordenar (las
+   piezas del logo giran a su lugar) y revisar (una garra levanta
+   la caja, la mira y le pone el sello). Es el trabajo de ualabi
+   dibujado: articular el proceso para que salga bien. */
+(function () {
+  const fab = document.getElementById('fab');
+  if (!fab || !('roundRect' in CanvasRenderingContext2D.prototype)) return;
+  const cv = document.createElement('canvas');
+  const ctx = cv.getContext('2d');
+  fab.appendChild(cv);
+
+  const TEAL = '#3FAEC6', PURPLE = '#83389B', INK = '#232226', CREAM = '#F6F0EA';
+  const REDUCE = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  /* las tres piezas del logo, en su caja de 70 */
+  const PIEZAS = [
+    'M30.73 16.81L14.68 8.27L30.1 -1.37Z',
+    'M77.26 30.73L43.8 39.7L52.77 6.24Z',
+    'M13.89 78.89L9.89 33.17L51.49 52.57Z'
+  ].map((d) => new Path2D(d));
+
+  const MOVE = 900, ACT = 2600, CYCLE = MOVE + ACT;
+  let W = 0, H = 0, S = 0, beltY = 0, D = 0, x0 = 0, line = INK;
+
+  const medir = () => {
+    W = fab.clientWidth; H = fab.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    S = Math.max(34, Math.min(W * .14, 96));
+    beltY = H * .74;
+    x0 = W * .22; D = W * .26;     /* estaciones en .22, .48, .74 */
+    line = getComputedStyle(fab).color;
+  };
+
+  const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+  const seg = (a, t0, t1) => clamp((a - t0) / (t1 - t0));
+  const smooth = (t) => t * t * (3 - 2 * t);
+  const inout = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  /* cada caja llega con un defecto propio, siempre el mismo para su id */
+  const rasgo = (id, k) => {
+    const x = Math.sin(id * 127.1 + k * 311.7) * 43758.5;
+    return x - Math.floor(x);
+  };
+
+  const caja = (cx, cy, sc, rot) => {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(S * sc / 70, S * sc / 70);
+    ctx.translate(-35, -35);
+    ctx.beginPath(); ctx.roundRect(0, 0, 70, 70, 20);
+    ctx.fillStyle = TEAL; ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.translate(35, 35); ctx.rotate(rot); ctx.translate(-35, -35);
+    ctx.fillStyle = PURPLE; ctx.strokeStyle = INK; ctx.lineWidth = 2;
+    PIEZAS.forEach((p) => { ctx.fill(p); ctx.stroke(p); });
+    ctx.restore();
+    ctx.beginPath(); ctx.roundRect(1.5, 1.5, 67, 67, 18.5);
+    ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke();
+    ctx.restore();
+  };
+
+  const sello = (cx, cy, c) => {
+    if (c <= 0) return;
+    const r = S * .2 * smooth(c);
+    ctx.save();
+    ctx.translate(cx + S * .42, cy - S * .42);
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fillStyle = PURPLE; ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = CREAM; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-r * .45, 0); ctx.lineTo(-r * .1, r * .38); ctx.lineTo(r * .5, -r * .38);
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  const rotulo = (x, y, t) => {
+    ctx.save();
+    ctx.font = '500 11px "Azeret Mono", ui-monospace, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillStyle = line; ctx.globalAlpha = .6;
+    ctx.fillText(t, x, y);
+    ctx.restore();
+  };
+
+  const dibujar = (now) => {
+    ctx.clearRect(0, 0, W, H);
+    const n = Math.floor(now / CYCLE);
+    const t = now - n * CYCLE;
+    const moviendo = t < MOVE;
+    const off = moviendo ? inout(t / MOVE) : 1;   /* avance del tramo */
+    const a = moviendo ? 0 : (t - MOVE) / ACT;    /* progreso de la accion */
+
+    /* la cinta */
+    ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, beltY); ctx.lineTo(W, beltY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, beltY + 14); ctx.lineTo(W, beltY + 14); ctx.stroke();
+    const giro = ((n + off) * D) / 7;
+    for (let x = 12; x < W; x += 30) {
+      ctx.beginPath(); ctx.arc(x, beltY + 7, 5, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x + Math.cos(giro) * 4, beltY + 7 + Math.sin(giro) * 4);
+      ctx.lineTo(x - Math.cos(giro) * 4, beltY + 7 - Math.sin(giro) * 4);
+      ctx.stroke();
+    }
+    ['medir', 'ordenar', 'revisar'].forEach((r, i) => rotulo(x0 + i * D, beltY + 26, r));
+
+    /* las cajas: ranura k va de -1 (entrando) a 3 (saliendo) */
+    const cajas = [];
+    for (let k = -1; k <= 3; k++) {
+      const id = n - k;
+      const s0 = .84 + rasgo(id, 1) * .3;
+      const r0 = (.6 + rasgo(id, 2) * 1.4) * (rasgo(id, 3) < .5 ? -1 : 1);
+      const hecho = (st) => st < k ? 1 : st === k ? a : 0;
+      const sc = s0 + (1 - s0) * smooth(seg(hecho(0), .3, .6));
+      const rot = r0 * (1 - smooth(seg(hecho(1), .15, .7)));
+      const chk = seg(hecho(2), .55, .7);
+      const L = k === 2 ? seg(a, .3, .5) - seg(a, .7, .85) : 0;
+      const x = x0 + (k - 1 + off) * D;
+      const cy = beltY - S * sc / 2 - 1 - L * S * .55;
+      cajas.push({ x, cy, sc, rot, chk, L });
+    }
+
+    /* estacion 1: la regla baja hasta tocar la caja */
+    {
+      const x = x0, c = cajas[1];
+      const d = smooth(a < .6 ? seg(a, .1, .4) : 1 - seg(a, .68, .95));
+      const rest = beltY - S - 52, tope = beltY - S * c.sc - 6;
+      const y = rest + (tope - rest) * d;
+      ctx.strokeStyle = line; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, y - 6); ctx.stroke();
+      ctx.fillStyle = CREAM;
+      ctx.beginPath(); ctx.roundRect(x - S * .62, y - 6, S * 1.24, 8, 2); ctx.fill(); ctx.stroke();
+      ctx.lineWidth = 1.2;
+      for (let i = -5; i <= 5; i++) {
+        const tx = x + i * S * .11, h = i % 5 === 0 ? 6 : 3;
+        ctx.beginPath(); ctx.moveTo(tx, y - 6); ctx.lineTo(tx, y - 6 - h); ctx.stroke();
+      }
+    }
+    /* estacion 2: el intercambio, dos flechas que giran */
+    {
+      const x = x0 + D, y = beltY - S - 36;
+      const ang = smooth(seg(a, .1, .75)) * Math.PI * 2;
+      ctx.strokeStyle = line; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, y - 14); ctx.stroke();
+      ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+      ctx.fillStyle = line;
+      [0, Math.PI].forEach((o) => {
+        ctx.beginPath(); ctx.arc(0, 0, 12, o + .35, o + Math.PI - .35); ctx.stroke();
+        const e = o + Math.PI - .35;
+        const ex = Math.cos(e) * 12, ey = Math.sin(e) * 12;
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex + Math.cos(e - 2.2) * 6, ey + Math.sin(e - 2.2) * 6);
+        ctx.lineTo(ex + Math.cos(e - .9) * 6, ey + Math.sin(e - .9) * 6);
+        ctx.closePath(); ctx.fill();
+      });
+      ctx.restore();
+    }
+    /* estacion 3: la garra baja, agarra, levanta, revisa y suelta */
+    {
+      const x = x0 + 2 * D, c = cajas[3];
+      const d = a < .5 ? seg(a, 0, .18) : 1 - seg(a, .9, 1);
+      const g = seg(a, .18, .3) - seg(a, .85, .95);
+      const rest = beltY - S - 64, agarre = beltY - S * c.sc - 14;
+      const y = rest + (agarre - rest) * smooth(d) - c.L * S * .55;
+      const abierto = S * .62, cerrado = S * c.sc / 2 + 4;
+      const w = abierto + (cerrado - abierto) * smooth(g);
+      ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, y); ctx.stroke();
+      ctx.beginPath(); ctx.roundRect(x - 10, y, 20, 10, 3); ctx.fill(); ctx.stroke();
+      [-1, 1].forEach((s) => {
+        ctx.beginPath();
+        ctx.moveTo(x + s * 8, y + 10);
+        ctx.lineTo(x + s * w, y + 18);
+        ctx.lineTo(x + s * w, y + 18 + S * .5);
+        ctx.lineTo(x + s * (w - 7), y + 18 + S * .5 + 4);
+        ctx.stroke();
+      });
+    }
+
+    cajas.forEach((c) => { caja(c.x, c.cy, c.sc, c.rot); sello(c.x, c.cy, c.chk); });
+  };
+
+  medir();
+  if (REDUCE) { dibujar(3 * CYCLE + MOVE + ACT * .62); return; }
+
+  let raf = null;
+  const tick = (ts) => { raf = requestAnimationFrame(tick); dibujar(ts); };
+  raf = requestAnimationFrame(tick);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { if (!raf) raf = requestAnimationFrame(tick); }
+      else { cancelAnimationFrame(raf); raf = null; }
+    })).observe(fab);
+  }
+  let rt;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(medir, 160); });
+})();
+
+/* El prompt del CTA abre el correo con lo escrito. */
+(function () {
+  const f = document.getElementById('prompt');
+  if (!f) return;
+  f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = (f.querySelector('#q').value || '').trim();
+    const body = q ? q + '\n\n---\nEmpresa:\nPlazo estimado:\n'
+                   : 'Cuéntenos brevemente:\n\nEmpresa:\nDesafío:\nPlazo estimado:\n';
+    location.href = 'mailto:hola@ualabi.cl'
+      + '?subject=' + encodeURIComponent('Nuevo proyecto con ualabi')
+      + '&body=' + encodeURIComponent(body);
+  });
+})();
+</script>
+
 <script type="module">
-/* Sistema de animacion con Motion.
-   El contenido es visible por defecto en el CSS: si el modulo no
-   carga, la pagina queda completa y quieta. La animacion nunca
-   decide si el texto existe. */
-const REDUCE = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+/* Motion: reveal, tablero del titular, hover y scroll horizontal.
+   El contenido es visible sin esto. */
+const REDUCE = matchMedia('(prefers-reduced-motion:reduce)').matches;
 if (!REDUCE) {
   try {
-    const { animate, scroll, scrollInfo, inView, stagger, hover } =
+    const { animate, scroll, inView, stagger, hover } =
       await import('https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm');
-    /* animejs solo por su modulo de texto: 12.8 KB, no el paquete
-       completo de 120 KB. Es lo unico que Motion no trae. */
-    const { split } =
-      await import('https://cdn.jsdelivr.net/npm/animejs@4.5.0/text/+esm');
-
     const EASE = [0.16, 1, 0.3, 1];
 
-    /* 1. Reveal al entrar en viewport.
-       Comunica jerarquia: el contenido llega cuando se mira. */
     inView('[data-reveal]', (el) => {
       animate(el, { opacity: [0, 1], y: [18, 0] }, { duration: .65, ease: EASE });
     }, { margin: '0px 0px -12% 0px', amount: 0.15 });
 
-    /* Grupos escalonados: el orden de lectura se vuelve visible. */
     inView('[data-reveal-group]', (el) => {
       const kids = el.children;
       if (!kids.length) return;
@@ -1057,36 +776,20 @@ if (!REDUCE) {
         { duration: .55, ease: EASE, delay: stagger(0.07) });
     }, { margin: '0px 0px -10% 0px', amount: 0.12 });
 
-    /* 2. El titular cae como un tablero de estacion: las fichas giran
-       por el abecedario y se detienen de izquierda a derecha. Ocurre
-       una sola vez, al cargar. Un tablero real tampoco gira todo el
-       dia: cae cuando cambia la informacion. */
+    /* El titular cae como un tablero de estacion, una vez al cargar. */
     const flap = document.querySelector('[data-flap]');
     if (flap) {
       const RUEDA = ' ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ';
-      const posEn = (ch) => {
-        const i = RUEDA.indexOf(ch.toUpperCase());
-        return i < 0 ? 0 : i;
-      };
-      /* el HTML original lleva el destacado; se guarda para restituirlo
-         al final y no perder el subrayado */
+      const posEn = (ch) => Math.max(0, RUEDA.indexOf(ch.toUpperCase()));
       const htmlFinal = flap.innerHTML;
-      const textoFinal = flap.textContent;
-      const destino = textoFinal.split('');
-      /* las fichas de mas a la derecha dan mas vueltas: el tablero se
-         asienta en cascada */
-      const pasos = destino.map((ch, k) =>
-        ch === ' ' ? 0 : 3 + (k >> 2) + posEn(ch));
+      const destino = flap.textContent.split('');
+      const pasos = destino.map((ch, k) => ch === ' ' ? 0 : 3 + (k >> 2) + posEn(ch));
       const estado = destino.map(() => (Math.random() * RUEDA.length) | 0);
       const listas = destino.map((ch) => ch === ' ');
       const maxPasos = Math.max(...pasos);
-
       const pintar = () => {
-        flap.textContent = destino
-          .map((ch, k) => (listas[k] ? ch : RUEDA[estado[k]]))
-          .join('');
+        flap.textContent = destino.map((ch, k) => (listas[k] ? ch : RUEDA[estado[k]])).join('');
       };
-
       const caer = async () => {
         for (let t = 0; t <= maxPasos; t++) {
           destino.forEach((ch, k) => {
@@ -1097,302 +800,42 @@ if (!REDUCE) {
           pintar();
           await new Promise(r => setTimeout(r, 58));
         }
-        /* vuelve el HTML con el destacado intacto */
         flap.innerHTML = htmlFinal;
       };
       pintar();
       setTimeout(caer, 320);
     }
 
-    /* 3. El marquee responde al scroll: acelera con el movimiento y
-       cambia de sentido segun hacia donde va la pagina. El resto del
-       tiempo corre solo. */
-    const track = document.querySelector('.strip-track');
-    if (track) {
-      let base = 0, vel = 0, last = 0;
-      track.style.animation = 'none';
-      scroll((progress, info) => {
-        vel = (info?.y?.velocity ?? 0) / 1000;
-      });
-      const tick = () => {
-        base -= 0.45 + vel * 0.9;
-        const w = track.scrollWidth / 2;
-        if (base <= -w) base += w;
-        if (base > 0) base -= w;
-        track.style.transform = `translateX(${base}px)`;
-        vel *= 0.92;
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    }
-
-    /* 4. El dato del caso cuenta al entrar. Es el unico numero duro
-       de la pagina: animarlo lo subraya. */
-    const dato = document.querySelector('[data-count]');
-    if (dato) {
-      inView(dato, (el) => {
-        const from = +el.dataset.from, to = +el.dataset.count;
-        animate(from, to, {
-          duration: 1.1, ease: EASE,
-          onUpdate: (v) => { el.textContent = Math.round(v); }
-        });
-      }, { amount: 0.9 });
-    }
-
-    /* 5. Las tarjetas responden al puntero con fisica, no con una
-       curva fija: el rebote da la sensacion de peso. */
-    hover('.bento article, .svc-list .card', (el) => {
+    hover('.svc-list .card', (el) => {
       animate(el, { y: -4 }, { type: 'spring', stiffness: 320, damping: 24 });
       return () => animate(el, { y: 0 }, { type: 'spring', stiffness: 320, damping: 26 });
     });
 
-    /* 6. El hero se desvanece y sube mientras se scrollea: marca la
-       transicion del titular a la pagina en vez de cortarla seco. */
-    const hero = document.querySelector('.hero .pad');
-    if (hero) {
-      scroll(
-        (p) => {
-          hero.style.opacity = String(1 - Math.min(p * 1.35, 1));
-          hero.style.transform = `translateY(${p * -46}px)`;
-        },
-        { target: document.querySelector('.hero'), offset: ['start start', 'end start'] }
-      );
-    }
-
-    /* 7. Plano de trabajo del hero. Nodos conectados por lineas: al
-       pasar el cursor cerca de uno, se enciende y manda una senal que
-       recorre la cadena hasta el final. Es la idea de ualabi dibujada:
-       las cosas estan conectadas y una empuja a la siguiente. */
-    const play = document.getElementById('play');
-    if (play) {
-      const cv = document.createElement('canvas');
-      const ctx = cv.getContext('2d');
-      play.appendChild(cv);
-
-      const TEAL = '#3FAEC6', PURPLE = '#83389B', INK = '#232226';
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      let W = 0, H = 0, nodos = [], enlaces = [];
-
-      /* posiciones relativas: el plano se rearma con cada medida */
-      const PLANTA = [
-        { x: .10, y: .68, t: 'in'  },
-        { x: .26, y: .34, t: 'eng' },
-        { x: .42, y: .70, t: 'pal' },
-        { x: .58, y: .30, t: 'eng' },
-        { x: .74, y: .62, t: 'pal' },
-        { x: .90, y: .38, t: 'out' }
-      ];
-
-      const medir = () => {
-        W = play.clientWidth; H = play.clientHeight;
-        cv.width = W * dpr; cv.height = H * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        nodos = PLANTA.map((n) => ({
-          x: n.x * W, y: n.y * H, t: n.t,
-          carga: 0,      /* 0 apagado, 1 encendido */
-          giro: 0
-        }));
-        enlaces = nodos.slice(0, -1).map((n, i) => ({ a: i, b: i + 1, luz: 0 }));
-      };
-      medir();
-
-      let puntero = { x: -999, y: -999, dentro: false };
-      play.addEventListener('pointermove', (e) => {
-        const r = play.getBoundingClientRect();
-        puntero = { x: e.clientX - r.left, y: e.clientY - r.top, dentro: true };
-      });
-      play.addEventListener('pointerleave', () => { puntero.dentro = false; });
-
-      /* la senal viaja de un nodo al siguiente con un retardo, asi se
-         ve la cadena avanzar en vez de encenderse entera */
-      const disparar = (desde) => {
-        for (let i = desde; i < nodos.length; i++) {
-          setTimeout(() => {
-            nodos[i].carga = 1;
-            if (i > 0) enlaces[i - 1].luz = 1;
-          }, (i - desde) * 130);
-        }
-      };
-
-      let ultimo = -1;
-      const revisar = () => {
-        if (!puntero.dentro) { ultimo = -1; return; }
-        let cerca = -1, min = 46;
-        nodos.forEach((n, i) => {
-          const d = Math.hypot(n.x - puntero.x, n.y - puntero.y);
-          if (d < min) { min = d; cerca = i; }
-        });
-        if (cerca >= 0 && cerca !== ultimo) { ultimo = cerca; disparar(cerca); }
-        if (cerca < 0) ultimo = -1;
-      };
-
-      const dibujar = (t) => {
-        ctx.clearRect(0, 0, W, H);
-
-        /* las lineas: apagadas son tenues, encendidas toman el color */
-        enlaces.forEach((e) => {
-          const a = nodos[e.a], b = nodos[e.b];
-          ctx.strokeStyle = 'rgba(35,34,38,.16)';
-          ctx.lineWidth = 1.5;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          if (e.luz > .01) {
-            ctx.strokeStyle = PURPLE;
-            ctx.globalAlpha = e.luz;
-            ctx.lineWidth = 2.4;
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-            /* la chispa que corre por el cable */
-            const p = 1 - e.luz;
-            ctx.globalAlpha = e.luz;
-            ctx.fillStyle = PURPLE;
-            ctx.beginPath();
-            ctx.arc(a.x + (b.x - a.x) * p, a.y + (b.y - a.y) * p, 3.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
-          }
-        });
-
-        /* los nodos */
-        nodos.forEach((n) => {
-          ctx.save();
-          ctx.translate(n.x, n.y);
-          const on = n.carga;
-          ctx.strokeStyle = INK;
-          ctx.lineWidth = 2;
-
-          if (n.t === 'eng') {
-            /* engranaje: gira cuando esta cargado */
-            ctx.rotate(n.giro);
-            ctx.fillStyle = on > .05 ? TEAL : '#fff';
-            const R = 15, dientes = 8;
-            ctx.beginPath();
-            for (let i = 0; i < dientes * 2; i++) {
-              const a = (i / (dientes * 2)) * Math.PI * 2;
-              const r = i % 2 ? R : R + 5;
-              i ? ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r)
-                : ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
-            }
-            ctx.closePath(); ctx.fill(); ctx.stroke();
-            ctx.beginPath(); ctx.arc(0, 0, 4.5, 0, Math.PI * 2); ctx.stroke();
-          } else if (n.t === 'pal') {
-            /* palanca: se inclina al activarse */
-            ctx.rotate(-0.5 + on * 0.9);
-            ctx.fillStyle = on > .05 ? TEAL : '#fff';
-            ctx.beginPath(); ctx.roundRect(-18, -5, 36, 10, 5);
-            ctx.fill(); ctx.stroke();
-            ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, Math.PI * 2);
-            ctx.fillStyle = INK; ctx.fill();
-          } else {
-            /* entrada y salida: el cuadrado de la marca */
-            ctx.fillStyle = on > .05 ? TEAL : '#fff';
-            ctx.beginPath(); ctx.roundRect(-14, -14, 28, 28, 8);
-            ctx.fill(); ctx.stroke();
-            ctx.fillStyle = on > .05 ? PURPLE : 'rgba(35,34,38,.25)';
-            ctx.beginPath();
-            for (let i = 0; i < 3; i++) {
-              const a = -Math.PI / 2 + i * 2.0944;
-              const px = Math.cos(a) * 6, py = Math.sin(a) * 6;
-              i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-            }
-            ctx.closePath(); ctx.fill();
-          }
-          ctx.restore();
-        });
-
-        /* el cursor deja ver donde esta */
-        if (puntero.dentro) {
-          ctx.strokeStyle = 'rgba(35,34,38,.3)';
-          ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.arc(puntero.x, puntero.y, 6, 0, Math.PI * 2); ctx.stroke();
-        }
-      };
-
-      let raf = null;
-      const tick = () => {
-        raf = requestAnimationFrame(tick);
-        revisar();
-        nodos.forEach((n) => {
-          if (n.carga > 0) { n.carga *= 0.975; if (n.carga < .01) n.carga = 0; }
-          if (n.t === 'eng') n.giro += 0.008 + n.carga * 0.09;
-        });
-        enlaces.forEach((e) => { if (e.luz > 0) { e.luz *= 0.955; if (e.luz < .01) e.luz = 0; } });
-        dibujar();
-      };
-      tick();
-
-      if ('IntersectionObserver' in window) {
-        new IntersectionObserver((es) => es.forEach((e) => {
-          if (e.isIntersecting) { if (!raf) tick(); }
-          else { cancelAnimationFrame(raf); raf = null; }
-        })).observe(play);
-      }
-      let rt;
-      window.addEventListener('resize', () => {
-        clearTimeout(rt); rt = setTimeout(medir, 160);
-      });
-    }
-
-    /* 8. Scroll horizontal obligatorio en servicios. La seccion se fija
-       y el scroll vertical corre las tarjetas de lado hasta que
-       terminan. Se mide en vivo porque el ancho depende del viewport. */
+    /* Scroll horizontal en servicios: la seccion se fija y el scroll
+       vertical corre las tarjetas de lado hasta que terminan. */
     const pan = document.querySelector('.pan');
     const panList = pan && pan.querySelector('.svc-list');
     const panBar = pan && pan.querySelector('.pan-bar i');
-    const anchoOk = window.matchMedia('(min-width:900px)');
-
-    if (pan && panList && anchoOk.matches) {
+    if (pan && panList && matchMedia('(min-width:900px)').matches) {
       let recorrido = 0;
-
       const medir = () => {
-        /* cuanto sobra del carril por fuera de la pantalla */
         recorrido = Math.max(0, panList.scrollWidth - panList.clientWidth);
-        /* la seccion necesita ese alto extra para tener scroll que
-           consumir; sin esto el sticky no tiene donde correr */
-        pan.style.height = recorrido > 0
-          ? `calc(100vh + ${recorrido}px)`
-          : '';
+        pan.style.height = recorrido > 0 ? `calc(100vh + ${recorrido}px)` : '';
         if (recorrido === 0) panList.style.transform = '';
       };
-
       medir();
-
-      scroll(
-        (p) => {
-          if (recorrido === 0) return;
-          const x = p * recorrido;
-          panList.style.transform = `translate3d(${-x}px,0,0)`;
-          if (panBar) panBar.style.width = (p * 100).toFixed(1) + '%';
-        },
-        { target: pan, offset: ['start start', 'end end'] }
-      );
-
+      scroll((p) => {
+        if (recorrido === 0) return;
+        panList.style.transform = `translate3d(${-p * recorrido}px,0,0)`;
+        if (panBar) panBar.style.width = (p * 100).toFixed(1) + '%';
+      }, { target: pan, offset: ['start start', 'end end'] });
       let rt;
-      window.addEventListener('resize', () => {
-        clearTimeout(rt);
-        rt = setTimeout(medir, 160);
-      });
+      addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(medir, 160); });
     }
-
   } catch (e) {
     /* sin Motion la pagina queda quieta y completa */
   }
 }
-
-/* El prompt del CTA abre el correo con lo escrito. Va fuera del
-   bloque de animacion: no debe depender de que Motion cargue. */
-(function () {
-  const f = document.getElementById('prompt');
-  if (!f) return;
-  f.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const q = (f.querySelector('#q').value || '').trim();
-    const body = q ? q + '\n\n---\nEmpresa:\nPlazo estimado:\n'
-                   : 'Cuéntenos brevemente:\n\nEmpresa:\nDesafío:\nPlazo estimado:\n';
-    window.location.href = 'mailto:hola@ualabi.cl'
-      + '?subject=' + encodeURIComponent('Nuevo proyecto con ualabi')
-      + '&body=' + encodeURIComponent(body);
-  });
-})();
 </script>
 </body>
-
 </html>
