@@ -170,7 +170,8 @@ h1,h2,h3{
 .block-teal{background-color:var(--tint-teal);--accent:var(--teal-deep)}
 .block-ink{background-color:var(--ink);color:var(--on-ink)}
 .block-paper{background-color:var(--paper);background-image:none}
-.pad{padding:clamp(26px,4.5vw,64px)}
+:root{--pad:clamp(26px,4.5vw,64px)}
+.pad{padding:var(--pad)}
 
 /* ---------- HERO: texto y linea de produccion sobre el papel ---------- */
 .hero{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
@@ -241,7 +242,8 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
 
 /* escritorio: bento */
 @media(min-width:900px){
-  .svc-list{display:grid;gap:var(--sp-m);grid-template-columns:repeat(6,1fr)}
+  .svc{display:grid;gap:var(--sp-m);grid-template-columns:repeat(6,1fr)}
+  .svc-list{display:contents}
   .svc-intro{grid-column:1/3;grid-row:1;align-self:start}
   .svc-list>.card[data-n="1"]{grid-column:3/7;grid-row:1}
   .svc-list>.card[data-n="2"]{grid-column:1/4}
@@ -260,22 +262,13 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
   .svc-intro{margin-bottom:var(--sp-m)}
   .svc-list{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(272px,84vw);
     gap:var(--sp-m);overflow-x:auto;overscroll-behavior-x:contain;
-    scroll-snap-type:x mandatory;padding-bottom:14px;
-    margin-inline:calc(var(--gutter) * -1);padding-inline:var(--gutter);
+    scroll-snap-type:x mandatory;scroll-padding-inline:var(--pad);padding-bottom:14px;
+    margin-inline:calc(var(--pad) * -1);padding-inline:var(--pad);
     scrollbar-width:thin}
   .svc-list>.card{scroll-snap-align:start}
 }
-/* escritorio: el scroll vertical corre las tarjetas de lado */
-@media(min-width:900px) and (prefers-reduced-motion:no-preference){
-  .pan-sticky{position:sticky;top:0;min-height:100vh;
-    display:flex;flex-direction:column;justify-content:center;overflow:hidden}
-  .pan .svc-list{display:flex;flex-wrap:nowrap;gap:var(--sp-m);will-change:transform}
-  .pan .svc-list>.card{flex:0 0 clamp(320px,30vw,420px)}
-  .pan .svc-intro{flex:0 0 clamp(240px,22vw,320px);align-self:center}
-  .pan-bar{position:absolute;left:var(--gutter);right:var(--gutter);bottom:26px;height:2px;
-    background:var(--grid)}
-  .pan-bar i{display:block;height:100%;width:0;background:var(--line)}
-}
+.swipe{display:none;font-size:.6875rem;opacity:.55;letter-spacing:.02em;margin-top:2px}
+@media(max-width:899px){.swipe{display:block}}
 
 /* ---------- CTA COMO TERMINAL ---------- */
 .cta-block h2{font-size:var(--t-xl);font-variation-settings:'wdth' 74;font-weight:900;
@@ -384,7 +377,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     <div>
       <p class="kicker rise">Podemos ayudarte con productos, procesos e inteligencia artificial</p>
       <h1 class="rise" data-flap>Armamos cosas que <span class="hl">sirven</span></h1>
-      <p class="lede rise">Entendemos qué necesitan sus productos y sus procesos, y construimos solo lo que <span class="hl">agrega valor</span>. Nada que exista porque sí.</p>
+      <p class="lede rise">Entendemos qué necesitan sus productos y sus procesos, y construimos solo lo que <span class="hl">agrega valor</span>. No lo que se hace porque sí.</p>
       <div class="hero-cta rise">
         <a class="btn" href="#contacto">¿Quiere explorar su idea?</a>
         <a class="btn btn-light" href="#servicios">Ver servicios</a>
@@ -396,17 +389,18 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
   </header>
 
   <!-- SERVICIOS -->
-  <section id="servicios" class="pan block block-teal win" data-win="ualabi / servicios">
+  <section id="servicios" class="block block-teal win" data-win="ualabi / servicios">
     <div class="win-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="pan-sticky"><div class="pad">
+    <div class="pad">
       <!-- TODO: las descripciones ganan fuerza con un compromiso concreto
            al frente (plazo o precio). Si ualabi puede honrarlo, va como
            primera frase de cada servicio. No se inventa. -->
-      <div class="svc-list" data-reveal-group>
+      <div class="svc">
         <div class="svc-intro">
           <h2>Qué hacemos</h2>
-          <p>Las cosas para las que somos buenos.</p>
+          <p>Cuatro cosas que hacemos bien.</p>
         </div>
+      <div class="svc-list" data-reveal-group>
         <div class="card svc-item" data-n="1">
           <div class="card-bar" aria-hidden="true">
             <i></i><i></i><i></i><span>productos-digitales<i class="cursor"></i></span>
@@ -414,7 +408,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
           <div class="card-body">
             <div class="svc-head"><span class="svc-num" aria-hidden="true">01</span></div>
             <h3>Construimos productos</h3>
-            <p>Esa intuición de que algo puede funcionar, antes de que pueda explicarla. La exploramos con usted, la construimos y la dejamos operando como un producto real.</p>
+            <p>Tiene una idea que podría funcionar y todavía no sabe cómo explicarla. La exploramos con usted, la construimos y la dejamos operando como un producto real.</p>
             <div class="tags"><span>Discovery</span><span>Diseño y UX</span><span>Ingeniería</span><span>Prototipado</span><span>Escalamiento</span></div>
           </div>
         </div>
@@ -425,7 +419,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
           <div class="card-body">
             <div class="svc-head"><span class="svc-num" aria-hidden="true">02</span></div>
             <h3>Integramos IA</h3>
-            <p>Dónde conviene usarla, cómo conversa con los sistemas que ya tiene y cómo hacerlo sin que cueste una fortuna. Nos quedamos con los casos que escalan y se sostienen en el tiempo.</p>
+            <p>Vemos dónde conviene usar IA en sus procesos, cómo se conecta con los sistemas que ya tiene y cómo hacerlo sin que cueste una fortuna. Nos quedamos con los casos que escalan y se sostienen en el tiempo.</p>
             <div class="tags"><span>Integración en producto</span><span>Automatización</span><span>Asistentes sobre datos propios</span><span>Modelos en producción</span><span>Gobernanza</span></div>
           </div>
         </div>
@@ -436,7 +430,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
           <div class="card-body">
             <div class="svc-head"><span class="svc-num" aria-hidden="true">03</span></div>
             <h3>Colaboramos</h3>
-            <p>Quiere construir algo con alguien más y no sabe cómo. Diseñamos el proceso para que eso ocurra: con quién, bajo qué reglas y hacia dónde.</p>
+            <p>Quiere construir algo con otra empresa o con su propio equipo y no sabe por dónde partir. Diseñamos el proceso para que ocurra: con quién, bajo qué reglas y hacia dónde.</p>
             <div class="tags"><span>Talleres</span><span>Co-creación</span><span>Prototipado rápido</span><span>Roadmap</span></div>
           </div>
         </div>
@@ -447,13 +441,13 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
           <div class="card-body">
             <div class="svc-head"><span class="svc-num" aria-hidden="true">04</span></div>
             <h3>Formamos a su equipo</h3>
-            <p>Talleres y acompañamiento para que la innovación y la IA dejen de ser un proyecto aparte y pasen a ser parte del trabajo diario del equipo.</p>
+            <p>Talleres y acompañamiento para que la innovación y la IA dejen de ser un proyecto aparte y se vuelvan parte del trabajo diario de su equipo.</p>
             <div class="tags"><span>Formación</span><span>Acompañamiento</span><span>Gobernanza</span><span>Transferencia</span></div>
           </div>
         </div>
       </div>
-    </div>
-      <div class="pan-bar" aria-hidden="true"><i></i></div>
+      <p class="swipe" aria-hidden="true">Deslice para ver los cuatro</p>
+      </div>
     </div>
   </section>
 
@@ -489,7 +483,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
       </div>
       <!-- TODO: sin notas publicadas todavía. Al escribir la primera,
            reemplazar este párrafo por la lista. -->
-      <p class="notes-empty">Todavía no hay ninguna publicada. La primera sale cuando haya algo que contar.</p>
+      <p class="notes-empty">Todavía no publicamos ninguna. La primera sale cuando tengamos algo que contar.</p>
     </div>
   </section>
 
@@ -508,7 +502,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
             </g>
             <rect x="1.5" y="1.5" width="67" height="67" rx="18.5" fill="none" stroke="#232226" stroke-width="3"/>
           </svg>
-          <p>ualabi. Agencia chilena de innovación, ingeniería y tecnología.</p>
+          <p>Agencia chilena de innovación, ingeniería y tecnología.</p>
         </div>
         <div>
           <h4>Servicios</h4>
@@ -540,7 +534,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
 /* La fabrica del hero. No depende de ninguna libreria: si falla,
    el hero queda como texto. Tres estaciones sobre una cinta:
    medir (una regla baja y la caja toma su tamano), ordenar (las
-   piezas del logo giran a su lugar) y revisar (una garra levanta
+   caja se endereza) y revisar (una garra levanta
    la caja, la mira y le pone el sello). Es el trabajo de ualabi
    dibujado: articular el proceso para que salga bien. */
 (function () {
@@ -553,12 +547,6 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
   const TEAL = '#3FAEC6', PURPLE = '#83389B', INK = '#232226', CREAM = '#F6F0EA';
   const REDUCE = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const dpr = Math.min(devicePixelRatio || 1, 2);
-  /* las tres piezas del logo, en su caja de 70 */
-  const PIEZAS = [
-    'M30.73 16.81L14.68 8.27L30.1 -1.37Z',
-    'M77.26 30.73L43.8 39.7L52.77 6.24Z',
-    'M13.89 78.89L9.89 33.17L51.49 52.57Z'
-  ].map((d) => new Path2D(d));
 
   const MOVE = 900, ACT = 2600, CYCLE = MOVE + ACT;
   let W = 0, H = 0, S = 0, beltY = 0, D = 0, x0 = 0, line = INK;
@@ -583,20 +571,21 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     return x - Math.floor(x);
   };
 
+  /* la caja: un paquete turquesa con su etiqueta morada. Llega
+     chueca y de otro tamano; la linea la deja derecha y a escala. */
   const caja = (cx, cy, sc, rot) => {
     ctx.save();
-    ctx.translate(cx, cy);
+    ctx.translate(cx, cy); ctx.rotate(rot);
     ctx.scale(S * sc / 70, S * sc / 70);
     ctx.translate(-35, -35);
-    ctx.beginPath(); ctx.roundRect(0, 0, 70, 70, 20);
+    ctx.beginPath(); ctx.roundRect(0, 0, 70, 70, 14);
     ctx.fillStyle = TEAL; ctx.fill();
-    ctx.save(); ctx.clip();
-    ctx.translate(35, 35); ctx.rotate(rot); ctx.translate(-35, -35);
-    ctx.fillStyle = PURPLE; ctx.strokeStyle = INK; ctx.lineWidth = 2;
-    PIEZAS.forEach((p) => { ctx.fill(p); ctx.stroke(p); });
-    ctx.restore();
-    ctx.beginPath(); ctx.roundRect(1.5, 1.5, 67, 67, 18.5);
     ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke();
+    ctx.beginPath(); ctx.roundRect(14, 16, 42, 16, 4);
+    ctx.fillStyle = PURPLE; ctx.fill(); ctx.lineWidth = 2; ctx.stroke();
+    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(16, 44); ctx.lineTo(44, 44); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(16, 54); ctx.lineTo(34, 54); ctx.stroke();
     ctx.restore();
   };
 
@@ -645,20 +634,27 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
       ctx.stroke();
     }
     ['medir', 'ordenar', 'revisar'].forEach((r, i) => rotulo(x0 + i * D, beltY + 26, r));
+    /* el riel del que cuelga todo */
+    const railY = 10;
+    ctx.beginPath(); ctx.moveTo(x0 - S * .8, railY); ctx.lineTo(x0 + 2 * D + S * .8, railY); ctx.stroke();
+    ctx.fillStyle = CREAM;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath(); ctx.arc(x0 + i * D, railY, 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
 
     /* las cajas: ranura k va de -1 (entrando) a 3 (saliendo) */
     const cajas = [];
     for (let k = -1; k <= 3; k++) {
       const id = n - k;
       const s0 = .84 + rasgo(id, 1) * .3;
-      const r0 = (.6 + rasgo(id, 2) * 1.4) * (rasgo(id, 3) < .5 ? -1 : 1);
+      const r0 = (.12 + rasgo(id, 2) * .22) * (rasgo(id, 3) < .5 ? -1 : 1);
       const hecho = (st) => st < k ? 1 : st === k ? a : 0;
       const sc = s0 + (1 - s0) * smooth(seg(hecho(0), .3, .6));
       const rot = r0 * (1 - smooth(seg(hecho(1), .15, .7)));
       const chk = seg(hecho(2), .55, .7);
       const L = k === 2 ? seg(a, .3, .5) - seg(a, .7, .85) : 0;
       const x = x0 + (k - 1 + off) * D;
-      const cy = beltY - S * sc / 2 - 1 - L * S * .55;
+      const cy = beltY - S * sc / 2 - 1 - Math.abs(Math.sin(rot)) * S * .18 - L * S * .55;
       cajas.push({ x, cy, sc, rot, chk, L });
     }
 
@@ -669,7 +665,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
       const rest = beltY - S - 52, tope = beltY - S * c.sc - 6;
       const y = rest + (tope - rest) * d;
       ctx.strokeStyle = line; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, y - 6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x, y - 6); ctx.stroke();
       ctx.fillStyle = CREAM;
       ctx.beginPath(); ctx.roundRect(x - S * .62, y - 6, S * 1.24, 8, 2); ctx.fill(); ctx.stroke();
       ctx.lineWidth = 1.2;
@@ -683,7 +679,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
       const x = x0 + D, y = beltY - S - 36;
       const ang = smooth(seg(a, .1, .75)) * Math.PI * 2;
       ctx.strokeStyle = line; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, y - 14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x, y - 14); ctx.stroke();
       ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
       ctx.fillStyle = line;
       [0, Math.PI].forEach((o) => {
@@ -708,7 +704,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
       const abierto = S * .62, cerrado = S * c.sc / 2 + 4;
       const w = abierto + (cerrado - abierto) * smooth(g);
       ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x, y); ctx.stroke();
       ctx.beginPath(); ctx.roundRect(x - 10, y, 20, 10, 3); ctx.fill(); ctx.stroke();
       [-1, 1].forEach((s) => {
         ctx.beginPath();
@@ -756,12 +752,12 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
 </script>
 
 <script type="module">
-/* Motion: reveal, tablero del titular, hover y scroll horizontal.
+/* Motion: reveal, tablero del titular y hover.
    El contenido es visible sin esto. */
 const REDUCE = matchMedia('(prefers-reduced-motion:reduce)').matches;
 if (!REDUCE) {
   try {
-    const { animate, scroll, inView, stagger, hover } =
+    const { animate, inView, stagger, hover } =
       await import('https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm');
     const EASE = [0.16, 1, 0.3, 1];
 
@@ -811,27 +807,6 @@ if (!REDUCE) {
       return () => animate(el, { y: 0 }, { type: 'spring', stiffness: 320, damping: 26 });
     });
 
-    /* Scroll horizontal en servicios: la seccion se fija y el scroll
-       vertical corre las tarjetas de lado hasta que terminan. */
-    const pan = document.querySelector('.pan');
-    const panList = pan && pan.querySelector('.svc-list');
-    const panBar = pan && pan.querySelector('.pan-bar i');
-    if (pan && panList && matchMedia('(min-width:900px)').matches) {
-      let recorrido = 0;
-      const medir = () => {
-        recorrido = Math.max(0, panList.scrollWidth - panList.clientWidth);
-        pan.style.height = recorrido > 0 ? `calc(100vh + ${recorrido}px)` : '';
-        if (recorrido === 0) panList.style.transform = '';
-      };
-      medir();
-      scroll((p) => {
-        if (recorrido === 0) return;
-        panList.style.transform = `translate3d(${-p * recorrido}px,0,0)`;
-        if (panBar) panBar.style.width = (p * 100).toFixed(1) + '%';
-      }, { target: pan, offset: ['start start', 'end end'] });
-      let rt;
-      addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(medir, 160); });
-    }
   } catch (e) {
     /* sin Motion la pagina queda quieta y completa */
   }
