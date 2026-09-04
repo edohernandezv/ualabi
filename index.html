@@ -182,6 +182,9 @@ h1,h2,h3{
   margin-bottom:var(--sp-m);opacity:.88}
 .kicker::before{content:"// ";opacity:.6}
 h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;max-width:12ch}
+/* celdas del tablero: la palabra no se parte y cada letra guarda su ancho */
+.fw{display:inline-block;white-space:nowrap}
+.fc{display:inline-block;text-align:center;overflow:hidden;vertical-align:top}
 .lede{font-size:clamp(1rem,.95rem + .4vw,1.2rem);line-height:1.5;max-width:44ch;
   margin-top:clamp(18px,2.4vw,28px);opacity:.92}
 .hero-cta{margin-top:clamp(24px,3.2vw,36px);display:flex;flex-wrap:wrap;gap:12px}
@@ -687,7 +690,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
       if (k === 2) sq = Math.sin(seg(a, .55, .66) * Math.PI) * .07 + Math.sin(seg(a, .85, .93) * Math.PI) * .05;
       if (k === 0) sq = Math.sin(seg(a, .38, .5) * Math.PI) * .04;
       if (k === 1) sq = Math.sin(seg(a, .5, .6) * Math.PI) * .05;
-      const x = x0 + (k - 1 + off) * D;
+      const x = k === 4 ? xSalida : x0 + (k - 1 + off) * D;
       let cy = beltY - S * sc / 2 - 1 - Math.abs(Math.sin(rot)) * S * .18 - L * S * .55;
       /* llegando a la salida cae dentro de la caja grande; la de antes se hunde */
       const fondo = crateTop + S * .5;
@@ -695,7 +698,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
         const d = smooth(seg(off, .55, 1));
         cy += (fondo - cy) * d; sq += Math.sin(seg(off, .9, 1) * Math.PI) * .06;
       }
-      if (k === 4) cy = fondo + S * .4 * smooth(seg(off, 0, .5));
+      if (k === 4) cy = fondo + S * .55 * smooth(seg(off, 0, .5));
       cajas.push({ k, x, cy, sc, rot, chk, L, sq, pz });
     }
 
@@ -754,7 +757,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
 
     /* sombra en la cinta: se achica cuando la caja sube */
     cajas.forEach((c) => {
-      if (c.k >= 3) return;
+      if (c.k >= 3 || c.k === -1) return;
       ctx.save(); ctx.globalAlpha = .16 * (1 - c.L * .6); ctx.fillStyle = line;
       ctx.beginPath(); ctx.ellipse(c.x, beltY - 1, S * c.sc * .5 * (1 - c.L * .3), 3.5, 0, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
@@ -765,7 +768,8 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     ctx.beginPath(); ctx.roundRect(xSalida - cw / 2, crateTop, cw, ch, 4); ctx.fill(); ctx.stroke();
     cajas.forEach((c) => {
       ctx.save();
-      if (c.k >= 3) { ctx.beginPath(); ctx.rect(xSalida - cw / 2 - S, 0, cw + 2 * S, pisoY); ctx.clip(); }
+      if (c.k >= 3) { ctx.beginPath(); ctx.rect(0, 0, W, pisoY); ctx.clip(); }
+      if (c.k === -1) { ctx.beginPath(); ctx.rect(xPuerta, 0, W, H); ctx.clip(); }
       caja(c.x, c.cy, c.sc, c.rot, c.sq, c.pz); sello(c.x, c.cy, c.sc, c.chk);
       ctx.restore();
     });
@@ -850,20 +854,26 @@ if (!REDUCE) {
         { duration: .55, ease: EASE, delay: stagger(0.07) });
     }, { margin: '0px 0px -10% 0px', amount: 0.12 });
 
-    /* El titular cae como un tablero de estacion, una vez al cargar. */
+    /* El titular cae como un tablero de estacion, una vez al cargar.
+       Cada letra gira dentro de una celda con el ancho de la letra
+       final, asi el bloque no cambia de tamano mientras gira. */
     const flap = document.querySelector('[data-flap]');
     if (flap) {
       const RUEDA = ' ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ';
       const posEn = (ch) => Math.max(0, RUEDA.indexOf(ch.toUpperCase()));
       const htmlFinal = flap.innerHTML;
-      const destino = flap.textContent.split('');
-      const pasos = destino.map((ch, k) => ch === ' ' ? 0 : 3 + (k >> 2) + posEn(ch));
+      const palabras = flap.textContent.split(' ');
+      flap.innerHTML = palabras.map((w) =>
+        '<span class="fw">' + [...w].map((ch) => '<span class="fc">' + ch + '</span>').join('') + '</span>'
+      ).join(' ');
+      const celdas = [...flap.querySelectorAll('.fc')];
+      celdas.forEach((c) => { c.style.width = c.getBoundingClientRect().width + 'px'; });
+      const destino = celdas.map((c) => c.textContent);
+      const pasos = destino.map((ch, k) => 3 + (k >> 2) + posEn(ch));
       const estado = destino.map(() => (Math.random() * RUEDA.length) | 0);
-      const listas = destino.map((ch) => ch === ' ');
+      const listas = destino.map(() => false);
       const maxPasos = Math.max(...pasos);
-      const pintar = () => {
-        flap.textContent = destino.map((ch, k) => (listas[k] ? ch : RUEDA[estado[k]])).join('');
-      };
+      const pintar = () => celdas.forEach((c, k) => { c.textContent = listas[k] ? destino[k] : RUEDA[estado[k]]; });
       const caer = async () => {
         for (let t = 0; t <= maxPasos; t++) {
           destino.forEach((ch, k) => {
