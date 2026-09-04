@@ -533,8 +533,8 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
 <script>
 /* La fabrica del hero. No depende de ninguna libreria: si falla,
    el hero queda como texto. Tres estaciones sobre una cinta:
-   medir (una regla baja y la caja toma su tamano), ordenar (las
-   caja se endereza) y revisar (una garra levanta
+   entender (una regla baja y la caja toma su tamano y se endereza),
+   integrar (un dispensador le encaja la pieza que falta) y revisar (una garra levanta
    la caja, la mira y le pone el sello). Entra una idea por la puerta
    y sale algo que sirve. Es el trabajo de ualabi
    dibujado: articular el proceso para que salga bien. */
@@ -576,7 +576,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
 
   /* la caja: un paquete turquesa con su etiqueta morada. Llega
      chueca y de otro tamano; la linea la deja derecha y a escala. */
-  const caja = (cx, cy, sc, rot, sq) => {
+  const caja = (cx, cy, sc, rot, sq, pieza) => {
     ctx.save();
     ctx.translate(cx, cy); ctx.rotate(rot);
     ctx.scale(S * sc / 70 * (1 + sq), S * sc / 70 * (1 - sq));
@@ -584,8 +584,10 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     ctx.beginPath(); ctx.roundRect(0, 0, 70, 70, 14);
     ctx.fillStyle = TEAL; ctx.fill();
     ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke();
-    ctx.beginPath(); ctx.roundRect(14, 16, 42, 16, 4);
-    ctx.fillStyle = PURPLE; ctx.fill(); ctx.lineWidth = 2; ctx.stroke();
+    if (pieza >= 1) {
+      ctx.beginPath(); ctx.roundRect(14, 16, 42, 16, 4);
+      ctx.fillStyle = PURPLE; ctx.fill(); ctx.lineWidth = 2; ctx.stroke();
+    }
     ctx.lineWidth = 2.5; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(16, 44); ctx.lineTo(44, 44); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(16, 54); ctx.lineTo(34, 54); ctx.stroke();
@@ -675,14 +677,16 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
       const s0 = .84 + rasgo(id, 1) * .3;
       const r0 = (.12 + rasgo(id, 2) * .22) * (rasgo(id, 3) < .5 ? -1 : 1);
       const hecho = (st) => st < k ? 1 : st === k ? a : 0;
-      const sc = s0 + (1 - s0) * smooth(seg(hecho(0), .3, .6));
-      let rot = r0 * (1 - back(seg(hecho(1), .15, .7)));
+      const sc = s0 + (1 - s0) * smooth(seg(hecho(0), .3, .65));
+      let rot = r0 * (1 - back(seg(hecho(0), .3, .65)));
+      const pz = seg(hecho(1), .15, .5);
       const chk = seg(hecho(2), .55, .7);
       const L = k === 2 ? seg(a, .3, .5) - seg(a, .7, .85) : 0;
       if (k === 2 && a > .5 && a < .7) rot += Math.sin((a - .5) / .2 * Math.PI * 2) * .07;
       let sq = 0;
       if (k === 2) sq = Math.sin(seg(a, .55, .66) * Math.PI) * .07 + Math.sin(seg(a, .85, .93) * Math.PI) * .05;
       if (k === 0) sq = Math.sin(seg(a, .38, .5) * Math.PI) * .04;
+      if (k === 1) sq = Math.sin(seg(a, .5, .6) * Math.PI) * .05;
       const x = x0 + (k - 1 + off) * D;
       let cy = beltY - S * sc / 2 - 1 - Math.abs(Math.sin(rot)) * S * .18 - L * S * .55;
       /* llegando a la salida cae dentro de la caja grande; la de antes se hunde */
@@ -692,7 +696,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
         cy += (fondo - cy) * d; sq += Math.sin(seg(off, .9, 1) * Math.PI) * .06;
       }
       if (k === 4) cy = fondo + S * .4 * smooth(seg(off, 0, .5));
-      cajas.push({ k, x, cy, sc, rot, chk, L, sq });
+      cajas.push({ k, x, cy, sc, rot, chk, L, sq, pz });
     }
 
     /* estacion 1: la regla baja hasta tocar la caja */
@@ -711,25 +715,20 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
         ctx.beginPath(); ctx.moveTo(tx, y - 6); ctx.lineTo(tx, y - 6 - h); ctx.stroke();
       }
     }
-    /* estacion 2: el intercambio, dos flechas que giran */
+    /* estacion 2: el dispensador suelta la pieza y la encaja en la caja */
     {
-      const x = x0 + D, y = beltY - S - 36;
-      const ang = smooth(seg(a, .1, .75)) * Math.PI * 2;
-      ctx.strokeStyle = line; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x, y - 14); ctx.stroke();
-      ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
-      ctx.fillStyle = line;
-      [0, Math.PI].forEach((o) => {
-        ctx.beginPath(); ctx.arc(0, 0, 12, o + .35, o + Math.PI - .35); ctx.stroke();
-        const e = o + Math.PI - .35;
-        const ex = Math.cos(e) * 12, ey = Math.sin(e) * 12;
-        ctx.beginPath();
-        ctx.moveTo(ex, ey);
-        ctx.lineTo(ex + Math.cos(e - 2.2) * 6, ey + Math.sin(e - 2.2) * 6);
-        ctx.lineTo(ex + Math.cos(e - .9) * 6, ey + Math.sin(e - .9) * 6);
-        ctx.closePath(); ctx.fill();
-      });
-      ctx.restore();
+      const x = x0 + D;
+      const y = beltY - S - 30;
+      ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
+      ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x, y); ctx.stroke();
+      /* tolva: mas ancha arriba, boca abajo */
+      ctx.beginPath();
+      ctx.moveTo(x - S * .42, y); ctx.lineTo(x + S * .42, y);
+      ctx.lineTo(x + S * .22, y + 22); ctx.lineTo(x - S * .22, y + 22); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      /* la boca se abre cuando sale la pieza */
+      const boca = Math.sin(seg(a, .1, .35) * Math.PI) * 6;
+      ctx.beginPath(); ctx.moveTo(x - S * .22, y + 22 + boca); ctx.lineTo(x + S * .22, y + 22 + boca); ctx.stroke();
     }
     /* estacion 3: la garra baja, agarra, levanta, revisa y suelta */
     {
@@ -767,9 +766,22 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     cajas.forEach((c) => {
       ctx.save();
       if (c.k >= 3) { ctx.beginPath(); ctx.rect(xSalida - cw / 2 - S, 0, cw + 2 * S, pisoY); ctx.clip(); }
-      caja(c.x, c.cy, c.sc, c.rot, c.sq); sello(c.x, c.cy, c.sc, c.chk);
+      caja(c.x, c.cy, c.sc, c.rot, c.sq, c.pz); sello(c.x, c.cy, c.sc, c.chk);
       ctx.restore();
     });
+    /* la pieza en el aire, del dispensador a su lugar en la caja */
+    {
+      const c = cajas[2];
+      if (c.pz > 0 && c.pz < 1) {
+        const u = S * c.sc / 70;
+        const y0 = beltY - S - 30 + 22 + 8 * u, y1 = c.cy - 11 * u;
+        const py = y0 + (y1 - y0) * smooth(c.pz);
+        ctx.save(); ctx.translate(c.x, py);
+        ctx.beginPath(); ctx.roundRect(-21 * u, -8 * u, 42 * u, 16 * u, 4 * u);
+        ctx.fillStyle = PURPLE; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.stroke();
+        ctx.restore();
+      }
+    }
     /* pared delantera de la salida: tapa la mitad de abajo */
     ctx.fillStyle = CREAM;
     ctx.beginPath(); ctx.roundRect(xSalida - cw / 2, crateTop + ch * .42, cw, ch * .58, 4); ctx.fill(); ctx.stroke();
