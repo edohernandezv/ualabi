@@ -281,6 +281,13 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
 .cta-block .kicker{margin-bottom:14px}
 .term{border:var(--bw) solid var(--on-ink);border-radius:12px;overflow:hidden;
   max-width:62ch;margin-top:var(--sp-l);background:var(--ink)}
+/* escritorio: titulo a la izquierda, formulario a la derecha */
+@media(min-width:900px){
+  .cta-block{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+    gap:clamp(32px,5vw,80px);align-items:start}
+  .cta-text{position:sticky;top:calc(var(--nav-h) + 24px)}
+  .term{max-width:none;margin-top:0}
+}
 .term-bar{display:flex;align-items:center;gap:7px;padding:9px 13px;
   border-bottom:var(--bw) solid var(--on-ink)}
 .term-bar i{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1px solid currentColor;opacity:.5}
@@ -469,8 +476,10 @@ textarea.term-input{min-height:4.8em}
   <!-- CTA -->
   <section id="contacto" class="block block-ink on-dark">
     <div class="pad cta-block">
-      <p class="kicker">Escríbenos</p>
-      <h2>Cuéntanos qué <span class="hl">no está funcionando</span> y lo resolvemos juntos</h2>
+      <div class="cta-text">
+        <p class="kicker">Escríbenos</p>
+        <h2>Cuéntanos qué <span class="hl">no está funcionando</span> y lo resolvemos juntos</h2>
+      </div>
       <!-- Envío: Web3Forms (web3forms.com). Crear la clave con el correo
            que recibirá los mensajes y pegarla en data-key. Sin clave, el
            formulario abre el correo del visitante con todo escrito. -->
