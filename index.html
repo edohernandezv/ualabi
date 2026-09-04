@@ -665,7 +665,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     rotulo(xPuerta, beltY + 26, 'idea');
     rotulo(xSalida, beltY + 26, 'sirve');
     /* el riel del que cuelga todo */
-    ctx.beginPath(); ctx.moveTo(x0 - S * .8, railY); ctx.lineTo(x0 + 2 * D + S * .8, railY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, railY); ctx.lineTo(W, railY); ctx.stroke();
     ctx.fillStyle = CREAM;
     for (let i = 0; i < 3; i++) {
       ctx.beginPath(); ctx.roundRect(x0 + i * D - 5, railY, 10, 18, 2); ctx.fill(); ctx.stroke();
