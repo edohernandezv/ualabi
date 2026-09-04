@@ -101,8 +101,6 @@ a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%;height:auto}
 :focus-visible{outline:3px solid var(--purple-deep);outline-offset:3px}
 .skip{position:absolute;left:-9999px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .skip:focus{left:12px;top:12px;z-index:10000;background:var(--ink);color:var(--cream);padding:14px 22px;border-radius:var(--r-pill)}
 
 h1,h2,h3{
@@ -284,11 +282,21 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
 .term-bar i{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1px solid currentColor;opacity:.5}
 .term-bar span{font-size:.6875rem;opacity:.55;margin-left:5px;letter-spacing:.02em}
 .term-body{padding:clamp(18px,2.2vw,26px)}
-.term-line{display:flex;align-items:flex-start;gap:10px;font-size:.9375rem;line-height:1.6}
-.term-line::before{content:"$";opacity:.5;flex-shrink:0;padding-top:2px}
-.term-input{flex:1;background:none;border:0;padding:0;resize:none;
-  font:inherit;color:inherit;min-height:4.8em;outline:none}
+.term-row{display:grid;grid-template-columns:12ch 1fr;gap:10px;align-items:baseline;
+  font-size:.9375rem;line-height:1.6;padding:6px 0;border-bottom:1px solid currentColor}
+.term-key{opacity:.6;white-space:nowrap}
+.term-key::before{content:"$ ";opacity:.7}
+.term-input{background:none;border:0;padding:0;resize:vertical;min-width:0;width:100%;
+  font:inherit;color:inherit;outline:none;border-radius:0}
+select.term-input{cursor:pointer}
+select.term-input option{color:var(--ink);background:var(--cream)}
+textarea.term-input{min-height:4.8em}
+.term-check input{accent-color:var(--teal);margin-right:6px;width:16px;height:16px;vertical-align:-2px}
 .term-input::placeholder{color:currentColor;opacity:.55}
+.term-input:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.term-ok{padding:8px 0;font-size:.9375rem;line-height:1.6}
+.term-ok strong{font-weight:600}
+@media(max-width:480px){.term-row{grid-template-columns:1fr;gap:2px}}
 .term-foot{display:flex;flex-wrap:wrap;gap:14px;align-items:center;
   margin-top:16px;padding-top:14px;border-top:1px solid currentColor}
 .term-send{display:inline-flex;align-items:center;gap:9px;cursor:pointer;
@@ -443,7 +451,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
           </div>
           <div class="card-body">
             <div class="svc-head"><span class="svc-num" aria-hidden="true">04</span></div>
-            <h3>Formamos a su equipo</h3>
+            <h3>Formamos a tu equipo</h3>
             <p>Talleres y acompañamiento para que la innovación y la IA dejen de ser un proyecto aparte y se vuelvan parte del trabajo diario de tu equipo.</p>
             <div class="tags"><span>Formación</span><span>Acompañamiento</span><span>Transferencia</span></div>
           </div>
@@ -459,19 +467,34 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     <div class="pad cta-block">
       <p class="kicker">Escríbenos</p>
       <h2>Cuéntanos qué <span class="hl">no está funcionando</span> y lo resolvemos juntos</h2>
-      <form class="term" data-reveal id="prompt">
+      <!-- Envío: Web3Forms (web3forms.com). Crear la clave con el correo
+           que recibirá los mensajes y pegarla en data-key. Sin clave, el
+           formulario abre el correo del visitante con todo escrito. -->
+      <form class="term" data-reveal id="prompt" data-key="">
         <div class="term-bar" aria-hidden="true">
           <i></i><i></i><i></i><span>ualabi / nuevo proyecto</span>
         </div>
         <div class="term-body">
-          <label class="term-line" for="q">
-            <span class="sr-only">Cuéntanos qué necesitas</span>
-            <textarea class="term-input" id="q" name="q" rows="3"
-              placeholder="Tenemos una idea y no sabemos si vale la pena construirla."></textarea>
-          </label>
+          <label class="term-row"><span class="term-key">nombre</span>
+            <input class="term-input" name="nombre" type="text" autocomplete="name" required></label>
+          <label class="term-row"><span class="term-key">correo</span>
+            <input class="term-input" name="correo" type="email" autocomplete="email" required></label>
+          <label class="term-row"><span class="term-key">tema</span>
+            <select class="term-input" name="tema">
+              <option>Un producto</option>
+              <option>IA en procesos</option>
+              <option>Colaboración</option>
+              <option>Formación del equipo</option>
+              <option>Otro</option>
+            </select></label>
+          <label class="term-row term-check"><span class="term-key">cotización</span>
+            <span><input name="cotizacion" type="checkbox" value="sí"> Sí, necesito una cotización</span></label>
+          <label class="term-row"><span class="term-key">mensaje</span>
+            <textarea class="term-input" name="mensaje" rows="3" required
+              placeholder="Tenemos una idea y no sabemos si vale la pena construirla."></textarea></label>
           <div class="term-foot">
             <button class="term-send" type="submit">Enviar &#8599;</button>
-            <span class="term-hint">Abre tu correo. La primera conversación no tiene costo.</span>
+            <span class="term-hint">Te respondemos al correo que dejes. La primera conversación no tiene costo.</span>
           </div>
         </div>
       </form>
@@ -513,7 +536,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
             <li><a href="#servicios">Construimos productos</a></li>
             <li><a href="#servicios">Integramos IA</a></li>
             <li><a href="#servicios">Colaboramos</a></li>
-            <li><a href="#servicios">Formamos a su equipo</a></li>
+            <li><a href="#servicios">Formamos a tu equipo</a></li>
           </ul>
         </div>
         <div>
@@ -858,18 +881,54 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
   addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(medir, 160); });
 })();
 
-/* El prompt del CTA abre el correo con lo escrito. */
+/* El formulario del CTA. Con clave de Web3Forms envia directo al
+   correo configurado. Sin clave, o si falla, abre el correo del
+   visitante con todo escrito. */
 (function () {
   const f = document.getElementById('prompt');
   if (!f) return;
-  f.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const q = (f.querySelector('#q').value || '').trim();
-    const body = q ? q + '\n\n---\nEmpresa:\nPlazo estimado:\n'
-                   : 'Cuéntanos brevemente:\n\nEmpresa:\nDesafío:\nPlazo estimado:\n';
-    location.href = 'mailto:hola@ualabi.cl'
-      + '?subject=' + encodeURIComponent('Nuevo proyecto con ualabi')
+  const campos = () => {
+    const d = new FormData(f);
+    return {
+      nombre: (d.get('nombre') || '').trim(),
+      correo: (d.get('correo') || '').trim(),
+      tema: d.get('tema') || '',
+      cotizacion: d.get('cotizacion') ? 'sí' : 'no',
+      mensaje: (d.get('mensaje') || '').trim()
+    };
+  };
+  const asunto = (c) => 'ualabi / ' + c.tema + (c.cotizacion === 'sí' ? ' / cotización' : '');
+  const porCorreo = (c) => {
+    const body = c.mensaje + '\n\n---\nNombre: ' + c.nombre + '\nCorreo: ' + c.correo
+      + '\nTema: ' + c.tema + '\nCotización: ' + c.cotizacion + '\n';
+    location.href = 'mailto:hola@ualabi.cl?subject=' + encodeURIComponent(asunto(c))
       + '&body=' + encodeURIComponent(body);
+  };
+  const listo = (c) => {
+    f.querySelector('.term-body').innerHTML =
+      '<p class="term-ok"><strong>Enviado.</strong> Te respondemos a ' + c.correo.replace(/</g, '&lt;') + '.</p>';
+  };
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const c = campos(), key = f.dataset.key;
+    if (!key) return porCorreo(c);
+    const btn = f.querySelector('.term-send');
+    btn.disabled = true; btn.textContent = 'Enviando';
+    try {
+      const r = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: key, subject: asunto(c), from_name: c.nombre, email: c.correo,
+          nombre: c.nombre, tema: c.tema, cotizacion: c.cotizacion, message: c.mensaje
+        })
+      });
+      if (!r.ok) throw new Error(r.status);
+      listo(c);
+    } catch (err) {
+      btn.disabled = false; btn.innerHTML = 'Enviar &#8599;';
+      porCorreo(c);
+    }
   });
 })();
 </script>
