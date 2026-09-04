@@ -577,23 +577,43 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     return x - Math.floor(x);
   };
 
-  /* la caja: un paquete turquesa con su etiqueta morada. Llega
-     chueca y de otro tamano; la linea la deja derecha y a escala. */
+  /* la caja: una ventanita de terminal, como las tarjetas de la
+     pagina. Barra con tres puntos, prompt y cursor. Llega chueca y de
+     otro tamano; la linea la deja derecha, a escala y con su modulo. */
+  let parpadeo = true;
   const caja = (cx, cy, sc, rot, sq, pieza) => {
     ctx.save();
     ctx.translate(cx, cy); ctx.rotate(rot);
     ctx.scale(S * sc / 70 * (1 + sq), S * sc / 70 * (1 - sq));
     ctx.translate(-35, -35);
-    ctx.beginPath(); ctx.roundRect(0, 0, 70, 70, 14);
+    ctx.beginPath(); ctx.roundRect(0, 0, 70, 70, 12);
     ctx.fillStyle = TEAL; ctx.fill();
-    ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke();
+    ctx.save(); ctx.clip();
+    /* barra de ventana */
+    ctx.fillStyle = CREAM; ctx.fillRect(0, 0, 70, 16);
+    ctx.strokeStyle = INK; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, 16); ctx.lineTo(70, 16); ctx.stroke();
+    ctx.lineWidth = 1.5;
+    [10, 18, 26].forEach((dx) => { ctx.beginPath(); ctx.arc(dx, 8, 2.6, 0, Math.PI * 2); ctx.stroke(); });
+    /* prompt y una linea de salida */
+    ctx.fillStyle = INK;
+    ctx.font = '600 10px "Azeret Mono", ui-monospace, monospace';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText('$', 9, 28);
+    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(19, 28); ctx.lineTo(48, 28); ctx.stroke();
+    /* el modulo integrado */
     if (pieza >= 1) {
-      ctx.beginPath(); ctx.roundRect(14, 16, 42, 16, 4);
+      ctx.beginPath(); ctx.roundRect(9, 37, 42, 16, 4);
       ctx.fillStyle = PURPLE; ctx.fill(); ctx.lineWidth = 2; ctx.stroke();
     }
-    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(16, 44); ctx.lineTo(44, 44); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(16, 54); ctx.lineTo(34, 54); ctx.stroke();
+    /* cursor */
+    ctx.fillStyle = INK;
+    ctx.fillText('$', 9, 61);
+    if (parpadeo) ctx.fillRect(19, 56, 6, 10);
+    ctx.restore();
+    ctx.beginPath(); ctx.roundRect(0, 0, 70, 70, 12);
+    ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke();
     ctx.restore();
   };
 
@@ -637,6 +657,7 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
     ctx.clearRect(0, 0, W, H);
     const n = Math.floor(now / CYCLE);
     const t = now - n * CYCLE;
+    parpadeo = Math.floor(now / 530) % 2 === 0;
     const moviendo = t < MOVE;
     const off = moviendo ? inout(t / MOVE) : 1;   /* avance del tramo */
     const a = moviendo ? 0 : (t - MOVE) / ACT;    /* progreso de la accion */
@@ -778,10 +799,10 @@ h1{font-size:var(--t-xl);font-weight:600;letter-spacing:-.03em;line-height:1.02;
       const c = cajas[2];
       if (c.pz > 0 && c.pz < 1) {
         const u = S * c.sc / 70;
-        const y0 = beltY - S - 30 + 22 + 8 * u, y1 = c.cy - 11 * u;
+        const y0 = beltY - S - 30 + 22 + 8 * u, y1 = c.cy + 10 * u;
         const py = y0 + (y1 - y0) * smooth(c.pz);
         ctx.save(); ctx.translate(c.x, py);
-        ctx.beginPath(); ctx.roundRect(-21 * u, -8 * u, 42 * u, 16 * u, 4 * u);
+        ctx.beginPath(); ctx.roundRect(-26 * u, -8 * u, 42 * u, 16 * u, 4 * u);
         ctx.fillStyle = PURPLE; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.stroke();
         ctx.restore();
       }
