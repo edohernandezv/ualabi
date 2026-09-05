@@ -7,6 +7,7 @@
 <meta name="description" content="Agencia chilena de innovación, ingeniería y tecnología. Diseñamos productos, integramos IA en procesos y dejamos al equipo interno capaz de sostenerlos.">
 <meta name="theme-color" content="#F6F0EA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#232226" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://ualabi.co/">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,9 +128,6 @@ h1,h2,h3{
 .brand{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 86;font-weight:900;
   font-size:1.35rem;letter-spacing:-.03em;margin-right:auto;display:flex;align-items:center;gap:12px}
 .brand .mark{flex-shrink:0;display:block}
-.brand .cl{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 100;
-  font-style:normal;font-weight:700;font-size:.625rem;letter-spacing:.08em;
-  border:2px solid currentColor;border-radius:6px;padding:2px 5px;align-self:center;opacity:.65}
 .nav-links{display:flex;align-items:center;gap:2px}
 .nav-links a{padding:11px 16px;border-radius:var(--r-pill);font-size:.875rem;font-weight:600;
   transition:background .18s var(--ease)}
@@ -385,7 +383,6 @@ textarea.term-input{min-height:4.8em}
         <rect x="1.5" y="1.5" width="67" height="67" rx="18.5" fill="none" stroke="#232226" stroke-width="3"/>
       </svg>
       <span>ualabi</span>
-      <em class="cl">CL</em>
     </a>
     <div class="nav-links">
       <a href="#servicios">Servicios</a>
@@ -565,14 +562,14 @@ textarea.term-input{min-height:4.8em}
         <div>
           <h4>Contacto</h4>
           <ul>
-            <li><a href="mailto:hola@ualabi.cl">hola@ualabi.cl</a></li>
+            <li><a href="mailto:hola@ualabi.co">hola@ualabi.co</a></li>
             <li><span class="pending">Santiago, Chile</span></li>
           </ul>
         </div>
       </div>
       <div class="legal">
         <span>© 2026 ualabi</span>
-        <span>ualabi.cl</span>
+        <span>ualabi.co</span>
       </div>
     </div>
   </footer>
@@ -985,7 +982,7 @@ textarea.term-input{min-height:4.8em}
   const porCorreo = (c) => {
     const body = c.mensaje + '\n\n---\nNombre: ' + c.nombre + '\nCorreo: ' + c.correo
       + '\nTema: ' + c.tema + '\nCotización: ' + c.cotizacion + '\n';
-    location.href = 'mailto:hola@ualabi.cl?subject=' + encodeURIComponent(asunto(c))
+    location.href = 'mailto:hola@ualabi.co?subject=' + encodeURIComponent(asunto(c))
       + '&body=' + encodeURIComponent(body);
   };
   const listo = (c) => {
