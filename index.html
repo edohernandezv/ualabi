@@ -695,6 +695,18 @@ textarea.term-input{min-height:4.8em}
     ctx.restore();
   };
 
+  /* una cuerda nunca esta recta: pandea un poco y oscila lento,
+     cada una con su fase. Con la cinta en marcha vibra algo mas. */
+  let ahora = 0, vibra = 0;
+  const cuerda = (x, y0, y1, fase) => {
+    const L = y1 - y0;
+    const amp = Math.min(L * .035, 5) * (1 + vibra * .8);
+    const dx = Math.sin(ahora / 900 + fase) * amp + Math.sin(ahora / 230 + fase * 2) * vibra * 1.5;
+    ctx.beginPath(); ctx.moveTo(x, y0);
+    ctx.quadraticCurveTo(x + dx, y0 + L * .55, x, y1);
+    ctx.stroke();
+  };
+
   const rotulo = (x, y, t) => {
     ctx.save();
     ctx.font = '500 11px "Azeret Mono", ui-monospace, monospace';
@@ -709,9 +721,11 @@ textarea.term-input{min-height:4.8em}
     const n = Math.floor(now / CYCLE);
     const t = now - n * CYCLE;
     parpadeo = Math.floor(now / 530) % 2 === 0;
+    ahora = now;
     const moviendo = t < MOVE;
     const off = moviendo ? inout(t / MOVE) : 1;   /* avance del tramo */
     const a = moviendo ? 0 : (t - MOVE) / ACT;    /* progreso de la accion */
+    vibra = moviendo ? Math.sin(t / MOVE * Math.PI) : 0;
     const xPuerta = x0 - D, xSalida = x0 + 3 * D;
     const beltEnd = x0 + 2 * D + S * .9;
     const railY = 10;
@@ -781,7 +795,7 @@ textarea.term-input{min-height:4.8em}
       const rest = beltY - S - 52, tope = beltY - S * c.sc - 6;
       const y = rest + (tope - rest) * d;
       ctx.strokeStyle = line; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x, y - 6); ctx.stroke();
+      cuerda(x, railY, y - 6, 0);
       ctx.fillStyle = CREAM;
       ctx.beginPath(); ctx.roundRect(x - S * .62, y - 6, S * 1.24, 8, 2); ctx.fill(); ctx.stroke();
       ctx.lineWidth = 1.2;
@@ -795,7 +809,7 @@ textarea.term-input{min-height:4.8em}
       const x = x0 + D;
       const y = beltY - S - 30;
       ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
-      ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x, y); ctx.stroke();
+      cuerda(x, railY, y, 1.7);
       /* tolva: mas ancha arriba, boca abajo */
       ctx.beginPath();
       ctx.moveTo(x - S * .42, y); ctx.lineTo(x + S * .42, y);
@@ -815,7 +829,7 @@ textarea.term-input{min-height:4.8em}
       const abierto = S * .62, cerrado = S * c.sc / 2 + 4;
       const w = abierto + (cerrado - abierto) * smooth(g);
       ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
-      ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x, y); ctx.stroke();
+      cuerda(x, railY, y, 3.1);
       ctx.beginPath(); ctx.roundRect(x - 10, y, 20, 10, 3); ctx.fill(); ctx.stroke();
       [-1, 1].forEach((s) => {
         ctx.beginPath();
@@ -882,7 +896,7 @@ textarea.term-input{min-height:4.8em}
       want = Math.max(.3, Math.min(Math.PI - .3, want));
       camAng += (want - camAng) * (REDUCE ? 1 : .1);
       ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
-      ctx.beginPath(); ctx.moveTo(px, railY); ctx.lineTo(px, py); ctx.stroke();
+      cuerda(px, railY, py, 4.4);
       ctx.save(); ctx.translate(px, py); ctx.rotate(camAng);
       const u = S / 84;
       ctx.beginPath(); ctx.roundRect(-9 * u, -9 * u, 32 * u, 18 * u, 4 * u); ctx.fill(); ctx.stroke();
