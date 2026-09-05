@@ -695,17 +695,34 @@ textarea.term-input{min-height:4.8em}
     ctx.restore();
   };
 
-  /* una cuerda nunca esta recta: pandea un poco y oscila lento,
-     cada una con su fase. Con la cinta en marcha vibra algo mas. */
-  let ahora = 0, vibra = 0;
-  const cuerda = (x, y0, y1, fase) => {
-    const L = y1 - y0;
-    const amp = Math.min(L * .035, 5) * (1 + vibra * .8);
-    const dx = Math.sin(ahora / 900 + fase) * amp + Math.sin(ahora / 230 + fase * 2) * vibra * 1.5;
-    ctx.beginPath(); ctx.moveTo(x, y0);
-    ctx.quadraticCurveTo(x + dx, y0 + L * .55, x, y1);
-    ctx.stroke();
-  };
+  /* Una cuerda con carga cuelga tensa y recta. Lo que se ve moverse
+     es el conjunto: un pendulo que se excita cuando la herramienta
+     acelera o frena, y se amortigua solo. Y la cuerda cede un poco
+     con el peso: al agarrar la caja se estira, al soltarla rebota. */
+  const G = 2200;                    /* gravedad en px/s2 a esta escala */
+  class Cuerda {
+    constructor() { this.th = 0; this.w = 0; this.e = 0; this.ev = 0; this.py = null; this.pv = 0; this.pp = 1; }
+    /* L largo actual, y punto de amarre, peso relativo, dt en s.
+       Devuelve el desplazamiento de la herramienta. */
+    paso(L, y, peso, dt) {
+      const Lr = Math.max(L, 24);
+      const et = peso * S * .05;
+      if (dt > 0) {
+        const v = this.py === null ? 0 : (y - this.py) / dt;
+        this.w -= (v - this.pv) * 4e-4;          /* arrancar y frenar la mece */
+        this.w += (peso - this.pp) * .05;        /* cambiar de carga tambien */
+        this.w += (-(G / Lr) * Math.sin(this.th) - .45 * this.w) * dt;
+        this.th += this.w * dt;
+        this.ev += (-80 * (this.e - et) - 5 * this.ev) * dt;
+        this.e += this.ev * dt;
+        this.py = y; this.pv = v; this.pp = peso;
+      } else { this.e = et; }
+      return { dx: Math.sin(this.th) * Lr, dy: (Math.cos(this.th) - 1) * Lr + this.e };
+    }
+    dibuja(px, py, x, y) { ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(x, y); ctx.stroke(); }
+  }
+  const cuerdas = [new Cuerda(), new Cuerda(), new Cuerda(), new Cuerda()];
+  let antes = null;
 
   const rotulo = (x, y, t) => {
     ctx.save();
@@ -721,11 +738,11 @@ textarea.term-input{min-height:4.8em}
     const n = Math.floor(now / CYCLE);
     const t = now - n * CYCLE;
     parpadeo = Math.floor(now / 530) % 2 === 0;
-    ahora = now;
+    const dt = antes === null ? 0 : Math.min(.05, (now - antes) / 1000);
+    antes = now;
     const moviendo = t < MOVE;
     const off = moviendo ? inout(t / MOVE) : 1;   /* avance del tramo */
     const a = moviendo ? 0 : (t - MOVE) / ACT;    /* progreso de la accion */
-    vibra = moviendo ? Math.sin(t / MOVE * Math.PI) : 0;
     const xPuerta = x0 - D, xSalida = x0 + 3 * D;
     const beltEnd = x0 + 2 * D + S * .9;
     const railY = 10;
@@ -790,12 +807,15 @@ textarea.term-input{min-height:4.8em}
 
     /* estacion 1: la regla baja hasta tocar la caja */
     {
-      const x = x0, c = cajas[1];
+      const xb = x0, c = cajas[1];
       const d = smooth(a < .6 ? seg(a, .1, .4) : 1 - seg(a, .68, .95));
       const rest = beltY - S - 52, tope = beltY - S * c.sc - 6;
-      const y = rest + (tope - rest) * d;
+      const yb = rest + (tope - rest) * d;
+      /* apoyada en la caja la cuerda descansa: menos peso */
+      const sw = cuerdas[0].paso(yb - railY, yb, d > .98 ? .4 : 1, dt);
+      const x = xb + sw.dx, y = yb + sw.dy;
       ctx.strokeStyle = line; ctx.lineWidth = 2;
-      cuerda(x, railY, y - 6, 0);
+      cuerdas[0].dibuja(xb, railY, x, y - 6);
       ctx.fillStyle = CREAM;
       ctx.beginPath(); ctx.roundRect(x - S * .62, y - 6, S * 1.24, 8, 2); ctx.fill(); ctx.stroke();
       ctx.lineWidth = 1.2;
@@ -806,10 +826,12 @@ textarea.term-input{min-height:4.8em}
     }
     /* estacion 2: el dispensador suelta la pieza y la encaja en la caja */
     {
-      const x = x0 + D;
-      const y = beltY - S - 30;
+      const xb = x0 + D, yb = beltY - S - 30;
+      /* al soltar la pieza pierde algo de peso */
+      const sw = cuerdas[1].paso(yb - railY, yb, a > .1 && a < .5 ? .85 : 1, dt);
+      const x = xb + sw.dx, y = yb + sw.dy;
       ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
-      cuerda(x, railY, y, 1.7);
+      cuerdas[1].dibuja(xb, railY, x, y);
       /* tolva: mas ancha arriba, boca abajo */
       ctx.beginPath();
       ctx.moveTo(x - S * .42, y); ctx.lineTo(x + S * .42, y);
@@ -821,15 +843,19 @@ textarea.term-input{min-height:4.8em}
     }
     /* estacion 3: la garra baja, agarra, levanta, revisa y suelta */
     {
-      const x = x0 + 2 * D, c = cajas[3];
+      const xb = x0 + 2 * D, c = cajas[3];
       const d = a < .5 ? seg(a, 0, .18) : 1 - seg(a, .9, 1);
       const g = seg(a, .18, .3) - seg(a, .85, .95);
       const rest = beltY - S - 64, agarre = beltY - S * c.sc - 14;
-      const y = rest + (agarre - rest) * smooth(d) - c.L * S * .55;
+      const yb = rest + (agarre - rest) * smooth(d) - c.L * S * .55;
+      /* con la caja en el aire carga el doble; la caja se mece con ella */
+      const sw = cuerdas[2].paso(yb - railY, yb, 1 + c.L * 1.2, dt);
+      const x = xb + sw.dx, y = yb + sw.dy;
+      c.x += sw.dx * c.L; c.cy += sw.dy * c.L;
       const abierto = S * .62, cerrado = S * c.sc / 2 + 4;
       const w = abierto + (cerrado - abierto) * smooth(g);
       ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
-      cuerda(x, railY, y, 3.1);
+      cuerdas[2].dibuja(xb, railY, x, y);
       ctx.beginPath(); ctx.roundRect(x - 10, y, 20, 10, 3); ctx.fill(); ctx.stroke();
       [-1, 1].forEach((s) => {
         ctx.beginPath();
@@ -889,14 +915,19 @@ textarea.term-input{min-height:4.8em}
     /* la camara de inspeccion: sigue al cursor; sin cursor, a la caja
        que revisa la garra. Gira solo hacia abajo, como algo montado. */
     {
-      const px = x0 + 2.5 * D, py = railY + 34, c = cajas[3];
+      const pxb = x0 + 2.5 * D, pyb = railY + 34, c = cajas[3];
       const conMouse = mira && now - miraT < 2500 && !REDUCE;
       const tx = conMouse ? mira.x : c.x, ty = conMouse ? mira.y : c.cy;
-      let want = Math.atan2(ty - py, tx - px);
+      let want = Math.atan2(ty - pyb, tx - pxb);
       want = Math.max(.3, Math.min(Math.PI - .3, want));
-      camAng += (want - camAng) * (REDUCE ? 1 : .1);
+      const giroCam = (want - camAng) * (REDUCE ? 1 : .1);
+      camAng += giroCam;
+      /* girar la reacciona: la cuerda corta se mece con cada giro */
+      cuerdas[3].w -= giroCam * .9;
+      const sw = cuerdas[3].paso(pyb - railY, pyb, 1, dt);
+      const px = pxb + sw.dx, py = pyb + sw.dy;
       ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.fillStyle = CREAM;
-      cuerda(px, railY, py, 4.4);
+      cuerdas[3].dibuja(pxb, railY, px, py);
       ctx.save(); ctx.translate(px, py); ctx.rotate(camAng);
       const u = S / 84;
       ctx.beginPath(); ctx.roundRect(-9 * u, -9 * u, 32 * u, 18 * u, 4 * u); ctx.fill(); ctx.stroke();
